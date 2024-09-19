@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="personaldod" default="dotenv">
+    <property name="base.dir" value="${project.basedir}"/>
+    <property name="properties.dir" value="${base.dir}/app/build/properties"/>
+
+    <condition property="build.env" value="dev">
+        <not>
+            <isset property="build.env"/>
+        </not>
+    </condition>
+
+    <echo msg="=============="/>
+    <echo msg="ENVIRONMENT:${build.env}"/>
+    <echo msg="WORKSPACE:${base.dir}"/>
+    <echo msg="============="/>
+
+    <property file="${properties.dir}/default.properties"/>
+    <property file="${properties.dir}/${build.env}.properties"/>
+    <target name="dotenv">
+        <echo msg="Copying .env.dist to .env"/>
+        <copy file="${base.dir}/.env.dist" tofile="${base.dir}/.env" overwrite="true">
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="\#\!prop\s" replace=""/>
+                </replaceregexp>
+                <expandproperties/>
+                <stripwhitespace />
+            </filterchain>
+        </copy>
+
+    <property file="${base.dir}/.env" override="true"/>
+    </target>
+
+    <target name="phinxMigrations" description="Create rollback and run migrations">
+        <echo message="Creating rollbacks and running phinx migrations"/>
+        <echo message="Running rollback to reset all migrations"/>
+        <exec passthru="true" logoutput="true" checkreturn="true"
+              command="php vendor/bin/phinx rollback -e development -t 0"/>
+        <echo message="running migrations"/>
+        <exec passthru="true" logoutput="true" checkreturn="true"
+              command="php vendor/bin/phinx migrate -e development"/>
+
+
+    </target>
+</project>
