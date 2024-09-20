@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MainController!{% endblock %}
+
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
+
+    <main class="layout">
+        <div class="header">
+
+
+
+        </div>
+        <div class="sidenav">
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="#contact">Contact</a>
+            {# Products #}
+            <button class="dropdown-btn">Products
+                {{ ux_icon('caret-down-solid', {height: '16px', width: '16px'}) }}
+            </button>
+            <div class="dropdown-container">
+                <a href="#">Product List</a>
+                <a href="#">Add Product</a>
+            </div>
+            {# Customers #}
+            <button class="dropdown-btn">Customers
+                {{ ux_icon('caret-down-solid', {height: '16px', width: '16px'}) }}
+            </button>
+            <div class="dropdown-container">
+                <a href="#">Customers List</a>
+                <a href="#">Add Customer</a>
+            </div>
+            {# Categories #}
+            <button class="dropdown-btn">Category
+                {{ ux_icon('caret-down-solid', {height: '16px', width: '16px'}) }}
+            </button>
+            <div class="dropdown-container">
+                <a href="#">Categories List</a>
+                <a href="#">Add Category</a>
+            </div>
+            <a href="#contact">Search</a>
+        </div>
+        <div class="banner">
+            Banner
+        </div>
+        <div class="page-content">
+            Page-Content
+        </div>
+        <div class="footer">
+            Footer
+        </div>
+    </main>
+
+
+{% endblock %}

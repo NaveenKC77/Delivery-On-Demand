@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="personaldod" default="dotenv">
+    <property name="base.dir" value="${project.basedir}"/>
+    <property name="scripts.dir" value="${project.basedir}/app/scripts"/>
+    <property name="properties.dir" value="${base.dir}/app/build/properties"/>
+    <property name ="vendor.dir" value="${base.dir}/vendor"/>
+    <condition property="build.env" value="dev">
+        <not>
+            <isset property="build.env"/>
+        </not>
+    </condition>
+
+    <echo msg="=============="/>
+    <echo msg="ENVIRONMENT:${build.env}"/>
+    <echo msg="WORKSPACE:${base.dir}"/>
+    <echo msg="============="/>
+
+    <property file="${properties.dir}/${build.env}.properties"/>
+    <property file="${properties.dir}/default.properties"/>
+
+    <target name="composer-install" description="Runs composer install">
+        <property name="no_dev_install" value="--no-dev"/>
+        <if>
+            <or>
+                <equals arg1="${build.env}" arg2="dev"/>
+                <equals arg1="${build.env}" arg2="test"/>
+                <equals arg1="${build.env}" arg2="uat"/>
+                <equals arg1="${build.env}" arg2="ci"/>
+            </or>
+            <then>
+                <property name="no_dev_install" value="" override="true"/>
+            </then>
+        </if>
+
+        <echo msg="Install composer dependencies"/>
+        <exec checkreturn="true" passthru="true" logoutput="true" executable="${scripts.dir}/composer">
+            <arg value="install"/>
+            <arg value="--optimize-autoloader"/>
+            <arg value="--prefer-dist"/>
+            <arg value="--no-progress"/>
+            <arg value="${no_dev_install}"/>
+        </exec>
+    </target>
+
+    <target name="dotenv" description="Generate env file">
+        <echo msg="Populating env file"/>
+                <copy file="${base.dir}/.env.dist" tofile="${base.dir}/.env" overwrite="true">
+                    <filterchain>
+                        <replaceregexp>
+                            <regexp pattern="\#\!prop\s" replace=""/>
+                        </replaceregexp>
+                        <expandproperties/>
+                        <stripwhitespace />
+                    </filterchain>
+                </copy>
+        <property file="${base.dir}/.env" override="true"/>
+    </target>
+
+
+    <target name="phinxMigrations" description="Create rollback and run migrations">
+        <echo message="Creating rollbacks and running phinx migrations"/>
+        <echo message="Running rollback to reset all migrations"/>
+        <exec passthru="true" logoutput="true" checkreturn="true"
+              command="php vendor/bin/phinx rollback -e development -t 0"/>
+        <echo message="running migrations"/>
+        <exec passthru="true" logoutput="true" checkreturn="true"
+              command="php vendor/bin/phinx migrate -e development"/>
+    </target>
+
+    <target name="ci" depends="phpmd, phpcs, phpcpd , php-cs-fixer"/>
+
+    <target name="phpmd">
+        <echo msg="Running phpmd" />
+        <exec passthru="true" logoutput="true" executable="${vendor.dir}/phpmd" checkreturn="true">
+            <arg value="${src.dir}" />
+            <arg value="xml" />
+            <arg value="${base.dir}/phpmd.xml"/>
+            <arg value="--reportfile-xml" />
+            <arg value="${phpmd.dir}/pmd.xml" />
+            <arg value="--reportfile-html" />
+            <arg value="${phpmd.dir}/pmd.html" />
+            <arg value="--exclude" />
+            <arg value="Migrations"/>
+        </exec>
+    </target>
+
+    <target name="phpcs" description="Generate checkstyle.xml using PHP_CodeSniffer">
+        <echo msg="Generate checkstyle-results.xml using PHP_CodeSniffer"/>
+        <exec passthru="true" logoutput="true" checkreturn="true"
+              command="${vendor.dir}/phpcs
+                        --report=checkstyle
+                        --report-file=${base.dir}/checkstyle-results.xml
+                        --standard=PSR2
+                        --ignore=Exceptions.php,*_view.php ${src.dir}" />
+    </target>
+
+    <target name="phpcpd" description="Generate pmd-cpd.xml using PHPCPD">
+        <echo msg="Generate pmd-cpd.xml using PHPCPD"/>
+        <exec passthru="true" logoutput="true" checkreturn="true"
+              executable="${vendor.dir}/bin/phpcpd">
+            <arg value="--log-pmd" />
+            <arg value="${base.dir}/pmd-cpd.xml" />
+            <arg value="${src.dir}" />
+        </exec>
+    </target>
+
+    <target name="php-cs-fixer" description="Generate unused imports using PHP Code Fixer">
+        <echo msg="Generate PHPCS report for tests"/>
+        <exec passthru="true" logoutput="true" checkreturn="true"
+              command="${vendor.dir}/php-cs-fixer
+                        --format=checkstyle
+                        --rules=no_unused_imports,ordered_imports
+                        --dry-run
+                        fix ${src.dir} > ${base.dir}/unused_import_checkstyle.xml" />
+    </target>
+
+    <target name="php-fix-cs" description="Fixing unused imports on src using PHP Code Fixer">
+        <echo msg="Fixing unused imports with PHP Code Fixer"/>
+        <exec passthru="true" logoutput="true" checkreturn="true"
+              command="${vendor.dir}/php-cs-fixer
+                        --rules=no_unused_imports,ordered_imports
+                        fix ${src.dir}" />
+    </target>
+</project>
