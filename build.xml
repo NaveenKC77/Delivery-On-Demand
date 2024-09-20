@@ -4,7 +4,7 @@
     <property name="base.dir" value="${project.basedir}"/>
     <property name="scripts.dir" value="${project.basedir}/app/scripts"/>
     <property name="properties.dir" value="${base.dir}/app/build/properties"/>
-
+    <property name ="vendor.dir" value="${base.dir}/vendor"/>
     <condition property="build.env" value="dev">
         <not>
             <isset property="build.env"/>
@@ -68,7 +68,7 @@
               command="php vendor/bin/phinx migrate -e development"/>
     </target>
 
-    <target name="ci" depends="phpmd, phpcs, php-cs-fixer"/>
+    <target name="ci" depends="phpmd, phpcs, phpcpd , php-cs-fixer"/>
 
     <target name="phpmd">
         <echo msg="Running phpmd" />
@@ -93,6 +93,16 @@
                         --report-file=${base.dir}/checkstyle-results.xml
                         --standard=PSR2
                         --ignore=Exceptions.php,*_view.php ${src.dir}" />
+    </target>
+
+    <target name="phpcpd" description="Generate pmd-cpd.xml using PHPCPD">
+        <echo msg="Generate pmd-cpd.xml using PHPCPD"/>
+        <exec passthru="true" logoutput="true" checkreturn="true"
+              executable="${vendor.dir}/bin/phpcpd">
+            <arg value="--log-pmd" />
+            <arg value="${base.dir}/pmd-cpd.xml" />
+            <arg value="${src.dir}" />
+        </exec>
     </target>
 
     <target name="php-cs-fixer" description="Generate unused imports using PHP Code Fixer">

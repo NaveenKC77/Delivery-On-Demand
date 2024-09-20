@@ -105,6 +105,7 @@
         "phing/phing": "2.*",
         "phpmd/phpmd": "@stable",
         "phpunit/phpunit": "^9.5",
+        "sebastian/phpcpd": "^6.0",
         "squizlabs/php_codesniffer": "3.*",
         "symfony/browser-kit": "7.1.*",
         "symfony/css-selector": "7.1.*",
