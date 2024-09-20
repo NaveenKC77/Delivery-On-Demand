@@ -1,101 +1,19 @@
 
-
-*{
-    box-sizing: border-box;
-    text-align: center;
-}
-
-body {
-    background-color: skyblue;
-    width:100vw;
-}
-
-.layout{
-    display:grid;
-    width:90vw;
-    min-height: 100vh;
-    margin: 0 auto;
-    grid-gap:1rem;
-    grid-template-areas: "h h h h h h"
-                         "m b b b b b"
-                         "m c c c c c"
-                         "m c c c c c"
-                         "m c c c c c"
-                         "m c c c c c"
-                         "f f f f f f";
-    grid-auto-rows: 20vh;
-    grid-template-columns:repeat(auto-fit,minmax(15vw,1fr));
-}
-
-.header{
-    border:2px solid black;
-    grid-area: h;
-}
-
-.sidenav {
-    height: 100%;
-    display:grid;
-    justify-content: center;
-    align-content: center;
-    overflow-x: hidden;
-    padding-top: 20px;
-    grid-area:m;
-    border:2px solid black;
-}
-
-/* Style the sidenav links and the dropdown button */
-.sidenav a, .dropdown-btn {
-    padding: 6px 8px 6px 16px;
-    text-decoration: none;
-    font-size: 20px;
-    display: block;
-    border: none;
-    background: none;
-    width:100%;
-    text-align: left;
-    cursor: pointer;
-    outline: none;
-}
-
-/* On mouse-over */
-.sidenav a:hover, .dropdown-btn:hover {
-    color: #f1f1f1;
-}
-
-/* Main content */
-.main {
-    margin-left: 200px; /* Same as the width of the sidenav */
-    font-size: 20px; /* Increased text to enable scrolling */
-    padding: 0px 10px;
-}
-
-/* Add an active class to the active dropdown button */
-.active {
-}
-
-/* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
-.dropdown-container {
-    display: none;
-    padding-left: 8px;
-}
-
-/* Optional: Style the caret down icon */
-.fa-caret-down {
-    float: right;
-    padding-right: 8px;
+.banner img{
+    height:auto;
+    max-width: 100%;
+    max-height: 100%;
+    opacity: 0.75;
 }
 
 .banner{
-    border:2px solid black;
-    grid-area: b;
+    max-height: 50vh;
+    overflow: hidden;
+    border-radius:2.5rem;
+
 }
 
-.page-content{
-    border:2px solid black;
-    grid-area: c;
+.login-form{
+    max-width:60vw;
 }
 
-.footer{
-    border:2px solid black;
-    grid-area: f;
-}
