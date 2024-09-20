@@ -19,7 +19,7 @@
     <property file="${properties.dir}/${build.env}.properties"/>
     <property file="${properties.dir}/default.properties"/>
 
-    <target name="composer-install" description="Runs composer install">
+    <target name="composer-install" description="Runs composer install" depends="dotenv">
         <property name="no_dev_install" value="--no-dev"/>
         <if>
             <or>
@@ -72,14 +72,14 @@
 
     <target name="phpmd">
         <echo msg="Running phpmd" />
-        <exec passthru="true" logoutput="true" executable="${vendor.dir}/phpmd" checkreturn="true">
+        <exec passthru="true" logoutput="true" executable="${vendor.dir}/bin/phpmd" checkreturn="true">
             <arg value="${src.dir}" />
             <arg value="xml" />
             <arg value="${base.dir}/phpmd.xml"/>
             <arg value="--reportfile-xml" />
-            <arg value="${phpmd.dir}/pmd.xml" />
+            <arg value="${base.dir}/pmd.xml" />
             <arg value="--reportfile-html" />
-            <arg value="${phpmd.dir}/pmd.html" />
+            <arg value="${base.dir}/pmd.html" />
             <arg value="--exclude" />
             <arg value="Migrations"/>
         </exec>
@@ -88,7 +88,7 @@
     <target name="phpcs" description="Generate checkstyle.xml using PHP_CodeSniffer">
         <echo msg="Generate checkstyle-results.xml using PHP_CodeSniffer"/>
         <exec passthru="true" logoutput="true" checkreturn="true"
-              command="${vendor.dir}/phpcs
+              command="${vendor.dir}/bin/phpcs
                         --report=checkstyle
                         --report-file=${base.dir}/checkstyle-results.xml
                         --standard=PSR2
@@ -108,7 +108,7 @@
     <target name="php-cs-fixer" description="Generate unused imports using PHP Code Fixer">
         <echo msg="Generate PHPCS report for tests"/>
         <exec passthru="true" logoutput="true" checkreturn="true"
-              command="${vendor.dir}/php-cs-fixer
+              command="${vendor.dir}/bin/php-cs-fixer
                         --format=checkstyle
                         --rules=no_unused_imports,ordered_imports
                         --dry-run
@@ -118,7 +118,7 @@
     <target name="php-fix-cs" description="Fixing unused imports on src using PHP Code Fixer">
         <echo msg="Fixing unused imports with PHP Code Fixer"/>
         <exec passthru="true" logoutput="true" checkreturn="true"
-              command="${vendor.dir}/php-cs-fixer
+              command="${vendor.dir}/bin/php-cs-fixer
                         --rules=no_unused_imports,ordered_imports
                         fix ${src.dir}" />
     </target>
