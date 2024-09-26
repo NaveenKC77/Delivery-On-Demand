@@ -26,5 +26,10 @@ final class UserMigration extends AbstractMigration
             ->addColumn('password', 'string')
             ->create();
 
+            if ($this->isMigratingUp()) {
+            $table->insert([['username'=>'admin','roles'=>'["ROLE_ADMIN"]','email'=>'admin@dod.com','password'=>'$2y$13$eAFf0Mtfyw5OiDiwxL7f2u4uxWufZBisB27MSj2YE/8b7hbhHNWOC']])
+                  ->save();
+        }
+
     }
 }

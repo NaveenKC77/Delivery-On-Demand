@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MainController!{% endblock %}
+
+
+{% block nav %}
+<nav class=" container-fluid navbar navbar-expand-lg navbar-light bg-light mx-auto">
+              <a class="navbar-brand" href="#">DELiVERY ON DEMAND</a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarText">
+                  <ul class="navbar-nav mr-auto">
+                      <li class="nav-item active">
+                          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                      </li>
+                      <li class="nav-item dropdown">
+                          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown productDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              Products
+                          </a>
+                          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                              <a class="dropdown-item" href="#">Products List</a>
+                          </div>
+                      </li>
+                      
+
+                  </ul>
+
+              </div>
+              {% if app.user %}
+                  <p class="navbar-text">
+                      <span class="text-primary text-capitalize px-1">{{ app.user.username }}</span><a href="/logout" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Logout</a>
+                  </p>
+              {% else %}
+                  <span class="navbar-text">
+                          <a href="/login" class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Login</a>
+                      </span>
+              {% endif %}
+          </nav>
+
+{% endblock %}
+
+{% block banner %}
+ <div class="banner row container my-2 >">
+                    <img class="img-fluid rounded-top" src="{{ asset('./images/banner.jpeg') }}" alt="banner image"/>
+              </div>
+
+{% endblock %}
+
+
+{% block content %}
+    Home
+{% endblock %}

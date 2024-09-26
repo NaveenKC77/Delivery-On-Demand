@@ -1,0 +1,30 @@
+{% extends './admin/dashboard.html.twig' %}
+
+{% block title %}Hello CategoryController!{% endblock %}
+
+{% block content %}
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Description</th>
+      <th scope="col">Active</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+  {%  for category in categories %}
+    <tr>
+      <th scope="row">{{category.id}}</th>
+      <td>{{category.name}}</td>
+      <td>{{category.description}}</td>
+      <td>{{category.active? "Yes" : "No"}}</td>
+      
+    </tr>
+
+    {% endfor %}
+   
+  </tbody>
+</table>
+{% endblock %}

@@ -15,7 +15,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type:'integer')]
+
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
@@ -121,5 +122,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->email = $email;
 
         return $this;
+    }
+
+    // check if the user is admin
+    public function isAdmin():bool{
+        if(in_array("ROLE_ADMIN",$this->getRoles())){
+           return true; 
+        }
+        return false;
     }
 }
