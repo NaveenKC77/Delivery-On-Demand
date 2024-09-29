@@ -1,0 +1,75 @@
+{% extends './admin/dashboard.html.twig' %}
+
+{% block title %}
+	{{product.name}}
+{% endblock %}
+
+{% block banner %}{% endblock %}
+
+{% block content %}
+
+	<div class="container-fluid mx-auto mt-5">
+
+		<div class="row">
+
+			<div class="col col-md-6">
+				<img src="{{asset (product.imagePath) }}" class="img img-fluid rounded" alt="...">
+			</div>
+
+			<div class="col col-md-6">
+				<table class="table table-borderless">
+					<tr>
+						<td>
+							ID
+						</td>
+						<td>{{product.id}}
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Name
+						</td>
+						<td>{{product.name}}
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Description
+						</td>
+						<td>{{product.description}}
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Price
+						</td>
+						<td>AUD
+							{{product.price}}
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Available
+						</td>
+						<td>{{product.available? "Yes" : "No"}}</td>
+					</tr>
+					<tr>
+						<td>
+							Category
+						</td>
+						<td>{{product.category.name}}</td>
+					</tr>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<a href="/admin/product/edit/{{product.id}}" class="btn btn-lg btn-success">Edit</button>
+			</td>
+			<td>
+				<a href="/admin/product/delete/{{product.id}}" class="btn btn-lg btn-danger ">Delete</button>
+			</td>
+		</tr>
+	</table>
+
+</div></div></div>{% endblock %}

@@ -1,19 +1,26 @@
-
-.banner img{
-    height:auto;
-    max-width: 100%;
-    max-height: 100%;
-    opacity: 0.75;
+* {
+  box-sizing: border-box;
+  font-size: 1.2rem;
+  font-family: "Open Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  font-variation-settings: "wdth" 96.6;
 }
 
-.banner{
-    max-height: 50vh;
-    overflow: hidden;
-    border-radius:2.5rem;
-
+.banner img {
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  opacity: 0.75;
 }
 
-.login-form{
-    max-width:60vw;
+.banner {
+  max-height: 50vh;
+  overflow: hidden;
+  border-radius: 2.5rem;
 }
 
+.login-form {
+  max-width: 60vw;
+}

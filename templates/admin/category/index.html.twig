@@ -1,0 +1,47 @@
+{% extends './admin/dashboard.html.twig' %}
+
+{% block title %}Categories
+{% endblock %}
+
+{% block banner %}{% endblock %}
+
+{% block content %}
+
+	<div class="container-fluid my-5">
+		<a class="btn btn-primary btn-md mb-2" href="/admin/category/new">Add Category</a>
+		<table class="table">
+			<thead class="thead-dark">
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">Name</th>
+					<th scope="col">Description</th>
+					<th scope="col">Active</th>
+					<th colspan="2" scope="col">Actions</th>
+
+				</tr>
+			</thead>
+			<tbody>
+				{%  for category in categories %}
+					<tr>
+						<th scope="row">{{category.id}}</th>
+						<td>{{category.name}}</td>
+						<td>{{category.description}}</td>
+						<td>{{category.active? "Yes" : "No"}}</td>
+						<td>
+							<a href="/admin/category/edit/{{category.id}}" class="btn btn-md btn-success">Edit</a>
+						</td>
+						<td>
+							<a href="/admin/category/delete/{{category.id}}" class="btn btn-md btn-danger">Delete</a>
+						</td>
+
+
+					</tr>
+
+				{% endfor %}
+
+			</tbody>
+		</table>
+
+	</div>
+
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends './admin/dashboard.html.twig' %}
+
+{% block title %}Products
+{% endblock %}
+
+{% block banner %}{% endblock %}
+
+{% block content %}
+	<div class="container-fluid">
+
+		<a href="/admin/product/new" class="btn btn-md btn-success my-2">Add Product</a>
+		<table class="table">
+			<thead class="thead-dark">
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">Name</th>
+					<th scope="col">Description</th>
+					<th scope="col">Price</th>
+					<th scope="col">Available</th>
+					<th scope="col">Category</th>
+				</tr>
+			</thead>
+			<tbody>
+				{%  for product in products %}
+					<tr>
+						<th scope="row">{{product.id}}</th>
+						<td>
+							<a href="/admin/product/{{product.id}}">{{product.name}}</a>
+						</td>
+						<td>{{product.description}}</td>
+						<td>${{product.price}}</td>
+						<td>{{product.available? "Yes" : "No"}}</td>
+						<td>{{product.category.name}}</td>
+					</tr>
+
+				{% endfor %}
+
+			</tbody>
+		</table>
+	</div>
+
+
+{% endblock %}

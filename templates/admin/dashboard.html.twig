@@ -1,65 +1,147 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AdminController!{% endblock %}
+{% block title %}Admin Dashboard
+{% endblock %}
 
 {% block nav %}
 
-<nav class=" container-fluid navbar navbar-expand-lg navbar-light bg-light mx-auto">
-              <a class="navbar-brand" href="#">DELiVERY ON DEMAND</a>
-              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarText">
-                  <ul class="navbar-nav mr-auto">
-                      <li class="nav-item active">
-                          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                      </li>
-                      <li class="nav-item dropdown">
-                          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown productDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Products
-                          </a>
-                          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                              <a class="dropdown-item" href="/product">Products List</a>
-                              <a class="dropdown-item" href="#">Add Product</a>
-                          </div>
-                      </li>
-                      <li class="nav-item dropdown">
-                          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown customerDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Customers
-                          </a>
-                          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                              <a class="dropdown-item" href="#">Customers List</a>
-                              <a class="dropdown-item" href="#">Add Customer</a>
-                          </div>
-                      </li>
-                      <li class="nav-item dropdown">
-                          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown categoryDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Categories
-                          </a>
-                          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                              <a class="dropdown-item" href="/category">Categories List</a>
-                              <a class="dropdown-item" href="#">Add Customer</a>
-                          </div>
-                      </li>
+	<nav class=" container-fluid navbar navbar-expand-lg navbar-light bg-light mx-auto">
+		<a class="navbar-brand" href="#">DELiVERY ON DEMAND</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarText">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active">
+					<a class="nav-link" href="/admin">Home
+					</a>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown productDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Products
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="/admin/product">Products List</a>
+						<a class="dropdown-item" href="/admin/product/new">Add Product</a>
+					</div>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown customerDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Customers
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="#">Customers List</a>
+						<a class="dropdown-item" href="#">Add Customer</a>
+					</div>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown categoryDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Categories
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="/admin/category">Categories List</a>
+						<a class="dropdown-item" href="/admin/category/new">Add Category</a>
+					</div>
+				</li>
 
-                  </ul>
+			</ul>
 
-              </div>
-              {% if app.user %}
-                  <p class="navbar-text">
-                      <span class="text-primary text-capitalize px-1">{{ app.user.username }}</span><a href="/logout" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Logout</a>
-                  </p>
-              {% else %}
-                  <span class="navbar-text">
-                          <a href="/login" class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Login</a>
-                      </span>
-              {% endif %}
-          </nav>
+		</div>
+		{% if app.user %}
+			<p class="navbar-text">
+				<span class="text-primary text-capitalize px-1">{{ app.user.username }}</span>
+				<a href="/logout" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Logout</a>
+			</p>
+		{% else %}
+			<span class="navbar-text">
+				<a href="/login" class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Login</a>
+			</span>
+		{% endif %}
+	</nav>
 
-    {% endblock %}
+{% endblock %}
+
+{% block banner %}
 
 
-    {% block content %}
+	<div class="banner row container my-5 >">
 
+		<div class="card col mx-2" style="width: 18rem;">
 
-    {% endblock %}
+			<div class="card-body">
+				<h5 class="card-title">Categories</h5>
+				<table class="table table-borderless">
+					<tr>
+						<td>
+							Total Categories</td>
+						<td>{{categoryCardInfo['totalCount']}}
+						</td>
+					</tr>
+
+					<tr>
+						<td>
+							Active
+						</td>
+						<td>{{categoryCardInfo['activeCount']}}
+						</td>
+					</tr>
+
+					<tr>
+						<td>
+							Inactive
+						</td>
+						<td>{{categoryCardInfo['inactiveCount']}}
+						</td>
+					</tr>
+				</table>
+				<a href="/admin/category" class="btn btn-primary">Go to Categories Page</a>
+			</div>
+
+		</div>
+
+		<div class="card col mx-2" style="width: 18rem;">
+
+			<div class="card-body">
+				<h5 class="card-title my-2">Products</h5>
+				<table class="table table-borderless">
+					<tr>
+						<td>
+							Total Products</td>
+						<td>{{productCardInfo['productsCount']}}
+						</td>
+					</tr>
+
+					<tr>
+						<td>
+							Available
+						</td>
+						<td>{{productCardInfo['availableProductsCount']}}
+						</td>
+					</tr>
+
+					<tr>
+						<td>
+							Unavailable
+						</td>
+						<td>{{productCardInfo['unavailableProductsCount']}}
+						</td>
+					</tr>
+				</table>
+
+				<a href="/admin/product" class="btn btn-primary">Go to Products Page</a>
+
+			</div>
+
+		</div>
+
+		<div class="card col mx-2" style="width: 18rem;">
+
+			<h5 class="card-title">Users</h5>
+			<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+			<a href="#" class="btn btn-primary">Go somewhere</a>
+
+		</div>
+
+	</div>
+
+</div>{% endblock %}{% block content %}{% endblock %}

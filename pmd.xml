@@ -1,3 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<pmd version="@package_version@" tool="phpmd" timestamp="2024-09-20T04:34:15+02:00">
+<pmd version="@package_version@" tool="phpmd" timestamp="2024-09-29T07:22:04+02:00">
+  <file name="C:\Users\jungk\Sites\GithubRepos\delivery-on-demand\src\Form\ProductFormType.php">
+    <violation beginline="18" endline="18" rule="UnusedFormalParameter" ruleset="Unused Code Rules" externalInfoUrl="https://phpmd.org/rules/unusedcode.html#unusedformalparameter" priority="3">
+      Avoid unused parameters such as &#039;$options&#039;.
+    </violation>
+  </file>
+  <file name="C:\Users\jungk\Sites\GithubRepos\delivery-on-demand\src\Form\RegistrationFormType.php">
+    <violation beginline="17" endline="17" rule="UnusedFormalParameter" ruleset="Unused Code Rules" externalInfoUrl="https://phpmd.org/rules/unusedcode.html#unusedformalparameter" priority="3">
+      Avoid unused parameters such as &#039;$options&#039;.
+    </violation>
+  </file>
+  <file name="C:\Users\jungk\Sites\GithubRepos\delivery-on-demand\src\Security\LoginFormAuthenticator.php">
+    <violation beginline="56" endline="56" rule="UnusedFormalParameter" ruleset="Unused Code Rules" externalInfoUrl="https://phpmd.org/rules/unusedcode.html#unusedformalparameter" priority="3">
+      Avoid unused parameters such as &#039;$request&#039;.
+    </violation>
+  </file>
 </pmd>
