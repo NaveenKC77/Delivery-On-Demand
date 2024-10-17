@@ -3,19 +3,21 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Events\ProductCreatedEvent;
 use App\Form\ProductFormType;
 use App\Services\ProductService;
+use function Cake\Core\toString;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 
-use function Cake\Core\toString;
+use Symfony\Component\Routing\Attribute\Route;
 
 class ProductController extends AbstractController
 {
-    public function __construct(private ProductService $productService)
+    public function __construct(private ProductService $productService, private EventDispatcherInterface $dispatcher)
     {
     }
 
@@ -62,7 +64,8 @@ class ProductController extends AbstractController
 
                 try {
                     $imagePath->move(
-                        $this->getParameter('kernel.project_dir').'/assets/images/uploads', $newFileName
+                        $this->getParameter('kernel.project_dir').'/assets/images/uploads',
+                        $newFileName
                     );
                 } catch (FileException $e) {
                     return new Response($e->getMessage());
@@ -72,10 +75,17 @@ class ProductController extends AbstractController
 
             $this->productService->add($newProduct);
 
+            $event = new ProductCreatedEvent($newProduct);
+            $this->dispatcher->dispatch($event, ProductCreatedEvent::class);
+
             return $this->redirectToRoute('admin_product');
         }
 
-        return $this->render('admin/product/create.html.twig', ['product' => $newProduct, 'form' => $form->createView()]);
+        return $this->render(
+            'admin/product/create.html.twig',
+            ['product' => $newProduct,
+                'form' => $form->createView()]
+        );
     }
 
     #[Route('/admin/product/edit/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
@@ -110,7 +120,7 @@ class ProductController extends AbstractController
                 }
             }
 
-            $this->productService->edit($product);
+            $this->productService->edit();
 
             return $this->redirectToRoute('admin_product');
         }

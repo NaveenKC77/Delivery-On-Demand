@@ -8,8 +8,10 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class CategoryService
 {
-    public function __construct(private CategoryRepository $categoryRepository, private EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private CategoryRepository $categoryRepository,
+        private EntityManagerInterface $entityManager,
+    ) {
     }
 
     public function getAll()
@@ -47,7 +49,7 @@ class CategoryService
         $this->entityManager->flush();
     }
 
-    public function edit(Category $category)
+    public function edit()
     {
         $this->entityManager->flush();
     }

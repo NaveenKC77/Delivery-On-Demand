@@ -10,16 +10,21 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class AdminController extends AbstractController
 {
-    public function __construct(private ProductService $productService,private CategoryService $categoryService){
-
+    public function __construct(private ProductService $productService, private CategoryService $categoryService)
+    {
     }
-    
+
     #[Route('/admin', name: 'app_admin')]
     public function index(): Response
     {
-       $productCardInfo = $this->productService->returnCardProperties();
-       $categoryCardInfo =$this->categoryService->returnCardProperties();
+        $productCardInfo = $this->productService->returnCardProperties();
+        $categoryCardInfo = $this->categoryService->returnCardProperties();
 
-        return $this->render('admin/dashboard.html.twig',['productCardInfo'=>$productCardInfo,'categoryCardInfo'=>$categoryCardInfo]);
+        return $this->render(
+            'admin/dashboard.html.twig',
+            [
+                'productCardInfo' => $productCardInfo, 'categoryCardInfo' => $categoryCardInfo,
+            ]
+        );
     }
 }

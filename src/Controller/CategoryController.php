@@ -42,7 +42,10 @@ class CategoryController extends AbstractController
             return $this->redirectToRoute('admin_category');
         }
 
-        return $this->render('/admin/category/create.html.twig', ['category' => $category, 'form' => $form->createView()]);
+        return $this->render(
+            '/admin/category/create.html.twig',
+            ['category' => $category, 'form' => $form->createView()]
+        );
     }
 
     // Page to edit a single category
@@ -54,12 +57,15 @@ class CategoryController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->categoryService->edit($category);
+            $this->categoryService->edit();
 
             return $this->redirectToRoute('admin_category');
         }
 
-        return $this->render('/admin/category/edit.html.twig', ['category' => $category, 'form' => $form->createView()]);
+        return $this->render(
+            '/admin/category/edit.html.twig',
+            ['category' => $category, 'form' => $form->createView()]
+        );
     }
 
     // Delete single Category

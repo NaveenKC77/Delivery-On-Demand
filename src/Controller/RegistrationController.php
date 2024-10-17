@@ -6,16 +6,22 @@ use App\Entity\User;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Events\UserRegisteredEvent;
 
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
-    {
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        EntityManagerInterface $entityManager,
+        EventDispatcherInterface $dispatcher,
+    ): Response {
         if ($this->getUser()) {
             return $this->redirectToRoute('app_main');
         }
@@ -30,10 +36,12 @@ class RegistrationController extends AbstractController
 
             // encode the plain password
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
-       
 
             $entityManager->persist($user);
             $entityManager->flush();
+
+            $event = new UserRegisteredEvent($user);
+            $dispatcher->dispatch($event, 'UserRegisteredEvent');
 
             // do anything else you need here, like send an email
 

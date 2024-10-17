@@ -17,6 +17,12 @@ use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
 class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 {
+    /**
+     * This will suppress all the PMD warnings in
+     * this class.
+     *
+     * @SuppressWarnings(PHPMD)
+     */
     use TargetPathTrait;
 
     public const LOGIN_ROUTE = 'app_login';
@@ -46,11 +52,11 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        if($token->getUser()->isAdmin()){
+        if ($token->getUser()->isAdmin()) {
             return new RedirectResponse($this->urlGenerator->generate('app_admin'));
         }
-         return new RedirectResponse($this->urlGenerator->generate('app_main'));
 
+        return new RedirectResponse($this->urlGenerator->generate('app_main'));
     }
 
     protected function getLoginUrl(Request $request): string

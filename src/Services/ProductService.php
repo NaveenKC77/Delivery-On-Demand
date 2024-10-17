@@ -8,8 +8,10 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ProductService
 {
-    public function __construct(private ProductRepository $productRepository, private EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private ProductRepository $productRepository,
+        private EntityManagerInterface $entityManager,
+    ) {
     }
 
     public function getAll()
@@ -28,7 +30,7 @@ class ProductService
         $this->entityManager->flush();
     }
 
-    public function edit(Product $product)
+    public function edit()
     {
         $this->entityManager->flush();
     }

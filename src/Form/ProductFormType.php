@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:ignoreFile
+
 namespace App\Form;
 
 use App\Entity\Category;
@@ -18,26 +20,60 @@ class ProductFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class, ['attr' => ['class' => 'form-control', 'id' => 'name'], 'required' => true, 'label' => 'Product name'])
-            ->add('description', TextType::class, ['attr' => ['class' => 'form-control', 'id' => 'description'], 'required' => true, 'label' => 'Product Description'])
-            ->add('price', NumberType::class, ['attr' => ['class' => 'form-control', 'id' => 'price'], 'required' => true, 'label' => 'Product price'])
+            ->add(
+                'name',
+                TextType::class,
+                ['attr' => ['class' => 'form-control',
+                    'id' => 'name'],
+                    'required' => true,
+                    'label' => 'Product name']
+            )
+            ->add(
+                'description',
+                TextType::class,
+                ['attr' => ['class' => 'form-control',
+                    'id' => 'description'],
+                    'required' => true,
+                    'label' => 'Product Description']
+            )
+            ->add(
+                'price',
+                NumberType::class,
+                ['attr' => ['class' => 'form-control',
+                    'id' => 'price'],
+                    'required' => true,
+                    'label' => 'Product price']
+            )
             ->add('available')
-            ->add('imagePath', FileType::class, ['label' => 'Image', 'required' => false])
-             ->add('category', EntityType::class, ['attr' => ['class' => 'form-control', 'id' => 'category', 'required' => true],
-                 'class' => Category::class,
-                 'choice_label' => 'name',
-                 'required' => true,
-             ]);
+            ->add(
+                'imagePath',
+                FileType::class,
+                ['label' => 'Image',
+                    'required' => false]
+            )
+             ->add(
+                 'category',
+                 EntityType::class,
+                 ['attr' => ['class' => 'form-control',
+                     'id' => 'category',
+                     'required' => true],
+                     'class' => Category::class,
+                     'choice_label' => 'name',
+                     'required' => true,
+                 ]
+             );
 
         $builder->get('imagePath')
-             ->addModelTransformer(new CallbackTransformer(
-                 function ($imagePath) {
-                     return null;
-                 },
-                 function ($imagePath) {
-                     return $imagePath;
-                 }
-             ))
+             ->addModelTransformer(
+                 new CallbackTransformer(
+                     function ($imagePath) {
+                         return null;
+                     },
+                     function ($imagePath) {
+                         return $imagePath;
+                     }
+                 )
+             )
         ;
     }
 

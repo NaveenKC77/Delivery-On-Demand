@@ -4,7 +4,7 @@ return
 [
     'paths' => [
         'migrations' => '%%PHINX_CONFIG_DIR%%/migrations',
-        'seeds' => '%%PHINX_CONFIG_DIR%%/db/seeds'
+        'seeds' => '%%PHINX_CONFIG_DIR%%/db/seeds',
     ],
     'environments' => [
         'default_migration_table' => 'phinxlog',
@@ -18,6 +18,15 @@ return
             'port' => '3306',
             'charset' => 'utf8',
         ],
+        'test' => [
+            'adapter' => 'mysql',
+            'host' => 'dev.cpaa6ecscm5w.us-east-1.rds.amazonaws.com',
+            'name' => 'db_dod_test',
+            'user' => 'admin',
+            'pass' => 'admin12377',
+            'port' => '3306',
+            'charset' => 'utf8',
+        ],
         'development' => [
             'adapter' => 'mysql',
             'host' => 'localhost',
@@ -27,15 +36,6 @@ return
             'port' => '3306',
             'charset' => 'utf8',
         ],
-        'testing' => [
-            'adapter' => 'mysql',
-            'host' => 'localhost',
-            'name' => 'testing_db',
-            'user' => 'root',
-            'pass' => '',
-            'port' => '3306',
-            'charset' => 'utf8',
-        ]
     ],
-    'version_order' => 'creation'
+    'version_order' => 'creation',
 ];

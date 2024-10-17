@@ -6,12 +6,11 @@ use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-
 class Product
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type:"integer")]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -26,11 +25,11 @@ class Product
     #[ORM\Column]
     private ?bool $available = null;
 
-     #[ORM\Column(name: "category_id", type: 'integer')]
+    #[ORM\Column(name: 'category_id', type: 'integer')]
     private ?int $categoryId = null; // Add category_id property
 
-    #[ORM\ManyToOne(targetEntity:Category::class)]
-    #[ORM\JoinColumn(name:"category_id",referencedColumnName:"id",nullable:false)]
+    #[ORM\ManyToOne(targetEntity: Category::class)]
+    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: false)]
     private ?Category $category = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -64,7 +63,8 @@ class Product
 
         return $this;
     }
-      public function getPrice(): ?float
+
+    public function getPrice(): ?float
     {
         return $this->price;
     }
@@ -99,7 +99,8 @@ class Product
 
         return $this;
     }
-      public function getCategory(): ?Category
+
+    public function getCategory(): ?Category
     {
         return $this->category;
     }
@@ -121,5 +122,5 @@ class Product
         $this->imagePath = $imagePath;
 
         return $this;
-        }
+    }
 }
