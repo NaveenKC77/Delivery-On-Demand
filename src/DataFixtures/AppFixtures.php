@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Factory\CartFactory;
 use App\Factory\CategoryFactory;
 use App\Factory\CustomerFactory;
 use App\Factory\EmployeeFactory;
@@ -18,11 +19,11 @@ class AppFixtures extends Fixture
     {
         UserFactory::new()->createOne(['email' => 'admin@dod.com', 'username' => 'admin', 'roles' => ['ROLE_ADMIN'], 'isVerified' => true]);
 
-        CustomerFactory::new()->createMany(50);
-        EmployeeFactory::new()->createMany(50);
+        CartFactory::new()->createMany(10);
+        EmployeeFactory::new()->createMany(2);
 
 
-        CategoryFactory::new()->createMany(13);
-        ProductFactory::new()->createMany(56);
+        CategoryFactory::new()->createMany(4);
+        ProductFactory::new()->createMany(16);
     }
 }

@@ -20,7 +20,7 @@
 		href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
 
 		{# Local CSS #}
-		<link href="{{ asset('assets/styles/app.css') }}" rel="stylesheet">
+		<link href="{{ asset('/styles/app.css') }}" rel="stylesheet">
 
 
 	</head>
@@ -50,7 +50,7 @@
 									</a>
 									<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 										<li>
-											<a class="dropdown-item" href="#">View All Products</a>
+											<a class="dropdown-item" href="{{path('app_product')}}">View All Products</a>
 										</li>
 										<li>
 											<a class="dropdown-item" href="#">Most Popular Products</a>
@@ -76,7 +76,18 @@
 
 							</ul>
 							<form class="d-flex">
+
+
 								{% if app.user %}
+
+									<a class="btn btn-sm bg-light border border-primary text-primary me-2" href="{{path('app_cart')}}">
+
+
+										<h5 class="d-inline bi bi-cart"></h5>
+										<sup>{{app.user.customer.cart.quantity}}</sup>
+
+
+									</a>
 
 									<a href=" {{path('app_logout')}}" class="btn btn-light text-danger text-bold px-4 border border-danger">Logout</a>
 
@@ -117,6 +128,5 @@
 
 		{# Font Awesome CDN #}
 		<script src="https://kit.fontawesome.com/a7b610f770.js" crossorigin="anonymous"></script>
-
 	</body>
-</html></script></body></body></html>
+</html></body></html></script></body></body></html>

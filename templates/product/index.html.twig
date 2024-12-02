@@ -1,20 +1,57 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello {% endblock %}
+{% block title %}Hello
+{% endblock %}
 
-{% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+{% block main %}
+	<!-- Header -->
+	<header class="bg-primary text-white py-4">
+		<div class="container text-center">
+			<h1 class="mb-0">Our Products</h1>
+		</div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+	</header>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/jungk/Sites/GithubRepos/delivery-on-demand/src/Controller/ProductController.php</code></li>
-        <li>Your template at <code>C:/Users/jungk/Sites/GithubRepos/delivery-on-demand/templates/product/index.html.twig</code></li>
-    </ul>
-</div>
+	<!-- Products Section -->
+	<main class="container my-5">
+		<div class="row">
+			{% for flash in app.flashes('success') %}
+				<p class="alert alert-success">{{flash}}</p>
+			{% endfor %}
+			{% for flash in app.flashes('error') %}
+				<p class="alert alert-danger">{{flash}}</p>
+			{% endfor %}
+
+		</div>
+
+		<div class="row g-4">
+
+
+			{% for product in pager %}
+				<!-- Product Card -->
+				<div class="col-md-6 col-lg-4 col-xl-3">
+					<div class="card product-card">
+						<img src="{{asset(product.imagePath)}}" class="card-img-top product-image" alt="Product Image">
+						<div class="card-body">
+							<h5 class="card-title text-truncate">{{product.name}}</h5>
+							<p class="card-text text-muted small">{{product.description|slice(0,70)}}</p>
+							<div class="price">AUD{{product.price}}</div>
+							<a href="/product/single/{{product.id}}" class="btn btn-outline-primary mt-3 w-100">View Details</a>
+						</div>
+					</div>
+				</div>
+				<!-- Repeat Product Cards -->
+			{% endfor %}
+		</div>
+		{{pagerfanta(pager)}}
+	</main>
+
+	<!-- Footer -->
+	<footer class="bg-dark text-white py-4">
+		<div class="container text-center">
+			<p class="mb-0">© 2024 Your E-commerce Store. All Rights Reserved.</p>
+		</div>
+	</footer>
+
+
 {% endblock %}

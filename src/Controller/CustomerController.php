@@ -36,7 +36,7 @@ class CustomerController extends AbstractFormController
 
         $pagination->setMaxPerPage(10);
         $pagination->setCurrentPage($page);
-        $customers = $this->getService()->getAll();
+
 
         return $this->render('admin/customer/index.html.twig', [
             'pager' => $pagination,

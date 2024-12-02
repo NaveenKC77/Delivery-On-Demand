@@ -2,13 +2,13 @@
 
 namespace App\Factory;
 
-use App\Entity\Customer;
+use App\Entity\Cart;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
- * @extends PersistentProxyObjectFactory<Customer>
+ * @extends PersistentProxyObjectFactory<Cart>
  */
-final class CustomerFactory extends PersistentProxyObjectFactory
+final class CartFactory extends PersistentProxyObjectFactory
 {
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services
@@ -19,7 +19,7 @@ final class CustomerFactory extends PersistentProxyObjectFactory
 
     public static function class(): string
     {
-        return Customer::class;
+        return Cart::class;
     }
 
     /**
@@ -30,12 +30,12 @@ final class CustomerFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         $user = UserFactory::new()->createOne(['roles' => ['ROLE_CUSTOMER']]);
-
-
-
+        $customer = CustomerFactory::new()->createOne(['user' => $user]);
         return [
-            'address' => self::faker()->address(),
-            'user' => $user, // TODO add App\Entity\User type manually
+            'customer' => $customer,
+            'discount' => self::faker()->randomNumber(null),
+            'quantity' => self::faker()->randomNumber(null),
+            'total' => self::faker()->randomNumber(2),
         ];
     }
 
@@ -45,7 +45,7 @@ final class CustomerFactory extends PersistentProxyObjectFactory
     protected function initialize(): static
     {
         return $this
-            // ->afterInstantiate(function(Customer $customer): void {})
+            // ->afterInstantiate(function(Cart $cart): void {})
         ;
     }
 }

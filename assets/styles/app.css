@@ -166,3 +166,36 @@
     color: white;
     font-weight: bold;
 }
+
+
+/* Products Page For Customers */
+.product-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-image {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        /* Single Product Page */
+
+         .btn-cart {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-cart:hover {
+            background-color: #0056b3;
+        }

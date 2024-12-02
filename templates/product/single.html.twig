@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{product.name}}
+{% endblock %}
+
+{% block main %}
+	<!-- Header -->
+	<header class="bg-primary text-white py-3">
+		<div class="container">
+			<h1 class="text-center">{{ product.name }}</h1>
+		</div>
+	</header>
+
+	<!-- Product Details Section -->
+	<main class="container my-5">
+		<div
+			class="row g-5">
+			<!-- Product Image -->
+			<div class="col-md-6">
+				<img src="{{asset(product.imagePath) }}" alt="{{ product.name }}" class="img-fluid product-image rounded">
+			</div>
+			<!-- Product Information -->
+			<div class="col-md-6">
+				<div class="product-details">
+					<h2 class="mb-4">{{ product.name }}</h2>
+					<p class="price">${{ product.price }}</p>
+					<p>{{ product.description }}</p>
+					<div class="mt-4">
+						<strong>Category:</strong>
+						{{ product.category.name }}
+					</div>
+					<div class="mt-2">
+						<strong>Stock:</strong>
+						{{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}
+					</div>
+					<!-- Add to Cart Button -->
+					{% if(app.user) %}
+						<div class="mt-4">
+							<a href="/cart/add/{{ product.id }}" class="btn btn-cart btn-lg btn-primary w-100">
+								Add to Cart
+							</a>
+						</div>
+
+					{% else %}
+						<div class="mt-4">
+							<a href="/login" class="btn btn-cart btn-lg btn-primary w-100">
+								Login/Register To Purchase
+							</a>
+						</div>
+
+
+					{% endif %}
+				</div>
+			</div>
+		</div>
+
+		<!-- Product Reviews Section -->
+		{# <div class="mt-5">
+																				<h3>Customer Reviews</h3>
+																				<hr>
+																				{% if product.reviews|length > 0 %}
+																					{% for review in product.reviews %}
+																						<div class="mb-4">
+																							<h5>{{ review.user.name }}</h5>
+																							<p>{{ review.comment }}</p>
+																							<p class="text-muted">Rating:
+																								{{ review.rating }}/5</p>
+																						</div>
+																						<hr>
+																					{% endfor %}
+																				{% else %}
+																					<p>No reviews yet. Be the first to review this product!</p>
+																				{% endif %}
+																			</div> #}
+	</main>
+
+	<!-- Footer -->
+	<footer class="bg-dark text-white py-4">
+		<div class="container text-center">
+			<p class="mb-0">© 2024 Your E-commerce Store. All Rights Reserved.</p>
+		</div>
+	</footer>
+
+
+{% endblock %}

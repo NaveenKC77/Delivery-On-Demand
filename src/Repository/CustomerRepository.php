@@ -33,7 +33,7 @@ class CustomerRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder("c")
             ->addSelect("user")
-            ->leftJoin('c.user', 'user');
+            ->join('c.user', 'user');
     }
 
     public function getAllVerifiedQueryBuilder(): QueryBuilder

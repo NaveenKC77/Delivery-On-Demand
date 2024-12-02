@@ -155,4 +155,38 @@ class ProductController extends AbstractFormController
         $this->addFlash('error', 'Product successfully deleted.');
         return parent::delete($id);
     }
+
+
+    //User page for products
+    #[Route('/product/{page<\d+>}', name: 'app_product')]
+    public function userProducts($page = 1): Response
+    {
+        $this->setTemplateName('product/index.html.twig');
+
+        $qb = $this->productRepository->getAllQueryBuilder();
+        $pagination = new Pagerfanta(
+            new QueryAdapter($qb)
+        );
+
+        $pagination->setMaxPerPage(12);
+        $pagination->setCurrentPage($page);
+
+
+        $this->setTemplateData(['pager' => $pagination]);
+        return parent::read();
+    }
+
+    //User page for single product
+    #[Route('/product/single/{id<\d+>}', name: 'app_single_product')]
+    public function userSingleProduct($id): Response
+    {
+        $this->setTemplateName('product/single.html.twig');
+
+
+
+        $product = $this->getService()->getOneById($id);
+
+        $this->setTemplateData(['product' => $product]);
+        return parent::read();
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Cart;
 use App\Entity\User;
 
 use App\Form\EmployeeRegistrationFormType;
@@ -42,8 +43,14 @@ class RegistrationController extends AbstractController
             // encode the plain password
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
+            $user->setRoles(['ROLE_CUSTOMER']);
+
+            $cart = new Cart();
+
+            $cart->setCustomer($user->getCustomer());
 
             $this->entityManager->persist($user);
+            $this->entityManager->persist($cart);
             $this->entityManager->flush();
 
             $this->addFlash('success', 'You have successfully registered');
@@ -53,7 +60,7 @@ class RegistrationController extends AbstractController
             $this->addFlash('success', 'Confirm your email at :' . $signatureComponents->getSignedUrl());
             // do anything else you need here, like send an email
 
-            return $this->redirectToRoute('app_main');
+            return $this->redirectToRoute('app_login');
         } else {
             dump($form->getErrors(true, false));
         }

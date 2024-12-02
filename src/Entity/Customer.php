@@ -13,12 +13,16 @@ class Customer
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'customer', cascade: ['persist', 'remove'], fetch: "EXTRA_LAZY")]
+    #[ORM\OneToOne(inversedBy: 'customer', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
     #[ORM\Column(length: 255)]
     private ?string $address = null;
+
+    #[ORM\OneToOne(mappedBy: 'customer', cascade: ['persist', 'remove'])]
+    private ?Cart $cart = null;
+
 
     public function getId(): ?int
     {
@@ -45,6 +49,23 @@ class Customer
     public function setAddress(string $address): static
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+    public function getCart(): ?Cart
+    {
+        return $this->cart;
+    }
+
+    public function setCart(Cart $cart): static
+    {
+        // set the owning side of the relation if necessary
+        if ($cart->getCustomer() !== $this) {
+            $cart->setCustomer($this);
+        }
+
+        $this->cart = $cart;
 
         return $this;
     }
