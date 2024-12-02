@@ -2,139 +2,157 @@
 
 namespace App\Controller;
 
+use App\Controller\AbstractFormController;
+
 use App\Entity\Product;
-use App\Events\ProductCreatedEvent;
 use App\Form\ProductFormType;
+use App\Repository\ProductRepository;
 use App\Services\ProductService;
-use function Cake\Core\toString;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use App\Services\ServicesInterface;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\Routing\Attribute\Route;
+use function Cake\Core\toString;
 
-class ProductController extends AbstractController
+class ProductController extends AbstractFormController
 {
-    public function __construct(private ProductService $productService, private EventDispatcherInterface $dispatcher)
+
+    public function __construct(private ProductService $productService, private ProductRepository $productRepository)
     {
+        parent::__construct();
     }
 
-    #[Route('/admin/product', name: 'admin_product')]
-    public function index(): Response
+    //get form type
+    public function getFormType(): string
     {
-        $products = $this->productService->getAll();
 
-        return $this->render('admin/product/index.html.twig', [
-            'products' => $products,
-        ]);
+        return ProductFormType::class;
     }
 
-    #[Route(path: '/admin/product/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function singleItem(int $id)
+    //returns service
+    public function getService(): ServicesInterface
+    {
+        return $this->productService;
+    }
+
+    //returns upload dir 
+    public function getUploadDir(): string
+    {
+        return
+            $this->getParameter('kernel.project_dir') . '/assets/images/uploads';
+    }
+
+    // display page
+    #[Route('/admin/product/{page<\d+>}', name: 'app_admin_product')]
+    public function index($page = 1): Response
+    {
+        $this->setTemplateName('admin/product/index.html.twig');
+
+        $qb = $this->productRepository->getAllQueryBuilder();
+        $pagination = new Pagerfanta(
+            new QueryAdapter($qb)
+        );
+
+        $pagination->setMaxPerPage(10);
+        $pagination->setCurrentPage($page);
+
+
+        $this->setTemplateData(['pager' => $pagination]);
+        return parent::read();
+    }
+    // display page for single item
+    #[Route(path: '/admin/product/single/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function singleProductPage(int $id): Response
     {
         $product = $this->productService->getOneById($id);
 
-        if (null == $product->getImagePath()) {
+        if ($product->getImagePath() == null) {
             $product->setImagePath('./images/no_image.png');
         }
-
-        return $this->render('admin/product/singleProduct.html.twig', [
-            'product' => $product,
-        ]);
+        $this->setTemplateName('admin/product/singleProduct.html.twig');
+        $this->setTemplateData(['product' => $product]);
+        return parent::read();
     }
 
-    #[Route('/admin/product/new', name: 'product_new', methods: ['GET', 'POST'])]
-    public function add(Request $request): Response
+    //add new product
+    #[Route('/admin/product/create', name: 'app_admin_product_create', methods: ['GET', 'POST'])]
+    public function createProduct(Request $request): Response
     {
+        $this->setTemplateName('admin/product/create.html.twig');
+        $this->setRedirectRoute('admin_product');
+
         $newProduct = new Product();
 
-        $form = $this->createForm(ProductFormType::class, $newProduct);
-        $form->handleRequest($request);
+        $this->form = $this->createForm(ProductFormType::class, $newProduct);
+        $this->form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $newProduct = $form->getData();
-            $newProduct->setCategoryId($newProduct->getCategory()->getId());
+        if ($this->form->isSubmitted() && $this->form->isValid()) {
+            $newProduct = $this->form->getData();
+            $imagePath = $this->form->get('imagePath')->getData();
 
-            $imagePath = $form->get('imagePath')->getData();
 
+            // move uploaded image to uploads, also change name , to provide unique names
             if ($imagePath) {
-                $newFileName = uniqid().'.'.$imagePath->guessExtension();
-
-                try {
-                    $imagePath->move(
-                        $this->getParameter('kernel.project_dir').'/assets/images/uploads',
-                        $newFileName
-                    );
-                } catch (FileException $e) {
-                    return new Response($e->getMessage());
-                }
-                $newProduct->setImagePath('./images/uploads/'.$newFileName);
+                $newFileName = $this->getService()->processUpload($imagePath, $this->getUploadDir());
+                $newProduct->setImagePath('./images/uploads/' . $newFileName);
             }
 
-            $this->productService->add($newProduct);
+            $this->getService()->add($newProduct);
+            $this->addFlash('success', 'Product ' . $newProduct->getName() . ' successfully added');
 
-            $event = new ProductCreatedEvent($newProduct);
-            $this->dispatcher->dispatch($event, ProductCreatedEvent::class);
-
-            return $this->redirectToRoute('admin_product');
+            return $this->redirectToRoute($this->getRedirectRoute());
         }
 
-        return $this->render(
-            'admin/product/create.html.twig',
-            ['product' => $newProduct,
-                'form' => $form->createView()]
-        );
+        $this->setTemplateData(['form' => $this->form->createView(), 'product' => $newProduct]);
+
+        return parent::read();
     }
 
     #[Route('/admin/product/edit/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function editProduct($id, Request $request)
     {
+        $this->setTemplateName('admin/product/edit.html.twig');
+        $this->setRedirectRoute('admin_product');
+
         $product = $this->productService->getOneById($id);
         $originalImagePath = toString($product->getImagePath());
-        // dd($originalImagePath);
-        // exit;
-        $form = $this->createForm(ProductFormType::class, $product);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // $product->setName($form->get('name')->getData());
-            // $product->setDescription($form->get('description')->getData());
-            // $product->setPrice($form->get('price')->getData());
-            // $product->setAvailable($form->get('available')->getData());
-            // $product->setCategory($form->get('category')->getData());
-            // $product->setCategoryId($product->getCategory()->getId());
+        $this->form = $this->createForm(ProductFormType::class, $product);
+        $this->form->handleRequest($request);
+
+        if ($this->form->isSubmitted() && $this->form->isValid()) {
+
             $product->setImagePath($originalImagePath);
 
-            $imagePath = $form->get('imagePath')->getData();
+            $imagePath = $this->form->get('imagePath')->getData();
+
 
             if (null !== $imagePath) {
-                $newFileName = uniqid().'.'.$imagePath->guessExtension();
-
-                try {
-                    $imagePath->move($this->getParameter('kernel.project_dir').'/assets/images/uploads', $newFileName);
-                    $product->setImagePath('./images/uploads/'.$newFileName);
-                } catch (FileException $e) {
-                    return new Response($e->getMessage());
-                }
+                $newFileName = $this->getService()->processUpload($imagePath, $this->getUploadDir());
+                $product->setImagePath('./images/uploads/' . $newFileName);
             }
 
-            $this->productService->edit();
+            $this->productService->edit($product);
+            $this->addFlash('success', 'Product successfully edited.');
 
-            return $this->redirectToRoute('admin_product');
+            return $this->redirectToRoute($this->getRedirectRoute());
         }
 
-        return $this->render('/admin/product/edit.html.twig', ['product' => $product, 'form' => $form->createView()]);
+
+        $this->setTemplateData(['form' => $this->form->createView(), 'product' => $product]);
+
+        return parent::read();
     }
 
     // delete a single product
     #[Route('/admin/product/delete/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function delete($id)
+    public function deleteProduct($id): Response
     {
-        $product = $this->productService->getOneById($id);
-        $this->productService->delete($product);
-
-        return $this->redirectToRoute('admin_product');
+        $this->setRedirectRoute('admin_product');
+        $this->addFlash('error', 'Product successfully deleted.');
+        return parent::delete($id);
     }
 }

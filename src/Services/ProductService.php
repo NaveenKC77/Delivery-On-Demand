@@ -2,61 +2,54 @@
 
 namespace App\Services;
 
-use App\Entity\Product;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
-class ProductService
+class ProductService implements ServicesInterface
 {
-    public function __construct(
-        private ProductRepository $productRepository,
-        private EntityManagerInterface $entityManager,
-    ) {
-    }
 
-    public function getAll()
+    public function __construct(private ProductRepository $productRepository, private EntityManagerInterface $em) {}
+    public function getAll(): array
     {
-        return $this->productRepository->findAll();
+        return $this->productRepository->findAllWithCategories();
     }
-
-    public function getOneById(int $id)
+    function add($entity): void
     {
-        return $this->productRepository->find($id);
+        $this->em->persist($entity);
+        $this->em->flush();
     }
-
-    public function add(Product $product)
+    function delete($id)
     {
-        $this->entityManager->persist($product);
-        $this->entityManager->flush();
+        $object = $this->productRepository->find($id);
+        $this->em->remove($object);
+        $this->em->flush();
     }
-
-    public function edit()
+    function edit($entity)
     {
-        $this->entityManager->flush();
+        $this->em->persist($entity);
+        $this->em->flush();
     }
-
-    public function returnCardProperties()
+    function getOneById(int $id)
     {
-        $products = $this->getAll();
+        return $this->productRepository->findOneById($id);
+    }
+    function processUpload($imagePath, $uploadDir): string
+    {
+        $newFileName = uniqid() . '.' . $imagePath->guessExtension();
 
-        $productsCount = count($products);
-        $availCount = 0;
-        $unavailCount = 0;
-        foreach ($products as $product) {
-            if (true == $product->isAvailable()) {
-                ++$availCount;
-            } else {
-                ++$unavailCount;
-            }
+        try {
+            $imagePath->move(
+                $uploadDir,
+                $newFileName
+            );
+        } catch (FileException $e) {
+            return $e->getMessage();
         }
-
-        return ['productsCount' => $productsCount, 'availableProductsCount' => $availCount,
-            'unavailableProductsCount' => $unavailCount];
+        return $newFileName;
     }
-
-    public function delete(Product $product)
+    function returnCardProperties(): array
     {
-        $this->entityManager->remove($product);
-        $this->entityManager->flush();
+        return [];
     }
 }

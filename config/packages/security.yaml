@@ -16,12 +16,32 @@ security:
     main:
       lazy: true
       provider: app_user_provider
-      custom_authenticator: App\Security\LoginFormAuthenticator
+      
+      form_login:
+        login_path: app_login
+        check_path: app_login
+        success_handler: App\Security\LoginSuccessHandler
+        default_target_path: app_main
+        username_parameter: username
+        password_parameter: password
+        csrf_parameter: _csrf_token
+        csrf_token_id: nkc77
+        enable_csrf: true
+        remember_me: true
+
       logout:
         path: app_logout
         # where to redirect after logout
         # target: app_any_route
 
+      login_throttling: true
+
+      remember_me:
+        secret: '%kernel.secret%'
+
+      switch_user:  
+        parameter: _switch_user
+        role: ROLE_ALLOWED_TO_SWITCH
       # activate different ways to authenticate
       # https://symfony.com/doc/current/security.html#the-firewall
 

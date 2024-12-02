@@ -16,15 +16,21 @@ class CategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, Category::class);
     }
 
-    public function findActiveCategories()
+    public function getAllQueryBuilder()
     {
-        return $this->createQueryBuilder('c')
-               ->andWhere('c.active = :val')
-               ->setParameter('val', true)
-               ->orderBy('c.id', 'ASC')
-               ->getQuery()
-               ->getResult()
-        ;
+        return $this->createQueryBuilder("c")
+            ->addSelect('products')
+            ->leftJoin('c.products', 'products');
+    }
+
+
+    public function findAllWithProducts()
+    {
+        return $this->createQueryBuilder("c")
+            ->addSelect('products')
+            ->leftJoin('c.products', 'products')
+            ->getQuery()
+            ->getResult();
     }
 
     //    /**

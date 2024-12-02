@@ -2,67 +2,43 @@
 
 namespace App\Services;
 
-use App\Entity\Category;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-class CategoryService
+class CategoryService implements ServicesInterface
 {
-    public function __construct(
-        private CategoryRepository $categoryRepository,
-        private EntityManagerInterface $entityManager,
-    ) {
-    }
 
-    public function getAll()
+    public function __construct(private CategoryRepository $categoryRepository, private EntityManagerInterface $em) {}
+    public function getAll(): array
     {
-        return $this->categoryRepository->findAll();
+        return $this->categoryRepository->findAllWithProducts();
     }
-
-    public function getOneById(int $id)
+    function add($entity): void
     {
-        return $this->categoryRepository->find($id);
+        $this->em->persist($entity);
+        $this->em->flush();
     }
-
-    public function returnCardProperties()
+    function delete($id)
     {
-        $categories = $this->getAll();
-
-        $totalCount = count($categories);
-        $activeCount = 0;
-        $inactiveCount = 0;
-        foreach ($categories as $category) {
-            if (true == $category->isActive()) {
-                ++$activeCount;
-            } else {
-                ++$inactiveCount;
-            }
-        }
-
-        return ['totalCount' => $totalCount, 'activeCount' => $activeCount,
-            'inactiveCount' => $inactiveCount];
+        $object = $this->categoryRepository->findOneById($id);
+        $this->em->remove($object);
+        $this->em->flush();
     }
-
-    public function add(Category $category)
+    function edit($entity)
     {
-        $this->entityManager->persist($category);
-        $this->entityManager->flush();
+        $this->em->persist($entity);
+        $this->em->flush();
     }
-
-    public function edit()
+    function getOneById(int $id)
     {
-        $this->entityManager->flush();
+        return $this->categoryRepository->findOneById($id);
     }
-
-    public function delete(Category $category)
+    function processUpload($imagePath, $uploadDir): string
     {
-        $this->entityManager->remove($category);
-        $this->entityManager->flush();
+        return '';
     }
-
-    // public function getActiveCategories(){
-    //     $activeCategories=$this->categoryRepository->findActiveCategories();
-
-    //     return $activeCategories;
-    // }
+    function returnCardProperties(): array
+    {
+        return [];
+    }
 }

@@ -16,18 +16,13 @@ class CategoryFormType extends AbstractType
             ->add(
                 'name',
                 TextType::class,
-                ['attr' => ['class' => 'form-control', 'id' => 'name'], 'required' => true,
-                    'label' => 'Category name']
+
             )
             ->add(
                 'description',
                 TextType::class,
-                ['attr' => ['class' => 'form-control',
-                    'id' => 'description'],
-                    'required' => true,
-                    'label' => 'Category Description']
+
             )
-            ->add('active')
         ;
     }
 

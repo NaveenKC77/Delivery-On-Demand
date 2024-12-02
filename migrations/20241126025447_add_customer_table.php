@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
-final class CreateCategoryTable extends AbstractMigration
+final class AddCustomerTable extends AbstractMigration
 {
     /**
      * Change Method.
@@ -19,15 +19,12 @@ final class CreateCategoryTable extends AbstractMigration
      */
     public function change(): void
     {
-        $table =$this->table('category');
-        $table->addColumn('name','string')
-        ->addColumn('description','text')
-        ->addColumn('active','boolean')
-        ->create();
+        $table = $this->table("customer");
 
-        // if($this->isMigratingUp()){
-        //     $table->insert([['name'=>'testCategory','description'=>'test category description','active'=>0]]);
-        // }
-
+        $table->addColumn('address', 'string', ['limit' => 255, 'null' => false])
+            ->addColumn('user_id', 'integer', ['null' => false, 'signed' => false])
+            ->addIndex('user_id', ['unique' => true])
+            ->addForeignKey('user_id', 'user', 'id', ['delete' => 'CASCADE'])
+            ->create();
     }
 }

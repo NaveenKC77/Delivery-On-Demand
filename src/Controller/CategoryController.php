@@ -4,77 +4,126 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Form\CategoryFormType;
+use App\Repository\CategoryRepository;
 use App\Services\CategoryService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Services\ServicesInterface;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class CategoryController extends AbstractController
+class CategoryController extends AbstractFormController
 {
-    public function __construct(private CategoryService $categoryService)
+    public function __construct(private CategoryService $categoryService, private CategoryRepository $categoryRepository)
     {
+        parent::__construct();
     }
 
-    // Page that displays the table of all the categories
-    #[Route('admin/category', name: 'admin_category', methods: ['GET', 'POST'])]
-    public function index(): Response
+    //get form type
+    public function getFormType(): string
     {
-        $categories = $this->categoryService->getAll();
 
-        return $this->render('admin/category/index.html.twig', [
-            'categories' => $categories,
-        ]);
+        return CategoryFormType::class;
     }
 
-    // Page to add new category
-    #[Route('/admin/category/new', methods: ['GET', 'POST'])]
-    public function new(Request $request)
+    //returns service
+    public function getService(): ServicesInterface
     {
+        return $this->categoryService;
+    }
+
+    //returns upload dir 
+    public function getUploadDir(): string
+    {
+        return
+            $this->getParameter('kernel.project_dir') . '/assets/images/uploads';
+    }
+
+    // display page
+    #[Route('/admin/category/{page<\d+>}', name: 'app_admin_category')]
+    public function index($page = 1): Response
+    {
+        $this->setTemplateName('admin/category/index.html.twig');
+
+        // $categories = $this->getService()->getAll();
+
+        $qb = $this->categoryRepository->getAllQueryBuilder();
+
+        $pagination = new Pagerfanta(
+            new QueryAdapter($qb)
+        );
+
+        $pagination->setMaxPerPage(10);
+        $pagination->setCurrentPage($page);
+
+
+        $this->setTemplateData(['pager' => $pagination]);
+        return parent::read();
+    }
+    // display page for single item
+    #[Route(path: '/admin/category/single/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function singleCategroyPage(int $id)
+    {
+        $category = $this->getService()->getOneById($id);
+
+        $this->setTemplateName('admin/category/singleCategory.html.twig');
+        $this->setTemplateData(['category' => $category]);
+        return parent::read();
+    }
+
+    #[Route('/admin/category/create', name: 'app_admin_category_create', methods: ['GET', 'POST'])]
+    public function createCategory(Request $request)
+    {
+        $this->setTemplateName('admin/category/create.html.twig');
+        $this->setRedirectRoute('admin_category');
+
         $category = new Category();
         $form = $this->createForm(CategoryFormType::class, $category);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $category = $form->getData();
-            $this->categoryService->add($category);
-
-            return $this->redirectToRoute('admin_category');
+            $this->getService()->add($category);
+            $this->addFlash('success', 'Category ' . $category->getName() . ' successfully added');
+            return $this->redirectToRoute($this->getRedirectRoute());
         }
 
-        return $this->render(
-            '/admin/category/create.html.twig',
-            ['category' => $category, 'form' => $form->createView()]
-        );
+        $this->setTemplateData(['category' => $category, 'form' => $form->createView()]);
+
+        return parent::read();
     }
 
     // Page to edit a single category
     #[Route('/admin/category/edit/{id}', requirements: ['id' => '\d+'])]
-    public function edit($id, Request $request): Response
+    public function editCategory($id, Request $request): Response
     {
+        $this->setTemplateName('admin/category/edit.html.twig');
+        $this->setRedirectRoute('admin_category');
+
         $category = $this->categoryService->getOneById($id);
         $form = $this->createForm(CategoryFormType::class, $category);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->categoryService->edit();
+            $this->categoryService->edit($category);
+            $this->addFlash('success', 'Category : ' . $category->getName() . ' successfully edited.');
 
-            return $this->redirectToRoute('admin_category');
+            return $this->redirectToRoute($this->getRedirectRoute());
         }
+        $this->setTemplateData(['category' => $category, 'form' => $form->createView()]);
 
-        return $this->render(
-            '/admin/category/edit.html.twig',
-            ['category' => $category, 'form' => $form->createView()]
-        );
+
+        return parent::read();
     }
 
     // Delete single Category
     #[Route('/admin/category/delete/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function delete($id)
+    public function deleteCategory($id)
     {
-        $category = $this->categoryService->getOneById($id);
-        $this->categoryService->delete($category);
+        $this->setRedirectRoute('admin_category');
 
-        return $this->redirectToRoute('admin_category');
+        $this->addFlash('error', 'Category successfully deleted.');
+        return parent::delete($id);
     }
 }

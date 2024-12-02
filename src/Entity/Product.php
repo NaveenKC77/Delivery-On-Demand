@@ -3,37 +3,44 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
 {
+
+    use TimestampableEntity;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Gedmo\Slug(fields: ["name"])]
+    private ?string $slug = null;
+
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
-    private ?float $price = null;
+    #[ORM\Column]
+    private ?int $price = null;
 
     #[ORM\Column]
-    private ?bool $available = null;
+    private ?int $stock = null;
 
-    #[ORM\Column(name: 'category_id', type: 'integer')]
-    private ?int $categoryId = null; // Add category_id property
-
-    #[ORM\ManyToOne(targetEntity: Category::class)]
-    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: false)]
-    private ?Category $category = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $imagePath = null;
+
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Category $category = null;
 
     public function getId(): ?int
     {
@@ -52,6 +59,18 @@ class Product
         return $this;
     }
 
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
     public function getDescription(): ?string
     {
         return $this->description;
@@ -64,38 +83,38 @@ class Product
         return $this;
     }
 
-    public function getPrice(): ?float
+    public function getPrice(): ?int
     {
         return $this->price;
     }
 
-    public function setPrice(float $price): static
+    public function setPrice(int $price): static
     {
         $this->price = $price;
 
         return $this;
     }
 
-    public function isAvailable(): ?bool
+    public function getStock(): ?int
     {
-        return $this->available;
+        return $this->stock;
     }
 
-    public function setAvailable(bool $available): static
+    public function setStock(int $stock): static
     {
-        $this->available = $available;
+        $this->stock = $stock;
 
         return $this;
     }
 
-    public function getCategoryId(): ?int
+    public function getImagePath(): ?string
     {
-        return $this->categoryId;
+        return $this->imagePath;
     }
 
-    public function setCategoryId(int $categoryId): static
+    public function setImagePath(string $imagePath): static
     {
-        $this->categoryId = $categoryId;
+        $this->imagePath = $imagePath;
 
         return $this;
     }
@@ -108,18 +127,6 @@ class Product
     public function setCategory(?Category $category): static
     {
         $this->category = $category;
-
-        return $this;
-    }
-
-    public function getImagePath(): ?string
-    {
-        return $this->imagePath;
-    }
-
-    public function setImagePath(?string $imagePath): static
-    {
-        $this->imagePath = $imagePath;
 
         return $this;
     }

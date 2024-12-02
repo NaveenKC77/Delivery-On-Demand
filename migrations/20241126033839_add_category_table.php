@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
-final class AddImagePathToProductTable extends AbstractMigration
+final class AddCategoryTable extends AbstractMigration
 {
     /**
      * Change Method.
@@ -19,8 +19,12 @@ final class AddImagePathToProductTable extends AbstractMigration
      */
     public function change(): void
     {
-        $table = $this->table('product');
-        $table->addColumn('image_path','string')
-        ->save();
+        $table = $this->table("category");
+
+        $table->addColumn("name", "string", ["limit" => 255, 'null' => false])
+            ->addColumn('description', 'text', ['null' => false])
+            ->addColumn("created_at", "datetime", ["null" => false])
+            ->addColumn("updated_at", "datetime", ["null" => false])
+            ->create();
     }
 }
