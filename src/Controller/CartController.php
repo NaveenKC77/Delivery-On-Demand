@@ -57,7 +57,6 @@ class CartController extends AbstractController
     #[Route('/cart/remove/{id<\d+>}', name: 'remove_item_from_cart')]
     public function removeItem($id): Response
     {
-
         try {
             $cartItem = $this->cartItemService->getOneById($id);
             $this->cartService->removeCartItem($cartItem);
