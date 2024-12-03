@@ -90,43 +90,6 @@ abstract class UserAbstractController extends AbstractController
         return $this->render($this->getTemplateName(), $this->getTemplateData());
     }
 
-    // public function create($request, $user)
-    // {
-    //     $this->form = $this->createForm($this->getFormType(), $user);
-    //     $this->form->handleRequest($request);
-
-
-    //     if ($this->form->isSubmitted() && $this->form->isValid()) {
-    //         /** @var string $plainPassword */
-    //         $plainPassword = $this->form->get('plainPassword')->getData();
-
-    //         // encode the plain password
-    //         $user->setPassword($this->userPasswordHasher->hashPassword($user, $plainPassword));
-
-    //         $user->setRoles($this->getRoles());
-
-    //         dd($user);
-
-    //         // $cart = new Cart();
-
-    //         // $cart->setCustomer($user->getCustomer());
-
-
-    //         $this->entityManager->persist($user);
-    //         // $this->entityManager->persist($cart);
-    //         $this->entityManager->flush();
-
-    //         $this->addFlash('success', 'You have successfully registered');
-
-    //         //Verification
-    //         $signatureComponents = $this->verifyEmailHelper->generateSignature('app_verify_email', $user->getId(), $user->getEmail(), ['id' => $user->getId()]);
-    //         $this->addFlash('success', 'Confirm your email at :' . $signatureComponents->getSignedUrl());
-    //         // do anything else you need here, like send an email
-
-    //         return $this->redirectToRoute('app_login');
-    //     }
-    //     return $this->form;
-    // }
 
     public function getPagination(QueryBuilder $qb, int $currentPage, int $maxPerPage): Pagerfanta
     {

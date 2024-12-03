@@ -21,8 +21,8 @@ class CartRepository extends ServiceEntityRepository
             ->andWhere('c.customer = :val')
             ->setParameter('val', $customerId)
             ->addSelect('items', 'product')
-            ->innerjoin('c.cartItems', 'items')
-            ->innerJoin('items.product', 'product')
+            ->leftjoin('c.cartItems', 'items')
+            ->leftJoin('items.product', 'product')
             ->getQuery()
             ->getOneOrNullResult();
     }

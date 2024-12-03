@@ -62,11 +62,7 @@ class RegistrationController extends AbstractController
             // do anything else you need here, like send an email
 
             return $this->redirectToRoute('app_login');
-        } else {
-            $this->addFlash('error', $form->getErrors());
         }
-
-
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
@@ -97,8 +93,6 @@ class RegistrationController extends AbstractController
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
             $user->setRoles(['IS_EMPLOYEE']);
 
-
-
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
@@ -110,10 +104,7 @@ class RegistrationController extends AbstractController
             // do anything else you need here, like send an email
 
             return $this->redirectToRoute('app_main');
-        } else {
-            dump($form->getErrors(true, false));
         }
-
 
         return $this->render('registration/employee.html.twig', [
             'registrationForm' => $form->createView(),

@@ -58,28 +58,4 @@ class CustomerController extends UserAbstractController
 
         return parent::read();
     }
-    // #[Route('/customer/register', name: 'app_customer_register')]
-    // public function register(
-    //     Request $request,
-
-    // ): Response {
-    //     if ($this->getUser()) {
-    //         return $this->redirectToRoute('app_main');
-    //     }
-
-    //     $user = new User();
-
-    //     $result = parent::create($request, $user);
-
-    //     if (!$result instanceof FormInterface) {
-    //         return $result;
-    //     }
-
-    //     $this->form = $result;
-
-
-    //     return $this->render('registration/register.html.twig', [
-    //         'registrationForm' => $this->form,
-    //     ]);
-    // }
 }

@@ -30,6 +30,8 @@ class CartController extends AbstractController
         $customerId = $user->getCustomer()->getId();
         $cart = $this->cartService->getCartFromCustomerId($customerId);
 
+
+
         return $this->render('cart/index.html.twig', [
             'cart' => $cart,
         ]);

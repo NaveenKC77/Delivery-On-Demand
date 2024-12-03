@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use App\Entity\EntityInterface;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category implements EntityInterface
