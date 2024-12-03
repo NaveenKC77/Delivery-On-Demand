@@ -64,4 +64,13 @@ class CustomerService implements ServicesInterface
     {
         return [];
     }
+
+    public function getAllQueryBuilder()
+    {
+        return $this->customerRepository->getAllQueryBuilder();
+    }
+    public function getAllVerifiedQueryBuilder()
+    {
+        return $this->customerRepository->getAllVerifiedQueryBuilder();
+    }
 }

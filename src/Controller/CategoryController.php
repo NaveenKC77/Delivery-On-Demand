@@ -7,8 +7,7 @@ use App\Form\CategoryFormType;
 use App\Repository\CategoryRepository;
 use App\Services\CategoryService;
 use App\Services\ServicesInterface;
-use Pagerfanta\Doctrine\ORM\QueryAdapter;
-use Pagerfanta\Pagerfanta;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -44,21 +43,13 @@ class CategoryController extends AbstractFormController
     #[Route('/admin/category/{page<\d+>}', name: 'app_admin_category')]
     public function index($page = 1): Response
     {
-        $this->setTemplateName('admin/category/index.html.twig');
-
-        // $categories = $this->getService()->getAll();
-
         $qb = $this->categoryRepository->getAllQueryBuilder();
 
-        $pagination = new Pagerfanta(
-            new QueryAdapter($qb)
-        );
+        $pagination = parent::getPagination($qb, $page, 10);
 
-        $pagination->setMaxPerPage(10);
-        $pagination->setCurrentPage($page);
-
-
+        $this->setTemplateName('admin/category/index.html.twig');
         $this->setTemplateData(['pager' => $pagination]);
+
         return parent::read();
     }
     // display page for single item
@@ -72,24 +63,23 @@ class CategoryController extends AbstractFormController
         return parent::read();
     }
 
+    //add new category
     #[Route('/admin/category/create', name: 'app_admin_category_create', methods: ['GET', 'POST'])]
     public function createCategory(Request $request)
     {
         $this->setTemplateName('admin/category/create.html.twig');
-        $this->setRedirectRoute('admin_category');
+        $this->setRedirectRoute('app_admin_category');
+        $this->setMessage('New Category Successfully Added');
 
-        $category = new Category();
-        $form = $this->createForm(CategoryFormType::class, $category);
-        $form->handleRequest($request);
+        $this->setData(new Category());
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $category = $form->getData();
-            $this->getService()->add($category);
-            $this->addFlash('success', 'Category ' . $category->getName() . ' successfully added');
-            return $this->redirectToRoute($this->getRedirectRoute());
+        $result = parent::create($request);
+        if (!$result instanceof FormInterface) {
+            return $result;
         }
+        $this->form = $result;
 
-        $this->setTemplateData(['category' => $category, 'form' => $form->createView()]);
+        $this->setTemplateData(['form' => $this->form]);
 
         return parent::read();
     }
@@ -99,19 +89,18 @@ class CategoryController extends AbstractFormController
     public function editCategory($id, Request $request): Response
     {
         $this->setTemplateName('admin/category/edit.html.twig');
-        $this->setRedirectRoute('admin_category');
+        $this->setRedirectRoute('app_admin_category');
+
 
         $category = $this->categoryService->getOneById($id);
-        $form = $this->createForm(CategoryFormType::class, $category);
-        $form->handleRequest($request);
+        $this->setMessage($category->getId() . ' successfully edited.');
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->categoryService->edit($category);
-            $this->addFlash('success', 'Category : ' . $category->getName() . ' successfully edited.');
-
-            return $this->redirectToRoute($this->getRedirectRoute());
+        $result = parent::update($category, $request);
+        if (!$result instanceof FormInterface) {
+            return $result;
         }
-        $this->setTemplateData(['category' => $category, 'form' => $form->createView()]);
+        $this->form = $result;
+        $this->setTemplateData(['category' => $category, 'form' => $this->form]);
 
 
         return parent::read();
@@ -123,7 +112,7 @@ class CategoryController extends AbstractFormController
     {
         $this->setRedirectRoute('admin_category');
 
-        $this->addFlash('error', 'Category successfully deleted.');
+        $this->setMessage('Category with id: ' . $id . ' deleted successfully');
         return parent::delete($id);
     }
 }

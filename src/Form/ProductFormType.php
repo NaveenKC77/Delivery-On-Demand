@@ -22,7 +22,7 @@ class ProductFormType extends AbstractType
             ->add('description', TextType::class)
             ->add('price', NumberType::class)
             ->add('stock', NumberType::class, ['required' => false])
-            ->add('imagePath', FileType::class)
+            ->add('imagePath', FileType::class, ['required' => false])
             // ->add('createdAt', null, [
             //     'widget' => 'single_text', 'required'=>false
             // ])

@@ -34,6 +34,7 @@ class ProductService implements ServicesInterface
     {
         return $this->productRepository->findOneById($id);
     }
+    // set a unique name for uploaded file, uploads it, and returns new FileName
     function processUpload($imagePath, $uploadDir): string
     {
         $newFileName = uniqid() . '.' . $imagePath->guessExtension();

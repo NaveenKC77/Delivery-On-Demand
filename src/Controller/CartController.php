@@ -17,6 +17,7 @@ use App\Services\UserService;
 class CartController extends AbstractController
 {
     public function __construct(private CartService $cartService, private CartItemService $cartItemService, private UserService $userService, private ProductService $productService) {}
+
     #[Route('/cart', name: 'app_cart')]
     #[IsGranted('ROLE_CUSTOMER')]
     public function index(): Response
@@ -24,11 +25,10 @@ class CartController extends AbstractController
         $user = $this->getUser();
 
         if (!$user instanceof User) {
-            throw new \Exception('wrong type of User passed');
+            throw new Exception('wrong type of User passed');
         }
         $customerId = $user->getCustomer()->getId();
         $cart = $this->cartService->getCartFromCustomerId($customerId);
-
 
         return $this->render('cart/index.html.twig', [
             'cart' => $cart,
@@ -37,7 +37,6 @@ class CartController extends AbstractController
     #[Route('/cart/add/{id<\d+>}', name: 'add_item_to_cart')]
     public function addItem($id): Response
     {
-
         $product = $this->productService->getOneById($id);
         $user = $this->getUser();
 

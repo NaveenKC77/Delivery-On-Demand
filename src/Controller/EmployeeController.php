@@ -2,8 +2,7 @@
 
 namespace App\Controller;
 
-
-use App\Form\EmployeeFormType;
+use App\Form\EmployeeRegistrationFormType;
 use App\Repository\EmployeeRepository;
 use App\Services\EmployeeService;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
@@ -11,53 +10,47 @@ use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class EmployeeController extends AbstractFormController
+class EmployeeController extends UserAbstractController
 {
-    public function __construct(private EmployeeService $employeeService, private EmployeeRepository $employeeRepository) {}
-    public function getFormType(): string
-    {
-        return EmployeeFormType::class;
-    }
+    public function __construct(private EmployeeService $employeeService,) {}
+
+
     public function getService()
     {
         return $this->employeeService;
     }
-    public function getUploadDir(): string
+
+    public function getRoles(): array
     {
-        return '';
+        return ['ROLE_EMPLOYEE'];
     }
+
+    public function getFormType(): string
+    {
+        return EmployeeRegistrationFormType::class;
+    }
+
+
     #[Route('/admin/employee/{page<\d+>}', name: 'app_employee')]
     public function index($page = 1): Response
     {
-        $qb = $this->employeeRepository->getAllQueryBuilder();
-        $pagination = new Pagerfanta(
-            new QueryAdapter($qb)
-        );
+        $qb = $this->getService()->getAllQueryBuilder();
+        $pagination = parent::getPagination($qb, $page, 10);
 
-        $pagination->setMaxPerPage(10);
-        $pagination->setCurrentPage($page);
-        $customers = $this->getService()->getAll();
+        $this->setTemplateName('/admin/employee/index.html.twig');
+        $this->setTemplateData(['pager' => $pagination]);
 
-        return $this->render('admin/employee/index.html.twig', [
-            'pager' => $pagination,
-        ]);
+        return parent::read();
     }
     #[Route('/admin/employee/verified/{page<\d+>}', name: 'app_verified_employee')]
     public function verifiedEmployees($page = 1): Response
     {
-        $qb = $this->employeeRepository->getAllVerifiedQueryBuilder();
-        $verified = $qb->getQuery()->getResult();
-        $pagination = new Pagerfanta(
-            new QueryAdapter($qb)
-        );
+        $qb = $this->getService()->getAllVerifiedQueryBuilder();
+        $pagination = parent::getPagination($qb, $page, 10);
 
-        $pagination->setMaxPerPage(10);
-        $pagination->setCurrentPage($page);
+        $this->setTemplateName('/admin/employee/verified.html.twig');
+        $this->setTemplateData(['pager' => $pagination]);
 
-
-
-        return $this->render('admin/employee/verified.html.twig', [
-            'pager' => $pagination,
-        ]);
+        return parent::read();
     }
 }

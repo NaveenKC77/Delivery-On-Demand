@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
-class Category
+class Category implements EntityInterface
 {
 
     use TimestampableEntity;

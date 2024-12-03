@@ -9,7 +9,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-class Product
+class Product implements EntityInterface
 {
 
     use TimestampableEntity;
@@ -112,7 +112,7 @@ class Product
         return $this->imagePath;
     }
 
-    public function setImagePath(string $imagePath): static
+    public function setImagePath(mixed $imagePath): static
     {
         $this->imagePath = $imagePath;
 

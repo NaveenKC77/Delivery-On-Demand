@@ -2,88 +2,84 @@
 
 namespace App\Controller;
 
-use App\Form\CustomerFormType;
-use App\Repository\CustomerRepository;
+use App\Entity\User;
+use App\Form\RegistrationFormType;
+use App\Repository\UserRepository;
 use App\Services\CustomerService;
+use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 
-class CustomerController extends AbstractFormController
+class CustomerController extends UserAbstractController
 {
-    public function __construct(private CustomerService $customerService, private CustomerRepository $customerRepository) {}
-    public function getFormType(): string
-    {
-        return CustomerFormType::class;
-    }
+    public function __construct(private CustomerService $customerService) {}
+
     public function getService()
     {
         return $this->customerService;
     }
-    public function getUploadDir(): string
+
+    public function getRoles(): array
     {
-        return '';
+        return ['ROLE_CUSTOMER'];
     }
+
+    public function getFormType(): string
+    {
+        return RegistrationFormType::class;
+    }
+
+
     #[Route('/admin/customer/{page<\d+>}', name: 'app_customer')]
     public function index($page = 1): Response
     {
-        $qb = $this->customerRepository->getAllQueryBuilder();
-        $pagination = new Pagerfanta(
-            new QueryAdapter($qb)
-        );
+        $qb = $this->getService()->getAllQueryBuilder();
+        $pagination = parent::getPagination($qb, $page, 10);
 
-        $pagination->setMaxPerPage(10);
-        $pagination->setCurrentPage($page);
+        $this->setTemplateName('/admin/customer/index.html.twig');
+        $this->setTemplateData(['pager' => $pagination]);
 
-
-        return $this->render('admin/customer/index.html.twig', [
-            'pager' => $pagination,
-        ]);
+        return parent::read();
     }
     #[Route('/admin/customer/verified/{page<\d+>}', name: 'app_verified_customer')]
     public function verifiedCustomers($page = 1): Response
     {
-        $qb = $this->customerRepository->getAllVerifiedQueryBuilder();
-        $verified = $qb->getQuery()->getResult();
-        $pagination = new Pagerfanta(
-            new QueryAdapter($qb)
-        );
+        $qb = $this->getService()->getAllVerifiedQueryBuilder();
+        $pagination = parent::getPagination($qb, $page, 10);
 
-        $pagination->setMaxPerPage(10);
-        $pagination->setCurrentPage($page);
-
-
-
-        return $this->render('admin/customer/verified.html.twig', [
-            'pager' => $pagination,
-        ]);
-    }
-    #[Route('/admin/customer/edit/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function editCustomer($id, Request $request)
-    {
-        $this->setTemplateName('admin/customer/edit.html.twig');
-        $this->setRedirectRoute('admin_customer');
-
-        $customer = $this->getService()->getOneById($id);
-
-
-        $this->form = $this->createForm(CustomerFormType::class, $customer);
-        $this->form->handleRequest($request);
-
-        if ($this->form->isSubmitted() && $this->form->isValid()) {
-
-
-            $this->getService()->edit($customer);
-            $this->addFlash('success', 'Customer successfully edited.');
-
-            return $this->redirectToRoute($this->getRedirectRoute());
-        }
-
-
-        $this->setTemplateData(['form' => $this->form->createView(), 'customer' => $customer]);
+        $this->setTemplateName('/admin/customer/verified.html.twig');
+        $this->setTemplateData(['pager' => $pagination]);
 
         return parent::read();
     }
+    // #[Route('/customer/register', name: 'app_customer_register')]
+    // public function register(
+    //     Request $request,
+
+    // ): Response {
+    //     if ($this->getUser()) {
+    //         return $this->redirectToRoute('app_main');
+    //     }
+
+    //     $user = new User();
+
+    //     $result = parent::create($request, $user);
+
+    //     if (!$result instanceof FormInterface) {
+    //         return $result;
+    //     }
+
+    //     $this->form = $result;
+
+
+    //     return $this->render('registration/register.html.twig', [
+    //         'registrationForm' => $this->form,
+    //     ]);
+    // }
 }

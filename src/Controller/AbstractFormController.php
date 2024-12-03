@@ -2,29 +2,29 @@
 
 namespace App\Controller;
 
+use App\Entity\EntityInterface;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\QueryBuilder;
 use Exception;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use function Cake\Core\toString;
 
 abstract class AbstractFormController extends AbstractController
 {
-
     protected const SUCCESS = 'success';
     protected const ERROR = 'error';
-
     protected string $templateName;
-
     protected string $redirectRoute;
     protected string $message;
     protected array $templateData = [];
-
-
     protected mixed $data = null;
     protected ?FormInterface $form;
-
 
     abstract protected function getFormType(): string;
     abstract protected function getService();
@@ -41,8 +41,6 @@ abstract class AbstractFormController extends AbstractController
     {
         return $this->templateName;
     }
-
-
     protected function setRedirectRoute($redirectRoute)
     {
         $this->redirectRoute = $redirectRoute;
@@ -52,8 +50,6 @@ abstract class AbstractFormController extends AbstractController
     {
         return $this->redirectRoute;
     }
-
-
     protected function setMessage($message): static
     {
         $this->message = $message;
@@ -63,7 +59,6 @@ abstract class AbstractFormController extends AbstractController
     {
         return $this->message;
     }
-
     protected function setTemplateData($templateData): static
     {
         $this->templateData = $templateData;
@@ -91,14 +86,27 @@ abstract class AbstractFormController extends AbstractController
         $this->form = $this->createForm($this->getFormType(), $this->getData());
         $this->form->handleRequest($request);
 
-
         if ($this->form->isSubmitted() && $this->form->isValid()) {
             $entity = $this->form->getData();
+
+            // Check if entity has image or not , if yes, process Upload.
+
+            if (property_exists($entity, 'imagePath')) {
+                $imagePath = $this->form->get('imagePath')->getData();
+
+                if ($imagePath) {
+                    $newFileName = $this->getService()->processUpload($imagePath, $this->getUploadDir());
+                    $entity->setImagePath('./images/uploads/' . $newFileName);
+                }
+            }
+
             try {
                 $this->getService()->add($entity);
+                $this->addFlash(static::SUCCESS, $this->getMessage());
                 return $this->redirectToRoute($this->getRedirectRoute());
             } catch (Exception $e) {
-                return new Response($e->getMessage());
+                $this->addFlash(static::ERROR, $e->getMessage());
+                return $this->redirectToRoute($this->getRedirectRoute());
             }
         }
         return $this->form;
@@ -107,27 +115,62 @@ abstract class AbstractFormController extends AbstractController
     {
         return $this->render($this->getTemplateName(), $this->getTemplateData());
     }
-    protected function edit($id, Request $request): FormInterface|RedirectResponse|null
+    protected function update(EntityInterface $entity, Request $request): FormInterface|RedirectResponse
     {
-        $entity = $this->getService()->getOneById($id);
+
         $this->form = $this->createForm($this->getFormType(), $entity);
         $this->form->handleRequest($request);
-        if ($this->form->isSubmitted() && $this->form->isValid()) {
-            $this->getService()->edit();
 
-            return $this->redirectToRoute($this->getRedirectRoute());
+        if ($this->form->isSubmitted() && $this->form->isValid()) {
+            $entity = $this->form->getData();
+
+            // Check if entity has image or not , if yes, process Upload.
+
+            if (property_exists($entity, 'imagePath')) {
+                $entity->setImagePath($this->getData());
+                $imagePath = $this->form->get('imagePath')->getData();
+
+                if (null !== $imagePath) {
+                    $newFileName = $this->getService()->processUpload($imagePath, $this->getUploadDir());
+                    $entity->setImagePath('./images/uploads/' . $newFileName);
+                }
+            }
+
+            try {
+                $this->getService()->edit($entity);
+                $this->addFlash(static::SUCCESS, $this->getMessage());
+                return $this->redirectToRoute($this->getRedirectRoute());
+            } catch (Exception $e) {
+                $this->addFlash(static::ERROR, $e->getMessage());
+                return $this->redirectToRoute($this->getRedirectRoute());
+            }
         }
 
         return $this->form;
     }
+
     protected function delete($id): Response
     {
         try {
             $entity = $this->getService()->getOneById($id);
             $this->getService()->delete($entity);
+            $this->addFlash(static::SUCCESS, $this->getMessage());
             return $this->redirectToRoute($this->getRedirectRoute());
         } catch (Exception $e) {
-            return new Response($e->getMessage());
+            $this->addFlash(static::ERROR, $e->getMessage());
+            return $this->redirectToRoute($this->getRedirectRoute());
         }
+    }
+
+
+    public function getPagination(QueryBuilder $qb, int $currentPage, int $maxPerPage): Pagerfanta
+    {
+        $pagination = new Pagerfanta(
+            new QueryAdapter($qb)
+        );
+
+        $pagination->setMaxPerPage($maxPerPage);
+        $pagination->setCurrentPage($currentPage);
+        return $pagination;
     }
 }

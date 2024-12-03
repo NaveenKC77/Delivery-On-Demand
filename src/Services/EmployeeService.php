@@ -65,4 +65,13 @@ class EmployeeService implements ServicesInterface
     {
         return [];
     }
+
+    public function getAllQueryBuilder()
+    {
+        return $this->employeeRepository->getAllQueryBuilder();
+    }
+    public function getAllVerifiedQueryBuilder()
+    {
+        return $this->employeeRepository->getAllVerifiedQueryBuilder();
+    }
 }

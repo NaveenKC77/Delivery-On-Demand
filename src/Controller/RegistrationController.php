@@ -49,6 +49,7 @@ class RegistrationController extends AbstractController
 
             $cart->setCustomer($user->getCustomer());
 
+
             $this->entityManager->persist($user);
             $this->entityManager->persist($cart);
             $this->entityManager->flush();
@@ -62,7 +63,7 @@ class RegistrationController extends AbstractController
 
             return $this->redirectToRoute('app_login');
         } else {
-            dump($form->getErrors(true, false));
+            $this->addFlash('error', $form->getErrors());
         }
 
 

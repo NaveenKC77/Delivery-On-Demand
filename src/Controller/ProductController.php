@@ -11,6 +11,7 @@ use App\Services\ProductService;
 use App\Services\ServicesInterface;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -69,9 +70,6 @@ class ProductController extends AbstractFormController
     {
         $product = $this->productService->getOneById($id);
 
-        if ($product->getImagePath() == null) {
-            $product->setImagePath('./images/no_image.png');
-        }
         $this->setTemplateName('admin/product/singleProduct.html.twig');
         $this->setTemplateData(['product' => $product]);
         return parent::read();
@@ -82,31 +80,22 @@ class ProductController extends AbstractFormController
     public function createProduct(Request $request): Response
     {
         $this->setTemplateName('admin/product/create.html.twig');
-        $this->setRedirectRoute('admin_product');
+        $this->setRedirectRoute('app_admin_product');
+        $this->setMessage(' New product added successfully');
 
-        $newProduct = new Product();
-
-        $this->form = $this->createForm(ProductFormType::class, $newProduct);
-        $this->form->handleRequest($request);
-
-        if ($this->form->isSubmitted() && $this->form->isValid()) {
-            $newProduct = $this->form->getData();
-            $imagePath = $this->form->get('imagePath')->getData();
+        $product = new Product();
+        $this->setData($product);
 
 
-            // move uploaded image to uploads, also change name , to provide unique names
-            if ($imagePath) {
-                $newFileName = $this->getService()->processUpload($imagePath, $this->getUploadDir());
-                $newProduct->setImagePath('./images/uploads/' . $newFileName);
-            }
+        $result = parent::create($request);
 
-            $this->getService()->add($newProduct);
-            $this->addFlash('success', 'Product ' . $newProduct->getName() . ' successfully added');
-
-            return $this->redirectToRoute($this->getRedirectRoute());
+        if (!$result instanceof FormInterface) {
+            return $result;
         }
+        $this->form = $result;
 
-        $this->setTemplateData(['form' => $this->form->createView(), 'product' => $newProduct]);
+
+        $this->setTemplateData(['form' => $this->form->createView(), 'product' => $product]);
 
         return parent::read();
     }
@@ -115,34 +104,22 @@ class ProductController extends AbstractFormController
     public function editProduct($id, Request $request)
     {
         $this->setTemplateName('admin/product/edit.html.twig');
-        $this->setRedirectRoute('admin_product');
+        $this->setRedirectRoute('app_admin_product');
+        $this->setMessage('Product Updated successfully');
 
         $product = $this->productService->getOneById($id);
         $originalImagePath = toString($product->getImagePath());
 
-        $this->form = $this->createForm(ProductFormType::class, $product);
-        $this->form->handleRequest($request);
+        $this->setData($originalImagePath);
 
-        if ($this->form->isSubmitted() && $this->form->isValid()) {
+        $result = parent::update($product, $request);
 
-            $product->setImagePath($originalImagePath);
-
-            $imagePath = $this->form->get('imagePath')->getData();
-
-
-            if (null !== $imagePath) {
-                $newFileName = $this->getService()->processUpload($imagePath, $this->getUploadDir());
-                $product->setImagePath('./images/uploads/' . $newFileName);
-            }
-
-            $this->productService->edit($product);
-            $this->addFlash('success', 'Product successfully edited.');
-
-            return $this->redirectToRoute($this->getRedirectRoute());
+        if (!$result instanceof FormInterface) {
+            return $result;
         }
+        $this->form = $result;
 
-
-        $this->setTemplateData(['form' => $this->form->createView(), 'product' => $product]);
+        $this->setTemplateData(['form' => $this->form, 'product' => $product]);
 
         return parent::read();
     }
@@ -152,7 +129,7 @@ class ProductController extends AbstractFormController
     public function deleteProduct($id): Response
     {
         $this->setRedirectRoute('admin_product');
-        $this->addFlash('error', 'Product successfully deleted.');
+        $this->setMessage('Product with id ' . $id . 'deleted successfully');
         return parent::delete($id);
     }
 
@@ -181,7 +158,6 @@ class ProductController extends AbstractFormController
     public function userSingleProduct($id): Response
     {
         $this->setTemplateName('product/single.html.twig');
-
 
 
         $product = $this->getService()->getOneById($id);

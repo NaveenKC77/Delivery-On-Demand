@@ -41,4 +41,8 @@ class CategoryService implements ServicesInterface
     {
         return [];
     }
+    function getAllQueryBuilder()
+    {
+        return $this->categoryRepository->getAllQueryBuilder();
+    }
 }
