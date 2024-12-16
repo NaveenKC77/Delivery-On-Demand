@@ -16,7 +16,7 @@ class Employee
     #[ORM\Column(length: 255)]
     private ?string $department = null;
 
-    #[ORM\OneToOne(inversedBy: 'employee', cascade: ['persist', 'remove'], fetch: "EXTRA_LAZY")]
+    #[ORM\OneToOne(inversedBy: 'employee', cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 

@@ -3,17 +3,15 @@
 namespace App\Controller;
 
 use App\Form\EmployeeRegistrationFormType;
-use App\Repository\EmployeeRepository;
 use App\Services\EmployeeService;
-use Pagerfanta\Doctrine\ORM\QueryAdapter;
-use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class EmployeeController extends UserAbstractController
+class EmployeeController extends AbstractUserController
 {
-    public function __construct(private EmployeeService $employeeService,) {}
-
+    public function __construct(private EmployeeService $employeeService)
+    {
+    }
 
     public function getService()
     {
@@ -30,9 +28,8 @@ class EmployeeController extends UserAbstractController
         return EmployeeRegistrationFormType::class;
     }
 
-
     #[Route('/admin/employee/{page<\d+>}', name: 'app_employee')]
-    public function index($page = 1): Response
+    public function index(int $page = 1): Response
     {
         $qb = $this->getService()->getAllQueryBuilder();
         $pagination = parent::getPagination($qb, $page, 10);
@@ -42,8 +39,9 @@ class EmployeeController extends UserAbstractController
 
         return parent::read();
     }
+
     #[Route('/admin/employee/verified/{page<\d+>}', name: 'app_verified_employee')]
-    public function verifiedEmployees($page = 1): Response
+    public function verifiedEmployees(int $page = 1): Response
     {
         $qb = $this->getService()->getAllVerifiedQueryBuilder();
         $pagination = parent::getPagination($qb, $page, 10);

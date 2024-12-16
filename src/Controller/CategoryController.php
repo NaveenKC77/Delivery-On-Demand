@@ -14,34 +14,34 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class CategoryController extends AbstractFormController
 {
-    public function __construct(private CategoryService $categoryService, private CategoryRepository $categoryRepository)
-    {
+    public function __construct(
+        private CategoryService $categoryService,
+        private CategoryRepository $categoryRepository,
+    ) {
         parent::__construct();
     }
 
-    //get form type
+    // get form type
     public function getFormType(): string
     {
-
         return CategoryFormType::class;
     }
 
-    //returns service
+    // returns service
     public function getService(): ServicesInterface
     {
         return $this->categoryService;
     }
 
-    //returns upload dir 
+    // returns upload dir
     public function getUploadDir(): string
     {
-        return
-            $this->getParameter('kernel.project_dir') . '/assets/images/uploads';
+        return $this->getParameter('kernel.project_dir').'/assets/images/uploads';
     }
 
     // display page
     #[Route('/admin/category/{page<\d+>}', name: 'app_admin_category')]
-    public function index($page = 1): Response
+    public function index(int $page = 1): Response
     {
         $qb = $this->categoryRepository->getAllQueryBuilder();
 
@@ -52,6 +52,7 @@ class CategoryController extends AbstractFormController
 
         return parent::read();
     }
+
     // display page for single item
     #[Route(path: '/admin/category/single/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function singleCategroyPage(int $id)
@@ -60,10 +61,11 @@ class CategoryController extends AbstractFormController
 
         $this->setTemplateName('admin/category/singleCategory.html.twig');
         $this->setTemplateData(['category' => $category]);
+
         return parent::read();
     }
 
-    //add new category
+    // add new category
     #[Route('/admin/category/create', name: 'app_admin_category_create', methods: ['GET', 'POST'])]
     public function createCategory(Request $request)
     {
@@ -86,14 +88,13 @@ class CategoryController extends AbstractFormController
 
     // Page to edit a single category
     #[Route('/admin/category/edit/{id}', requirements: ['id' => '\d+'])]
-    public function editCategory($id, Request $request): Response
+    public function editCategory(int $id, Request $request): Response
     {
         $this->setTemplateName('admin/category/edit.html.twig');
         $this->setRedirectRoute('app_admin_category');
 
-
         $category = $this->categoryService->getOneById($id);
-        $this->setMessage($category->getId() . ' successfully edited.');
+        $this->setMessage($category->getId().' successfully edited.');
 
         $result = parent::update($category, $request);
         if (!$result instanceof FormInterface) {
@@ -102,17 +103,17 @@ class CategoryController extends AbstractFormController
         $this->form = $result;
         $this->setTemplateData(['category' => $category, 'form' => $this->form]);
 
-
         return parent::read();
     }
 
     // Delete single Category
     #[Route('/admin/category/delete/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function deleteCategory($id)
+    public function deleteCategory(int $id)
     {
         $this->setRedirectRoute('admin_category');
 
-        $this->setMessage('Category with id: ' . $id . ' deleted successfully');
+        $this->setMessage('Category with id: '.$id.' deleted successfully');
+
         return parent::delete($id);
     }
 }

@@ -8,12 +8,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use App\Entity\EntityInterface;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category implements EntityInterface
 {
-
     use TimestampableEntity;
 
     #[ORM\Id]
@@ -30,8 +28,7 @@ class Category implements EntityInterface
     /**
      * @var Collection<int, Product>
      */
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'category', orphanRemoval: true, fetch: "EXTRA_LAZY")]
-
+    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'category', orphanRemoval: true, fetch: 'EXTRA_LAZY')]
     private Collection $products;
 
     public function __construct()

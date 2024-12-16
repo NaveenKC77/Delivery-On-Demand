@@ -16,12 +16,10 @@ class CategoryFormType extends AbstractType
             ->add(
                 'name',
                 TextType::class,
-
             )
             ->add(
                 'description',
                 TextType::class,
-
             )
         ;
     }

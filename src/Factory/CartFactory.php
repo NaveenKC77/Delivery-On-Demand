@@ -15,7 +15,9 @@ final class CartFactory extends PersistentProxyObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     public static function class(): string
     {
@@ -31,6 +33,7 @@ final class CartFactory extends PersistentProxyObjectFactory
     {
         $user = UserFactory::new()->createOne(['roles' => ['ROLE_CUSTOMER']]);
         $customer = CustomerFactory::new()->createOne(['user' => $user]);
+
         return [
             'customer' => $customer,
             'discount' => self::faker()->randomNumber(null),

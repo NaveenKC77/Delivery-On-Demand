@@ -15,9 +15,10 @@ class CartRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Cart::class);
     }
+
     public function findOneByCustomerId(int $customerId): ?Cart
     {
-        return $this->createQueryBuilder("c")
+        return $this->createQueryBuilder('c')
             ->andWhere('c.customer = :val')
             ->setParameter('val', $customerId)
             ->addSelect('items', 'product')

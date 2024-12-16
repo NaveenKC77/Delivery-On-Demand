@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<checkstyle version="3.10.3">
-<file name="C:\Users\jungk\Sites\GithubRepos\delivery-on-demand\src\Events\AppEventSubscriber.php">
- <error line="10" column="1" severity="error" message="There must be one blank line after the last USE statement; 2 found;" source="PSR2.Namespaces.UseDeclaration.SpaceAfterLastUse"/>
- <error line="44" column="8" severity="error" message="Line indented incorrectly; expected at least 8 spaces, found 7" source="Generic.WhiteSpace.ScopeIndent.Incorrect"/>
-</file>
+<checkstyle version="3.11.2">
 </checkstyle>
 

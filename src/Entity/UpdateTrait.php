@@ -2,6 +2,6 @@
 
 namespace App\Entity;
 
-interface EntityInterface
+trait UpdateTrait
 {
 }

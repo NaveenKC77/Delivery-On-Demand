@@ -3,40 +3,27 @@
 namespace App\Services;
 
 use App\Repository\CartRepository;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 
-class CartService implements ServicesInterface
+class CartService
 {
-
-    public function __construct(private CartRepository $cartRepository, private EntityManagerInterface $em) {}
-    function add($entity): void {}
-    function delete($entity) {}
-    function edit($entity) {}
-    function getAll(): array
+    public function __construct(private CartRepository $cartRepository, private EntityManagerInterface $em)
     {
-        return [];
     }
-    function getOneById(int $id)
+
+    public function getOneById(int $id)
     {
         return $this->cartRepository->findOneById($id);
     }
 
-    function returnCardProperties(): array
-    {
-        return [];
-    }
-    public function processUpload($imagePath, $uploadDir): string
-    {
-        return '';
-    }
     public function addCartItem($cartItem)
     {
         $cart = $this->cartRepository->findOneById($cartItem->getCart()->getId());
         $cart->addCartItem($cartItem);
-        $this->em->persist($cart);
-        $this->em->flush();
+        $this->cartRepository->persist($cart);
+        $this->cartRepository->flush();
     }
+
     public function removeCartItem($cartItem)
     {
         $cart = $this->cartRepository->findOneById($cartItem->getCart()->getId());
@@ -44,6 +31,7 @@ class CartService implements ServicesInterface
         $this->em->persist($cart);
         $this->em->flush();
     }
+
     public function getCartFromCustomerId($customerId)
     {
         return $this->cartRepository->findOneByCustomerId($customerId);

@@ -18,15 +18,14 @@ class CategoryRepository extends ServiceEntityRepository
 
     public function getAllQueryBuilder()
     {
-        return $this->createQueryBuilder("c")
+        return $this->createQueryBuilder('c')
             ->addSelect('products')
             ->leftJoin('c.products', 'products');
     }
 
-
     public function findAllWithProducts()
     {
-        return $this->createQueryBuilder("c")
+        return $this->createQueryBuilder('c')
             ->addSelect('products')
             ->leftJoin('c.products', 'products')
             ->getQuery()

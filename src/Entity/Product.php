@@ -11,7 +11,6 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product implements EntityInterface
 {
-
     use TimestampableEntity;
 
     #[ORM\Id]
@@ -23,7 +22,7 @@ class Product implements EntityInterface
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    #[Gedmo\Slug(fields: ["name"])]
+    #[Gedmo\Slug(fields: ['name'])]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT)]

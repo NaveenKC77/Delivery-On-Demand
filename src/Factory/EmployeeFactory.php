@@ -15,7 +15,9 @@ final class EmployeeFactory extends PersistentProxyObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     public static function class(): string
     {
@@ -29,8 +31,8 @@ final class EmployeeFactory extends PersistentProxyObjectFactory
      */
     protected function defaults(): array|callable
     {
-
         $user = UserFactory::new()->createOne();
+
         return [
             'department' => self::faker()->text(10),
             'user' => $user,

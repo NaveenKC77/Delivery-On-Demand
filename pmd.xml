@@ -1,3 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<pmd version="@package_version@" tool="phpmd" timestamp="2024-10-17T03:47:20+02:00">
+<pmd version="@package_version@" tool="phpmd" timestamp="2024-12-16T08:03:44+01:00">
+  <file name="C:\Users\jungk\Sites\GithubRepos\delivery-on-demand\src\Controller\RegistrationController.php">
+    <violation beginline="22" endline="169" rule="CouplingBetweenObjects" ruleset="Design Rules" package="App\Controller" externalInfoUrl="https://phpmd.org/rules/design.html#couplingbetweenobjects" class="RegistrationController" priority="2">
+      The class RegistrationController has a coupling between objects value of 14. Consider to reduce the number of dependencies under 13.
+    </violation>
+  </file>
 </pmd>

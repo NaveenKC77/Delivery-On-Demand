@@ -15,7 +15,9 @@ final class CustomerFactory extends PersistentProxyObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     public static function class(): string
     {
@@ -30,8 +32,6 @@ final class CustomerFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         $user = UserFactory::new()->createOne(['roles' => ['ROLE_CUSTOMER']]);
-
-
 
         return [
             'address' => self::faker()->address(),

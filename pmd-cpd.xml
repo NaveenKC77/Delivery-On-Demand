@@ -1,2 +1,105 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd-cpd/>
+<pmd-cpd>
+  <duplication lines="52" tokens="97">
+    <file path="C:\Users\jungk\Sites\GithubRepos\delivery-on-demand\src\Controller\AbstractFormController.php" line="30"/>
+    <file path="C:\Users\jungk\Sites\GithubRepos\delivery-on-demand\src\Controller\AbstractUserController.php" line="29"/>
+    <codefragment>    abstract protected function getUploadDir(): string;&#13;
+&#13;
+    public function __construct() {}&#13;
+&#13;
+    protected function setTemplateName($templateName): static&#13;
+    {&#13;
+        $this-&gt;templateName = $templateName;&#13;
+        return $this;&#13;
+    }&#13;
+    public function getTemplateName()&#13;
+    {&#13;
+        return $this-&gt;templateName;&#13;
+    }&#13;
+    protected function setRedirectRoute($redirectRoute)&#13;
+    {&#13;
+        $this-&gt;redirectRoute = $redirectRoute;&#13;
+        return $this;&#13;
+    }&#13;
+    public function getRedirectRoute()&#13;
+    {&#13;
+        return $this-&gt;redirectRoute;&#13;
+    }&#13;
+    protected function setMessage($message): static&#13;
+    {&#13;
+        $this-&gt;message = $message;&#13;
+        return $this;&#13;
+    }&#13;
+    public function getMessage(): string&#13;
+    {&#13;
+        return $this-&gt;message;&#13;
+    }&#13;
+    protected function setTemplateData($templateData): static&#13;
+    {&#13;
+        $this-&gt;templateData = $templateData;&#13;
+        return $this;&#13;
+    }&#13;
+    public function getTemplateData(): array&#13;
+    {&#13;
+        return $this-&gt;templateData;&#13;
+    }&#13;
+&#13;
+    protected function setData(mixed $data): static&#13;
+    {&#13;
+        $this-&gt;data = $data;&#13;
+        return $this;&#13;
+    }&#13;
+&#13;
+    public function getData(): mixed&#13;
+    {&#13;
+        return $this-&gt;data;&#13;
+    }&#13;
+&#13;
+</codefragment>
+  </duplication>
+  <duplication lines="40" tokens="70">
+    <file path="C:\Users\jungk\Sites\GithubRepos\delivery-on-demand\src\Form\EmployeeRegistrationFormType.php" line="15"/>
+    <file path="C:\Users\jungk\Sites\GithubRepos\delivery-on-demand\src\Form\RegistrationFormType.php" line="15"/>
+    <codefragment>class EmployeeRegistrationFormType extends AbstractType&#13;
+{&#13;
+    /**&#13;
+     * This will suppress all the PMD warnings in&#13;
+     * this class.&#13;
+     *&#13;
+     * @SuppressWarnings(PHPMD)&#13;
+     */&#13;
+    public function buildForm(FormBuilderInterface $builder, array $options): void&#13;
+    {&#13;
+        $builder&#13;
+            -&gt;add('username')&#13;
+            -&gt;add('email')&#13;
+            -&gt;add('agreeTerms', CheckboxType::class, [&#13;
+                'mapped' =&gt; false,&#13;
+                'constraints' =&gt; [&#13;
+                    new IsTrue([&#13;
+                        'message' =&gt; 'You should agree to our terms.',&#13;
+                    ]),&#13;
+                ],&#13;
+            ])&#13;
+            -&gt;add('plainPassword', PasswordType::class, [&#13;
+                // instead of being set onto the object directly,&#13;
+                // this is read and encoded in the controller&#13;
+                'mapped' =&gt; false,&#13;
+                'label' =&gt; 'Password',&#13;
+                'attr' =&gt; ['autocomplete' =&gt; 'new-password'],&#13;
+                'constraints' =&gt; [&#13;
+                    new NotBlank([&#13;
+                        'message' =&gt; 'Please enter a password',&#13;
+                    ]),&#13;
+                    new Length([&#13;
+                        'min' =&gt; 6,&#13;
+                        'minMessage' =&gt; 'Your password should be at least {{ limit }} characters',&#13;
+                        // max length allowed by Symfony for security reasons&#13;
+                        'max' =&gt; 4096,&#13;
+                    ]),&#13;
+                ],&#13;
+            ])&#13;
+            -&gt;add('employee', EmployeeFormType::class); //Nested form for employee&#13;
+</codefragment>
+  </duplication>
+</pmd-cpd>

@@ -20,19 +20,26 @@
 		<div class="form-group mt-2">
 			{{ form_label(registrationForm.email, null, {'label_attr': {'for': 'email'}}) }}
 			{{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'id': 'email1', 'placeholder': 'Enter email'}}) }}
+			{{form_errors(registrationForm.email)}}
+
 			<small id="emailHelp" class="form-text text-muted">Use the work email only.</small>
 		</div>
 		<div class="form-group mt-2">
 			{{ form_label(registrationForm.username, null, {'label_attr': {'for': 'username'}}) }}
 			{{ form_widget(registrationForm.username, {'attr': {'class': 'form-control', 'id': 'username', 'placeholder': 'Enter username'}}) }}
+			{{form_errors(registrationForm.username)}}
 		</div>
 		<div class="form-group mt-2">
 			{{ form_label(registrationForm.plainPassword, null, {'label_attr': {'for': 'password'}}) }}
 			{{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control', 'id': 'password', 'placeholder': 'Password'}}) }}
+			{{form_errors(registrationForm.plainPassword)}}
+
+
 		</div>
 		<div class="form-group mt-2">
 			{{ form_label(registrationForm.employee.department, null, {'label_attr': {'for': 'department'}}) }}
 			{{ form_widget(registrationForm.employee.department, {'attr': {'class': 'form-control', 'id': 'department', 'placeholder': 'Department'}}) }}
+			{{form_errors(registrationForm.employee.department)}}
 		</div>
 		<div class="form-check mt-2">
 			{{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input', 'id': 'check'}}) }}

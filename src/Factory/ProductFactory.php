@@ -15,7 +15,9 @@ final class ProductFactory extends PersistentProxyObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     public static function class(): string
     {
@@ -38,7 +40,6 @@ final class ProductFactory extends PersistentProxyObjectFactory
             'stock' => self::faker()->randomNumber(2),
             'createdAt' => self::faker()->dateTimeBetween('-1 year'),
             'updatedAt' => self::faker()->dateTimeBetween('-1 year'),
-
         ];
     }
 

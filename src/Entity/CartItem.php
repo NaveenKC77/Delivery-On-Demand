@@ -33,7 +33,6 @@ class CartItem
     #[ORM\JoinColumn(nullable: false)]
     private ?Cart $cart = null;
 
-
     public function __construct(Product $product, Cart $cart)
     {
         $this->setProduct($product);
@@ -63,15 +62,14 @@ class CartItem
         return $this;
     }
 
-
     public function getTotal(): ?int
     {
         return $this->total;
     }
+
     public function calculateTotal(): ?int
     {
-        return
-            $this->getProduct()->getPrice() * $this->getQuantity();
+        return $this->getProduct()->getPrice() * $this->getQuantity();
     }
 
     public function resetTotal(): static
@@ -80,6 +78,7 @@ class CartItem
 
         return $this;
     }
+
     public function setTotal($total): static
     {
         $this->total = $total;

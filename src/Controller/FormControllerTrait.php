@@ -2,20 +2,13 @@
 
 namespace App\Controller;
 
-use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 
-
-abstract class UserAbstractController extends AbstractController
+trait FormControllerTrait
 {
-
     protected const SUCCESS = 'success';
     protected const ERROR = 'error';
     protected string $templateName;
@@ -28,68 +21,7 @@ abstract class UserAbstractController extends AbstractController
 
     abstract protected function getService();
 
-    abstract protected function getRoles(): array;
-
     abstract protected function getFormType(): string;
-
-
-
-    public function __construct() {}
-
-    protected function setTemplateName($templateName): static
-    {
-        $this->templateName = $templateName;
-        return $this;
-    }
-    public function getTemplateName()
-    {
-        return $this->templateName;
-    }
-    protected function setRedirectRoute($redirectRoute)
-    {
-        $this->redirectRoute = $redirectRoute;
-        return $this;
-    }
-    public function getRedirectRoute()
-    {
-        return $this->redirectRoute;
-    }
-    protected function setMessage($message): static
-    {
-        $this->message = $message;
-        return $this;
-    }
-    public function getMessage(): string
-    {
-        return $this->message;
-    }
-    protected function setTemplateData($templateData): static
-    {
-        $this->templateData = $templateData;
-        return $this;
-    }
-    public function getTemplateData(): array
-    {
-        return $this->templateData;
-    }
-
-    protected function setData(mixed $data): static
-    {
-        $this->data = $data;
-        return $this;
-    }
-
-    public function getData(): mixed
-    {
-        return $this->data;
-    }
-
-
-    public function read()
-    {
-        return $this->render($this->getTemplateName(), $this->getTemplateData());
-    }
-
 
     public function getPagination(QueryBuilder $qb, int $currentPage, int $maxPerPage): Pagerfanta
     {
@@ -99,6 +31,72 @@ abstract class UserAbstractController extends AbstractController
 
         $pagination->setMaxPerPage($maxPerPage);
         $pagination->setCurrentPage($currentPage);
+
         return $pagination;
+    }
+    public function read()
+    {
+        return $this->render($this->getTemplateName(), $this->getTemplateData());
+    }
+
+
+    protected function setTemplateName($templateName): static
+    {
+        $this->templateName = $templateName;
+
+        return $this;
+    }
+
+    public function getTemplateName()
+    {
+        return $this->templateName;
+    }
+
+    protected function setRedirectRoute($redirectRoute)
+    {
+        $this->redirectRoute = $redirectRoute;
+
+        return $this;
+    }
+
+    public function getRedirectRoute()
+    {
+        return $this->redirectRoute;
+    }
+
+    protected function setMessage($message): static
+    {
+        $this->message = $message;
+
+        return $this;
+    }
+
+    public function getMessage(): string
+    {
+        return $this->message;
+    }
+
+    protected function setTemplateData($templateData): static
+    {
+        $this->templateData = $templateData;
+
+        return $this;
+    }
+
+    public function getTemplateData(): array
+    {
+        return $this->templateData;
+    }
+
+    protected function setData(mixed $data): static
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    public function getData(): mixed
+    {
+        return $this->data;
     }
 }

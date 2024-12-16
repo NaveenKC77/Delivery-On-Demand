@@ -2,8 +2,6 @@
 
 namespace App\Controller;
 
-use App\Controller\AbstractFormController;
-
 use App\Entity\Product;
 use App\Form\ProductFormType;
 use App\Repository\ProductRepository;
@@ -14,41 +12,38 @@ use Pagerfanta\Pagerfanta;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use Symfony\Component\Routing\Attribute\Route;
+
 use function Cake\Core\toString;
 
 class ProductController extends AbstractFormController
 {
-
     public function __construct(private ProductService $productService, private ProductRepository $productRepository)
     {
         parent::__construct();
     }
 
-    //get form type
+    // get form type
     public function getFormType(): string
     {
-
         return ProductFormType::class;
     }
 
-    //returns service
+    // returns service
     public function getService(): ServicesInterface
     {
         return $this->productService;
     }
 
-    //returns upload dir 
+    // returns upload dir
     public function getUploadDir(): string
     {
-        return
-            $this->getParameter('kernel.project_dir') . '/assets/images/uploads';
+        return $this->getParameter('kernel.project_dir').'/assets/images/uploads';
     }
 
     // display page
     #[Route('/admin/product/{page<\d+>}', name: 'app_admin_product')]
-    public function index($page = 1): Response
+    public function index(int $page = 1): Response
     {
         $this->setTemplateName('admin/product/index.html.twig');
 
@@ -60,10 +55,11 @@ class ProductController extends AbstractFormController
         $pagination->setMaxPerPage(10);
         $pagination->setCurrentPage($page);
 
-
         $this->setTemplateData(['pager' => $pagination]);
+
         return parent::read();
     }
+
     // display page for single item
     #[Route(path: '/admin/product/single/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function singleProductPage(int $id): Response
@@ -72,12 +68,13 @@ class ProductController extends AbstractFormController
 
         $this->setTemplateName('admin/product/singleProduct.html.twig');
         $this->setTemplateData(['product' => $product]);
+
         return parent::read();
     }
 
-    //add new product
+    // add new product
     #[Route('/admin/product/create', name: 'app_admin_product_create', methods: ['GET', 'POST'])]
-    public function createProduct(Request $request): Response
+    public function create(Request $request): Response
     {
         $this->setTemplateName('admin/product/create.html.twig');
         $this->setRedirectRoute('app_admin_product');
@@ -86,7 +83,6 @@ class ProductController extends AbstractFormController
         $product = new Product();
         $this->setData($product);
 
-
         $result = parent::create($request);
 
         if (!$result instanceof FormInterface) {
@@ -94,14 +90,13 @@ class ProductController extends AbstractFormController
         }
         $this->form = $result;
 
-
         $this->setTemplateData(['form' => $this->form->createView(), 'product' => $product]);
 
         return parent::read();
     }
 
     #[Route('/admin/product/edit/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function editProduct($id, Request $request)
+    public function editProduct(int $id, Request $request)
     {
         $this->setTemplateName('admin/product/edit.html.twig');
         $this->setRedirectRoute('app_admin_product');
@@ -126,17 +121,17 @@ class ProductController extends AbstractFormController
 
     // delete a single product
     #[Route('/admin/product/delete/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function deleteProduct($id): Response
+    public function deleteProduct(int $id): Response
     {
         $this->setRedirectRoute('admin_product');
-        $this->setMessage('Product with id ' . $id . 'deleted successfully');
+        $this->setMessage('Product with id '.$id.'deleted successfully');
+
         return parent::delete($id);
     }
 
-
-    //User page for products
+    // User page for products
     #[Route('/product/{page<\d+>}', name: 'app_product')]
-    public function userProducts($page = 1): Response
+    public function userProducts(int $page = 1): Response
     {
         $this->setTemplateName('product/index.html.twig');
 
@@ -148,21 +143,21 @@ class ProductController extends AbstractFormController
         $pagination->setMaxPerPage(12);
         $pagination->setCurrentPage($page);
 
-
         $this->setTemplateData(['pager' => $pagination]);
+
         return parent::read();
     }
 
-    //User page for single product
+    // User page for single product
     #[Route('/product/single/{id<\d+>}', name: 'app_single_product')]
-    public function userSingleProduct($id): Response
+    public function userSingleProduct(int $id): Response
     {
         $this->setTemplateName('product/single.html.twig');
-
 
         $product = $this->getService()->getOneById($id);
 
         $this->setTemplateData(['product' => $product]);
+
         return parent::read();
     }
 }

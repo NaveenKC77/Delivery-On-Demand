@@ -2,23 +2,17 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Form\RegistrationFormType;
-use App\Repository\UserRepository;
 use App\Services\CustomerService;
-use Doctrine\ORM\EntityManagerInterface;
-use Pagerfanta\Doctrine\ORM\QueryAdapter;
-use Pagerfanta\Pagerfanta;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 
-class CustomerController extends UserAbstractController
+class CustomerController extends AbstractUserController
 {
-    public function __construct(private CustomerService $customerService) {}
+    public function __construct(
+        private CustomerService $customerService,
+    ) {
+    }
 
     public function getService()
     {
@@ -35,9 +29,8 @@ class CustomerController extends UserAbstractController
         return RegistrationFormType::class;
     }
 
-
     #[Route('/admin/customer/{page<\d+>}', name: 'app_customer')]
-    public function index($page = 1): Response
+    public function index(int $page = 1): Response
     {
         $qb = $this->getService()->getAllQueryBuilder();
         $pagination = parent::getPagination($qb, $page, 10);
@@ -47,8 +40,9 @@ class CustomerController extends UserAbstractController
 
         return parent::read();
     }
+
     #[Route('/admin/customer/verified/{page<\d+>}', name: 'app_verified_customer')]
-    public function verifiedCustomers($page = 1): Response
+    public function verifiedCustomers(int $page = 1): Response
     {
         $qb = $this->getService()->getAllVerifiedQueryBuilder();
         $pagination = parent::getPagination($qb, $page, 10);

@@ -9,20 +9,21 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
-use App\Entity\User;
 
 class UserController extends AbstractController
 {
     use TargetPathTrait;
-    public function __construct(private UserRepository $userRepository, private UserService $userService) {}
 
+    public function __construct(private UserRepository $userRepository, private UserService $userService)
+    {
+    }
 
     #[Route('/admin/user/delete/{id<\d+>}', name: 'app_user')]
-    public function delete($id, Request $request): Response
+    public function delete(int $id, Request $request): Response
     {
         $this->userService->deleteUser($id);
 
-        $this->addFlash('success', 'User deleted ' . $id);
+        $this->addFlash('success', 'User deleted '.$id);
         $session = $request->getSession();
 
         $targetPath = $this->getTargetPath($session, 'main');

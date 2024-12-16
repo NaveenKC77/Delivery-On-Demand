@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AvatarField;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -12,6 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -37,10 +37,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'], fetch: "EXTRA_LAZY")]
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY')]
     private ?Customer $customer = null;
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'], fetch: "EXTRA_LAZY")]
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY')]
     private ?Employee $employee = null;
 
     private ?string $plainPassword = null;
@@ -128,7 +128,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-
     /**
      * @see UserInterface
      */
@@ -208,10 +207,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getAvatarUri()
     {
-        return "https://ui-avatars.com/api/?" . http_build_query([
+        return 'https://ui-avatars.com/api/?'.http_build_query([
             'name' => $this->getUsername(),
             'background' => 'random',
-            'size' => '32'
+            'size' => '32',
         ]);
     }
 }

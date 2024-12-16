@@ -15,7 +15,9 @@ final class CategoryFactory extends PersistentProxyObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     public static function class(): string
     {
@@ -34,7 +36,6 @@ final class CategoryFactory extends PersistentProxyObjectFactory
             'description' => self::faker()->text(),
             'name' => self::faker()->text(10),
             'updatedAt' => self::faker()->dateTimeBetween('-1 year'),
-
         ];
     }
 

@@ -23,7 +23,6 @@ class Customer
     #[ORM\OneToOne(mappedBy: 'customer', cascade: ['persist', 'remove'])]
     private ?Cart $cart = null;
 
-
     public function getId(): ?int
     {
         return $this->id;

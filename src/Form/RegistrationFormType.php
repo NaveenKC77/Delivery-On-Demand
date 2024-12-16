@@ -51,7 +51,7 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('customer', CustomerFormType::class); //Nested form for customer
+            ->add('customer', CustomerFormType::class); // Nested form for customer
     }
 
     public function configureOptions(OptionsResolver $resolver): void

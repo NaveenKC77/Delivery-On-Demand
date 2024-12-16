@@ -15,7 +15,6 @@ class Cart
     public function updateTotal(): void
     {
         $this->resetTotal();
-        $this->resetTotal();
     }
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -38,7 +37,13 @@ class Cart
     /**
      * @var Collection<int, CartItem>
      */
-    #[ORM\OneToMany(targetEntity: CartItem::class, mappedBy: 'cart', cascade: ['persist', 'remove'], orphanRemoval: true, fetch: 'EXTRA_LAZY')]
+    #[ORM\OneToMany(
+        targetEntity: CartItem::class,
+        mappedBy: 'cart',
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true,
+        fetch: 'EXTRA_LAZY'
+    )]
     private Collection $cartItems;
 
     public function __construct()
@@ -61,6 +66,7 @@ class Cart
 
         return $total;
     }
+
     public function getQuantity(): ?int
     {
         return $this->quantity;
@@ -70,12 +76,13 @@ class Cart
     {
         $this->quantity = $quantity;
 
-
         return $this;
     }
+
     public function resetQuantity(): static
     {
         $this->quantity = $this->calculateQuantity();
+
         return $this;
     }
 
@@ -83,6 +90,7 @@ class Cart
     {
         return $this->total;
     }
+
     public function calculateTotal(): ?int
     {
         $total = array_reduce($this->cartItems->toArray(), function ($sum, $item) {
@@ -98,6 +106,7 @@ class Cart
 
         return $this;
     }
+
     public function resetTotal()
     {
         $this->total = $this->calculateTotal();
@@ -132,7 +141,6 @@ class Cart
 
     public function resetCart()
     {
-
         $this->setDiscount(0);
         $this->setQuantity(0);
     }
@@ -153,6 +161,7 @@ class Cart
         }
         $this->resetTotal();
         $this->resetQuantity();
+
         return $this;
     }
 

@@ -3,7 +3,6 @@
 namespace App\Form;
 
 use App\Entity\User;
-use App\Form\EmployeeFormType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -52,7 +51,7 @@ class EmployeeRegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('employee', EmployeeFormType::class); //Nested form for employee
+            ->add('employee', EmployeeFormType::class); // Nested form for employee
     }
 
     public function configureOptions(OptionsResolver $resolver): void

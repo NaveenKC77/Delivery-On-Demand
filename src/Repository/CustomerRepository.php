@@ -22,17 +22,15 @@ class CustomerRepository extends ServiceEntityRepository
     {
         return Criteria::create()->andWhere(Criteria::expr()->eq('user.isVerified', true));
     }
+
     /**
      * Summary of getAllCustomersQueryBuilder
-     * left joins user table
-     * @return \Doctrine\ORM\QueryBuilder
+     * left joins user table.
      */
-
-
     public function getAllQueryBuilder(): QueryBuilder
     {
-        return $this->createQueryBuilder("c")
-            ->addSelect("user")
+        return $this->createQueryBuilder('c')
+            ->addSelect('user')
             ->join('c.user', 'user');
     }
 
@@ -40,9 +38,9 @@ class CustomerRepository extends ServiceEntityRepository
     {
         return $this->getAllQueryBuilder()->addCriteria(self::getVerifiedCriteria());
     }
+
     /**
-     * Summary of findAll
-     * @return array
+     * Summary of findAll.
      */
     public function findAll(): array
     {

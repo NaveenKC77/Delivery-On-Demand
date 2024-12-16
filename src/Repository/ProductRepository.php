@@ -18,10 +18,10 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * Returns query builder for pagerfanta pagination
+     * Returns query builder for pagerfanta pagination.
+     *
      * @return QueryBuilder
      */
-
     public function getAllQueryBuilder()
     {
         return $this->createQueryBuilder('p')
@@ -29,12 +29,13 @@ class ProductRepository extends ServiceEntityRepository
             ->innerJoin('p.category', 'category')
             ->orderBy('p.id', 'ASC');
     }
+
     /**
      * Summary of findAllWithCategories
-     * inner joins categories to make less db requests
+     * inner joins categories to make less db requests.
+     *
      * @return array
      */
-
     public function findAllWithCategories()
     {
         return $this->getAllQueryBuilder()
