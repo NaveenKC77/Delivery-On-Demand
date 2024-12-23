@@ -3,12 +3,11 @@
 namespace App\Services;
 
 use App\Repository\ProductRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class ProductService implements ServicesInterface
 {
-    public function __construct(private ProductRepository $productRepository, private EntityManagerInterface $em)
+    public function __construct(private ProductRepository $productRepository)
     {
     }
 
@@ -19,21 +18,21 @@ class ProductService implements ServicesInterface
 
     public function add($entity): void
     {
-        $this->em->persist($entity);
-        $this->em->flush();
+        $this->productRepository->persist($entity);
+        $this->productRepository->flush();
     }
 
     public function delete($id)
     {
         $object = $this->productRepository->find($id);
-        $this->em->remove($object);
-        $this->em->flush();
+        $this->productRepository->remove($object);
+        $this->productRepository->flush();
     }
 
     public function edit($entity)
     {
-        $this->em->persist($entity);
-        $this->em->flush();
+        $this->productRepository->persist($entity);
+        $this->productRepository->flush();
     }
 
     public function getOneById(int $id)

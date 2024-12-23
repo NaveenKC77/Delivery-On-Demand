@@ -9,5 +9,4 @@ abstract class AbstractUserController extends AbstractController
     use FormControllerTrait;
 
     abstract protected function getRoles(): array;
- 
 }

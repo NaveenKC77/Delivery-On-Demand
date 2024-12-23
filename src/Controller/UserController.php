@@ -23,7 +23,7 @@ class UserController extends AbstractController
     {
         $this->userService->deleteUser($id);
 
-        $this->addFlash('success', 'User deleted '.$id);
+        $this->addFlash('success', 'User deleted ' . $id);
         $session = $request->getSession();
 
         $targetPath = $this->getTargetPath($session, 'main');

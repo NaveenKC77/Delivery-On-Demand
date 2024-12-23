@@ -3,24 +3,23 @@
 namespace App\Services;
 
 use App\Repository\CartItemRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 class CartItemService
 {
-    public function __construct(private CartItemRepository $cartItemRepository, private EntityManagerInterface $em)
+    public function __construct(private CartItemRepository $cartItemRepository)
     {
     }
 
     public function add($entity): void
     {
-        $this->em->persist($entity);
-        $this->em->flush();
+        $this->cartItemRepository->persist($entity);
+        $this->cartItemRepository->flush();
     }
 
     public function delete($entity)
     {
-        $this->em->remove($entity);
-        $this->em->flush();
+        $this->cartItemRepository->remove($entity);
+        $this->cartItemRepository->flush();
     }
 
     public function getOneById(int $id)
@@ -39,8 +38,8 @@ class CartItemService
         } else {
             $cartItem->setQuantity($quantity + 1);
         }
-        $this->em->persist($cartItem);
-        $this->em->flush();
+        $this->cartItemRepository->persist($cartItem);
+        $this->cartItemRepository->flush();
     }
 
     public function minusQuantity($id)
@@ -54,7 +53,7 @@ class CartItemService
         } else {
             $cartItem->setQuantity($quantity - 1);
         }
-        $this->em->persist($cartItem);
-        $this->em->flush();
+        $this->cartItemRepository->persist($cartItem);
+        $this->cartItemRepository->flush();
     }
 }

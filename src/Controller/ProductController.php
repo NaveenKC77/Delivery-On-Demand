@@ -6,10 +6,8 @@ use App\Entity\Product;
 use App\Form\ProductFormType;
 use App\Repository\ProductRepository;
 use App\Services\ProductService;
-use App\Services\ServicesInterface;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,7 +28,7 @@ class ProductController extends AbstractFormController
     }
 
     // returns service
-    public function getService(): ServicesInterface
+    public function getService(): ProductService
     {
         return $this->productService;
     }
@@ -38,7 +36,7 @@ class ProductController extends AbstractFormController
     // returns upload dir
     public function getUploadDir(): string
     {
-        return $this->getParameter('kernel.project_dir').'/assets/images/uploads';
+        return $this->getParameter('kernel.project_dir') . '/assets/images/uploads';
     }
 
     // display page
@@ -83,12 +81,28 @@ class ProductController extends AbstractFormController
         $product = new Product();
         $this->setData($product);
 
-        $result = parent::create($request);
+        $this->form = $this->createForm($this->getFormType(), $this->getData());
+        $this->form->handleRequest($request);
 
-        if (!$result instanceof FormInterface) {
-            return $result;
+        if ($this->form->isSubmitted() && $this->form->isValid()) {
+            $entity = $this->form->getData();
+            $imagePath = $this->form->get('imagePath')->getData();
+
+            if ($imagePath) {
+                $newFileName = $this->getService()->processUpload($imagePath, $this->getUploadDir());
+                $entity->setImagePath('./images/uploads/' . $newFileName);
+            }
+            try {
+                $this->getService()->add($entity);
+                $this->addFlash(static::SUCCESS, $this->getMessage());
+
+                return $this->redirectToRoute($this->getRedirectRoute());
+            } catch (\Exception $e) {
+                $this->addFlash(static::ERROR, $e->getMessage());
+
+                return $this->redirectToRoute($this->getRedirectRoute());
+            }
         }
-        $this->form = $result;
 
         $this->setTemplateData(['form' => $this->form->createView(), 'product' => $product]);
 
@@ -109,11 +123,6 @@ class ProductController extends AbstractFormController
 
         $result = parent::update($product, $request);
 
-        if (!$result instanceof FormInterface) {
-            return $result;
-        }
-        $this->form = $result;
-
         $this->setTemplateData(['form' => $this->form, 'product' => $product]);
 
         return parent::read();
@@ -124,7 +133,7 @@ class ProductController extends AbstractFormController
     public function deleteProduct(int $id): Response
     {
         $this->setRedirectRoute('admin_product');
-        $this->setMessage('Product with id '.$id.'deleted successfully');
+        $this->setMessage('Product with id ' . $id . 'deleted successfully');
 
         return parent::delete($id);
     }

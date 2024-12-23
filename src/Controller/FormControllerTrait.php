@@ -34,11 +34,11 @@ trait FormControllerTrait
 
         return $pagination;
     }
+
     public function read()
     {
         return $this->render($this->getTemplateName(), $this->getTemplateData());
     }
-
 
     protected function setTemplateName($templateName): static
     {

@@ -80,7 +80,10 @@
 
 								{% if app.user %}
 
+								{% if not app.user.isAdmin() %}
+
 									<a class="btn btn-sm bg-light border border-primary text-primary me-2" href="{{path('app_cart')}}">
+
 
 
 										<h5 class="d-inline bi bi-cart"></h5>
@@ -88,6 +91,8 @@
 
 
 									</a>
+
+									{% endif %}
 
 									<a href=" {{path('app_logout')}}" class="btn btn-light text-danger text-bold px-4 border border-danger">Logout</a>
 

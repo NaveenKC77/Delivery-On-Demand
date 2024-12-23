@@ -17,10 +17,20 @@ final class AlterProductTableToAllowNullImagePath extends AbstractMigration
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
      */
-    public function change(): void
+
+    public function up()
     {
+        // Forward migration (if using up/down instead of change)
         $table = $this->table('product');
-        $table->changeColumn('image_path', 'string', ['limit' => 255, 'null' => true])
+        $table->changeColumn('image_path', 'string', ['limit' => 255,'null' => true])
             ->update();
+    }
+
+    public function down()
+    {
+        // Revert the column change (reversal of the operation)
+        $table = $this->table('product');
+        $table->changeColumn('image_path', 'string', ['limit' => 255,'null' => false])  // Reverting back to the original type
+        ->update();
     }
 }

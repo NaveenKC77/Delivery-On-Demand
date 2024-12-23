@@ -5,7 +5,7 @@ namespace App\Services;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class FileUploadServices
- {
+{
     public function __construct()
     {
     }
@@ -29,5 +29,4 @@ class FileUploadServices
     //         $entity->setImagePath('./images/uploads/' . $newFileName);
     //             }
     // }
-
 }

@@ -53,7 +53,7 @@ class CartController extends AbstractController
             $cart = $user->getCustomer()->getCart();
             $cartItem = new CartItem($product, $cart);
             $this->cartService->addCartItem($cartItem);
-            $this->addFlash('success', 'Product'.$product->getName().'successfully added');
+            $this->addFlash('success', 'Product' . $product->getName() . 'successfully added');
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
@@ -67,7 +67,7 @@ class CartController extends AbstractController
         try {
             $cartItem = $this->cartItemService->getOneById($id);
             $this->cartService->removeCartItem($cartItem);
-            $this->addFlash('success', 'Item'.$cartItem->getProduct()->getName().'successfully removed');
+            $this->addFlash('success', 'Item' . $cartItem->getProduct()->getName() . 'successfully removed');
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }

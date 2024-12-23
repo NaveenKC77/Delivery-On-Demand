@@ -6,7 +6,7 @@ use App\Entity\User;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class EmployeeRegistrationFormType extends AbstractRegistrationFormType
+class CustomerRegistrationFormType extends AbstractRegistrationFormType
 {
     /**
      * This will suppress all the PMD warnings in
@@ -17,7 +17,7 @@ class EmployeeRegistrationFormType extends AbstractRegistrationFormType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::returnBuildForm($builder, $options)
-             ->add('employee', EmployeeFormType::class); // Nested form for employee
+            ->add('customer', CustomerFormType::class); // Nested form for customer
     }
 
     public function configureOptions(OptionsResolver $resolver): void

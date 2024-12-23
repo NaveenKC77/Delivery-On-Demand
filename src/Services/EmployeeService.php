@@ -3,30 +3,29 @@
 namespace App\Services;
 
 use App\Repository\EmployeeRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 class EmployeeService implements ServicesInterface
 {
-    public function __construct(private EmployeeRepository $employeeRepository, private EntityManagerInterface $em)
+    public function __construct(private EmployeeRepository $employeeRepository)
     {
     }
 
     public function add($entity): void
     {
-        $this->em->persist($entity);
-        $this->em->flush();
+        $this->employeeRepository->persist($entity);
+        $this->employeeRepository->flush();
     }
 
     public function delete($entity)
     {
-        $this->em->remove($entity);
-        $this->em->flush();
+        $this->employeeRepository->remove($entity);
+        $this->employeeRepository->flush();
     }
 
     public function edit($entity)
     {
-        $this->em->persist($entity);
-        $this->em->flush();
+        $this->employeeRepository->persist($entity);
+        $this->employeeRepository->flush();
     }
 
     public function getAll(): array

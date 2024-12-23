@@ -3,11 +3,10 @@
 namespace App\Services;
 
 use App\Repository\CustomerRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 class CustomerService implements ServicesInterface
 {
-    public function __construct(private CustomerRepository $customerRepository, private EntityManagerInterface $em)
+    public function __construct(private CustomerRepository $customerRepository)
     {
     }
 
@@ -17,14 +16,14 @@ class CustomerService implements ServicesInterface
 
     public function delete($entity)
     {
-        $this->em->remove($entity);
-        $this->em->flush();
+        $this->customerRepository->remove($entity);
+        $this->customerRepository->flush();
     }
 
     public function edit($entity)
     {
-        $this->em->persist($entity);
-        $this->em->flush();
+        $this->customerRepository->persist($entity);
+        $this->customerRepository->flush();
     }
 
     public function getAll(): array

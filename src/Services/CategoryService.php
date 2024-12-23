@@ -3,11 +3,10 @@
 namespace App\Services;
 
 use App\Repository\CategoryRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 class CategoryService implements ServicesInterface
 {
-    public function __construct(private CategoryRepository $categoryRepository, private EntityManagerInterface $em)
+    public function __construct(private CategoryRepository $categoryRepository)
     {
     }
 
@@ -18,21 +17,21 @@ class CategoryService implements ServicesInterface
 
     public function add($entity): void
     {
-        $this->em->persist($entity);
-        $this->em->flush();
+        $this->categoryRepository->persist($entity);
+        $this->categoryRepository->flush();
     }
 
     public function delete($id)
     {
         $object = $this->categoryRepository->findOneById($id);
-        $this->em->remove($object);
-        $this->em->flush();
+        $this->categoryRepository->remove($object);
+        $this->categoryRepository->flush();
     }
 
     public function edit($entity)
     {
-        $this->em->persist($entity);
-        $this->em->flush();
+        $this->categoryRepository->persist($entity);
+        $this->categoryRepository->flush();
     }
 
     public function getOneById(int $id)

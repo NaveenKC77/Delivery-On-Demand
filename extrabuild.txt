@@ -1,0 +1,9 @@
+ <target name="php-cs-fixer" description="Generate unused imports using PHP Code Fixer">
+        <echo msg="Generate PHPCS report for tests" />
+        <exec passthru="true" logoutput="true" checkreturn="true"
+            command="${vendor.dir}/bin/php-cs-fixer
+                        --format=checkstyle
+                        --rules=no_unused_imports,ordered_imports
+                        --dry-run
+                        fix ${src.dir} > ${base.dir}/unused_import_checkstyle.xml" />
+    </target>

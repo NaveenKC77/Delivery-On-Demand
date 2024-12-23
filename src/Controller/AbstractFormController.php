@@ -23,17 +23,6 @@ abstract class AbstractFormController extends AbstractController
         if ($this->form->isSubmitted() && $this->form->isValid()) {
             $entity = $this->form->getData();
 
-            // // Check if entity has image or not , if yes, process Upload.
-
-            // if (property_exists($entity, 'imagePath')) {
-            //     $imagePath = $this->form->get('imagePath')->getData();
-
-            //     if ($imagePath) {
-            //         $newFileName = $this->getService()->processUpload($imagePath, $this->getUploadDir());
-            //         $entity->setImagePath('./images/uploads/' . $newFileName);
-            //     }
-            // }
-
             try {
                 $this->getService()->add($entity);
                 $this->addFlash(static::SUCCESS, $this->getMessage());

@@ -36,7 +36,7 @@ class CategoryController extends AbstractFormController
     // returns upload dir
     public function getUploadDir(): string
     {
-        return $this->getParameter('kernel.project_dir').'/assets/images/uploads';
+        return $this->getParameter('kernel.project_dir') . '/assets/images/uploads';
     }
 
     // display page
@@ -94,7 +94,7 @@ class CategoryController extends AbstractFormController
         $this->setRedirectRoute('app_admin_category');
 
         $category = $this->categoryService->getOneById($id);
-        $this->setMessage($category->getId().' successfully edited.');
+        $this->setMessage($category->getId() . ' successfully edited.');
 
         $result = parent::update($category, $request);
         if (!$result instanceof FormInterface) {
@@ -112,7 +112,7 @@ class CategoryController extends AbstractFormController
     {
         $this->setRedirectRoute('admin_category');
 
-        $this->setMessage('Category with id: '.$id.' deleted successfully');
+        $this->setMessage('Category with id: ' . $id . ' deleted successfully');
 
         return parent::delete($id);
     }
