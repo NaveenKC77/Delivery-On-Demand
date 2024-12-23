@@ -18,7 +18,6 @@ class ProductController extends AbstractFormController
 {
     public function __construct(private ProductService $productService, private ProductRepository $productRepository)
     {
-        parent::__construct();
     }
 
     // get form type

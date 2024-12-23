@@ -12,20 +12,20 @@ class EmployeeService implements ServicesInterface
 
     public function add($entity): void
     {
-        $this->employeeRepository->persist($entity);
-        $this->employeeRepository->flush();
+        $this->employeeRepository->geteEntityManager()->persist($entity);
+        $this->employeeRepository->geteEntityManager()->flush();
     }
 
     public function delete($entity)
     {
-        $this->employeeRepository->remove($entity);
-        $this->employeeRepository->flush();
+        $this->employeeRepository->geteEntityManager()->remove($entity);
+        $this->employeeRepository->geteEntityManager()->flush();
     }
 
     public function edit($entity)
     {
-        $this->employeeRepository->persist($entity);
-        $this->employeeRepository->flush();
+        $this->employeeRepository->geteEntityManager()->persist($entity);
+        $this->employeeRepository->geteEntityManager()->flush();
     }
 
     public function getAll(): array

@@ -125,7 +125,7 @@
     </target>
 
 
-    <target name="loadFixtures" description="Load Doctrine fixtures" depends="phinxMigrations">
+    <target name="loadFixtures" description="Load Doctrine fixtures" >
         <echo message="Loading Doctrine Fixtures..." />
 
         <!-- Run the Symfony Doctrine fixtures command -->

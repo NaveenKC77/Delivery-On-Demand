@@ -16,14 +16,14 @@ class CustomerService implements ServicesInterface
 
     public function delete($entity)
     {
-        $this->customerRepository->remove($entity);
-        $this->customerRepository->flush();
+        $this->customerRepository->getEntityManager()->remove($entity);
+        $this->customerRepository->getEntityManager()->flush();
     }
 
     public function edit($entity)
     {
-        $this->customerRepository->persist($entity);
-        $this->customerRepository->flush();
+        $this->customerRepository->getEntityManager()->persist($entity);
+        $this->customerRepository->getEntityManager()->flush();
     }
 
     public function getAll(): array

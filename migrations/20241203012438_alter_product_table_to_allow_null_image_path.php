@@ -30,7 +30,7 @@ final class AlterProductTableToAllowNullImagePath extends AbstractMigration
     {
         // Revert the column change (reversal of the operation)
         $table = $this->table('product');
-        $table->changeColumn('image_path', 'string', ['limit' => 255,'null' => false])  // Reverting back to the original type
+        $table->changeColumn('image_path', 'string', ['limit' => 255])  // Reverting back to the original type
         ->update();
     }
 }

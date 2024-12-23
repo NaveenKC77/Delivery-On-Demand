@@ -18,7 +18,6 @@ class CategoryController extends AbstractFormController
         private CategoryService $categoryService,
         private CategoryRepository $categoryRepository,
     ) {
-        parent::__construct();
     }
 
     // get form type
@@ -110,7 +109,7 @@ class CategoryController extends AbstractFormController
     #[Route('/admin/category/delete/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function deleteCategory(int $id)
     {
-        $this->setRedirectRoute('admin_category');
+        $this->setRedirectRoute('app_admin_category');
 
         $this->setMessage('Category with id: ' . $id . ' deleted successfully');
 

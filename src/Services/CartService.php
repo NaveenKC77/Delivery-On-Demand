@@ -19,16 +19,16 @@ class CartService
     {
         $cart = $this->cartRepository->findOneById($cartItem->getCart()->getId());
         $cart->addCartItem($cartItem);
-        $this->cartRepository->persist($cart);
-        $this->cartRepository->flush();
+        $this->cartRepository->getEntityManager()->persist($cart);
+        $this->cartRepository->getEntityManager()->flush();
     }
 
     public function removeCartItem($cartItem)
     {
         $cart = $this->cartRepository->findOneById($cartItem->getCart()->getId());
         $cart->removeCartItem($cartItem);
-        $this->cartRepository->persist($cart);
-        $this->cartRepository->flush();
+        $this->cartRepository->getEntityManager()->persist($cart);
+        $this->cartRepository->getEntityManager()->flush();
     }
 
     public function getCartFromCustomerId($customerId)

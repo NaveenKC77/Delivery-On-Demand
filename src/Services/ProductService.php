@@ -18,21 +18,21 @@ class ProductService implements ServicesInterface
 
     public function add($entity): void
     {
-        $this->productRepository->persist($entity);
-        $this->productRepository->flush();
+        $this->productRepository->getEntityManager()->persist($entity);
+        $this->productRepository->getEntityManager()->flush();
     }
 
     public function delete($id)
     {
         $object = $this->productRepository->find($id);
-        $this->productRepository->remove($object);
-        $this->productRepository->flush();
+        $this->productRepository->getEntityManager()->remove($object);
+        $this->productRepository->getEntityManager()->flush();
     }
 
     public function edit($entity)
     {
-        $this->productRepository->persist($entity);
-        $this->productRepository->flush();
+        $this->productRepository->getEntityManager()->persist($entity);
+        $this->productRepository->getEntityManager()->flush();
     }
 
     public function getOneById(int $id)

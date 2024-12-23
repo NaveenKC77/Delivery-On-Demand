@@ -17,21 +17,21 @@ class CategoryService implements ServicesInterface
 
     public function add($entity): void
     {
-        $this->categoryRepository->persist($entity);
-        $this->categoryRepository->flush();
+        $this->categoryRepository->getEntityManager()->persist($entity);
+        $this->categoryRepository->getEntityManager()->flush();
     }
 
     public function delete($id)
     {
         $object = $this->categoryRepository->findOneById($id);
-        $this->categoryRepository->remove($object);
-        $this->categoryRepository->flush();
+        $this->categoryRepository->getEntityManager()->remove($object);
+        $this->categoryRepository->getEntityManager()->flush();
     }
 
     public function edit($entity)
     {
-        $this->categoryRepository->persist($entity);
-        $this->categoryRepository->flush();
+        $this->categoryRepository->getEntityManager()->persist($entity);
+        $this->categoryRepository->getEntityManager()->flush();
     }
 
     public function getOneById(int $id)

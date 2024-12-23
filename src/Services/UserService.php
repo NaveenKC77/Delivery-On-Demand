@@ -18,7 +18,7 @@ class UserService
     public function deleteUser($id)
     {
         $user = $this->getUser($id);
-        $this->userRepository->remove($user);
-        $this->userRepository->flush();
+        $this->userRepository->getEntityManager()->remove($user);
+        $this->userRepository->getEntityManager()->flush();
     }
 }

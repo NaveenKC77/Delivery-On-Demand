@@ -12,14 +12,14 @@ class CartItemService
 
     public function add($entity): void
     {
-        $this->cartItemRepository->persist($entity);
-        $this->cartItemRepository->flush();
+        $this->cartItemRepository->getEntityManager()->persist($entity);
+        $this->cartItemRepository->getEntityManager()->flush();
     }
 
     public function delete($entity)
     {
-        $this->cartItemRepository->remove($entity);
-        $this->cartItemRepository->flush();
+        $this->cartItemRepository->getEntityManager()->remove($entity);
+        $this->cartItemRepository->getEntityManager()->flush();
     }
 
     public function getOneById(int $id)
@@ -38,8 +38,8 @@ class CartItemService
         } else {
             $cartItem->setQuantity($quantity + 1);
         }
-        $this->cartItemRepository->persist($cartItem);
-        $this->cartItemRepository->flush();
+        $this->cartItemRepository->getEntityManager()->persist($cartItem);
+        $this->cartItemRepository->getEntityManager()->flush();
     }
 
     public function minusQuantity($id)
@@ -53,7 +53,7 @@ class CartItemService
         } else {
             $cartItem->setQuantity($quantity - 1);
         }
-        $this->cartItemRepository->persist($cartItem);
-        $this->cartItemRepository->flush();
+        $this->cartItemRepository->getEntityManager()->persist($cartItem);
+        $this->cartItemRepository->getEntityManager()->flush();
     }
 }
