@@ -32,7 +32,7 @@ return
             'host' => 'localhost',
             'name' => 'db_dod',
             'user' => 'root',
-            'pass' => '1234',
+            'pass' => 'Root1234',
             'port' => '3306',
             'charset' => 'utf8',
         ],
