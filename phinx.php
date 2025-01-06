@@ -20,10 +20,10 @@ return
         ],
         'test' => [
             'adapter' => 'mysql',
-            'host' => 'dev.cpaa6ecscm5w.us-east-1.rds.amazonaws.com',
+            'host' => 'dev.****.us-east-1.rds.amazonaws.com',
             'name' => 'db_dod_test',
             'user' => 'admin',
-            'pass' => 'admin12377',
+            'pass' => '****',
             'port' => '3306',
             'charset' => 'utf8',
         ],
