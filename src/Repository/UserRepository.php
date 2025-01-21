@@ -33,6 +33,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    /**
+     * Get all users with the "Admin" role.
+     *
+     * @return User[]
+     */
+    public function findAllAdmins(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('JSON_CONTAINS(u.roles, :role) = 1') // MySQL JSON_CONTAINS function
+            ->setParameter('role', json_encode('ROLE_ADMIN'))
+            ->addSelect('u.username', 'u.id')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */

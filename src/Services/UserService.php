@@ -21,4 +21,20 @@ class UserService
         $this->userRepository->getEntityManager()->remove($user);
         $this->userRepository->getEntityManager()->flush();
     }
+
+    /**
+     * Summary of getAllAdmin
+     * @return array
+     * used for sorting logs
+     * adds 'All Admin with id 0' to the start of array
+     */
+    public function getAllAdmin()
+    {
+
+        $admins = $this->userRepository->findAllAdmins();
+
+        // adding 0 for All Admin Options in Sort By Admin in Logs
+        array_unshift($admins, ['id'=>0,'username'=>'All Admins']);
+        return $admins;
+    }
 }

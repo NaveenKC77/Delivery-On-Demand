@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Event\Events\CategoryCRUDEvent;
 use App\Form\CategoryFormType;
 use App\Repository\CategoryRepository;
 use App\Services\CategoryService;
 use App\Services\ServicesInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +19,7 @@ class CategoryController extends AbstractFormController
     public function __construct(
         private CategoryService $categoryService,
         private CategoryRepository $categoryRepository,
+        private EventDispatcherInterface $eventDispatcher
     ) {
     }
 
@@ -42,8 +45,10 @@ class CategoryController extends AbstractFormController
     #[Route('/admin/category/{page<\d+>}', name: 'app_admin_category')]
     public function index(int $page = 1): Response
     {
+        // fetches queryBuyilder that returns all categories
         $qb = $this->categoryRepository->getAllQueryBuilder();
 
+        // pagination setup
         $pagination = parent::getPagination($qb, $page, 10);
 
         $this->setTemplateName('admin/category/index.html.twig');
@@ -54,7 +59,7 @@ class CategoryController extends AbstractFormController
 
     // display page for single item
     #[Route(path: '/admin/category/single/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function singleCategroyPage(int $id)
+    public function singleCategoryPage(int $id)
     {
         $category = $this->getService()->getOneById($id);
 
@@ -76,7 +81,18 @@ class CategoryController extends AbstractFormController
 
         $result = parent::create($request);
         if (!$result instanceof FormInterface) {
-            return $result;
+
+            try {
+                // triggering event to store log in dynamodb
+                $event = new CategoryCRUDEvent($this->data, 'Create');
+                $this->eventDispatcher->dispatch($event, CategoryCRUDEvent::class);
+
+                return $result;
+            } catch (\Exception $e) {
+                $this->addFlash('error', $e->getMessage());
+                return $this->redirectToRoute($this->getRedirectRoute());
+            }
+
         }
         $this->form = $result;
 
@@ -97,7 +113,17 @@ class CategoryController extends AbstractFormController
 
         $result = parent::update($category, $request);
         if (!$result instanceof FormInterface) {
-            return $result;
+            try {
+
+                // triggering event to store log in dynamodb
+                $event = new CategoryCRUDEvent($this->getData(), 'Update');
+                $this->eventDispatcher->dispatch($event, CategoryCRUDEvent::class);
+
+                return $result;
+            } catch (\Exception $e) {
+                $this->addFlash('error', $e->getMessage());
+                return $this->redirectToRoute($this->getRedirectRoute());
+            }
         }
         $this->form = $result;
         $this->setTemplateData(['category' => $category, 'form' => $this->form]);
@@ -113,6 +139,17 @@ class CategoryController extends AbstractFormController
 
         $this->setMessage('Category with id: ' . $id . ' deleted successfully');
 
-        return parent::delete($id);
+        try {
+            $category = $this->categoryService->getOneById($id);
+            // triggering event to store log in dynamodb
+            $event = new CategoryCRUDEvent($category, 'Create');
+            $this->eventDispatcher->dispatch($event, CategoryCRUDEvent::class);
+
+            return parent::delete($id);
+        } catch (\Exception $e) {
+            $this->addFlash('error', $e->getMessage());
+            return $this->redirectToRoute($this->getRedirectRoute());
+        }
+
     }
 }

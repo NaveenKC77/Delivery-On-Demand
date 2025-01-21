@@ -36,8 +36,8 @@ final class CartFactory extends PersistentProxyObjectFactory
 
         return [
             'customer' => $customer,
-            'discount' => self::faker()->randomNumber(null),
-            'quantity' => self::faker()->randomNumber(null),
+            'discount' => self::faker()->randomNumber(),
+            'quantity' => self::faker()->randomNumber(),
             'total' => self::faker()->randomNumber(2),
         ];
     }

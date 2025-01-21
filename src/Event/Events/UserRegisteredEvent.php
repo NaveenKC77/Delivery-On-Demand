@@ -3,6 +3,7 @@
 namespace App\Event\Events;
 
 use App\Entity\User;
+use App\Services\DynamoDbService;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class UserRegisteredEvent extends Event

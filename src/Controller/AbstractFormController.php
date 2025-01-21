@@ -9,6 +9,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Summary of AbstractFormController
+ * Abstract form controller for All Entities Apart from UserTypes , uses FormControllerTraits
+ * provides Create , Update and Delete Abstract Functions
+ */
 abstract class AbstractFormController extends AbstractController
 {
     use FormControllerTrait;
@@ -25,6 +30,10 @@ abstract class AbstractFormController extends AbstractController
 
             try {
                 $this->getService()->add($entity);
+
+                // for creating events, eg: returns category for Category Class from where event can be triggered using entity
+                $this->setData($entity);
+
                 $this->addFlash(static::SUCCESS, $this->getMessage());
 
                 return $this->redirectToRoute($this->getRedirectRoute());
@@ -46,20 +55,11 @@ abstract class AbstractFormController extends AbstractController
         if ($this->form->isSubmitted() && $this->form->isValid()) {
             $entity = $this->form->getData();
 
-            // Check if entity has image or not , if yes, process Upload.
-
-            if (property_exists($entity, 'imagePath')) {
-                $entity->setImagePath($this->getData());
-                $imagePath = $this->form->get('imagePath')->getData();
-
-                if (null !== $imagePath) {
-                    $newFileName = $this->getService()->processUpload($imagePath, $this->getUploadDir());
-                    $entity->setImagePath('./images/uploads/' . $newFileName);
-                }
-            }
-
             try {
                 $this->getService()->edit($entity);
+                // for creating events, eg: returns category for Category Class from where event can be triggered using entity
+                $this->setData($entity);
+
                 $this->addFlash(static::SUCCESS, $this->getMessage());
 
                 return $this->redirectToRoute($this->getRedirectRoute());

@@ -3,6 +3,7 @@
 namespace App\EventSubscribers;
 
 use App\Entity\User;
+use EmailNotVerifiedException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -16,6 +17,14 @@ class VerificationEventSubscriber implements EventSubscriberInterface
     {
     }
 
+    /**
+     * Summary of onCheckPassport
+     * checks if user is verified
+     * @param \Symfony\Component\Security\Http\Event\CheckPassportEvent $event
+     * @throws \Exception
+     * @throws \EmailNotVerifiedException
+     * @return void
+     */
     public function onCheckPassport(CheckPassportEvent $event): void
     {
         $passport = $event->getPassport();
@@ -30,7 +39,7 @@ class VerificationEventSubscriber implements EventSubscriberInterface
         }
 
         if (!$user->getIsVerified()) {
-            throw new \EmailNotVerifiedException();
+            throw new EmailNotVerifiedException();
         }
     }
 

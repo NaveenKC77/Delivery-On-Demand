@@ -24,6 +24,9 @@ doctrine:
                 alias: App
         controller_resolver:
             auto_mapping: false
+        dql:
+            string_functions:
+                JSON_CONTAINS: DoctrineExtensions\Query\Mysql\JsonContains
 
 when@test:
     doctrine:

@@ -7,6 +7,10 @@ use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * Summary of FormControllerTrait
+ * Basic form controller properties and methods including Read and pagination setup
+ */
 trait FormControllerTrait
 {
     protected const SUCCESS = 'success';

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Event\Events\ProductCRUDEvent;
 use App\Form\ProductFormType;
 use App\Repository\ProductRepository;
 use App\Services\ProductService;
@@ -11,12 +12,13 @@ use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use function Cake\Core\toString;
 
 class ProductController extends AbstractFormController
 {
-    public function __construct(private ProductService $productService, private ProductRepository $productRepository)
+    public function __construct(private ProductService $productService, private ProductRepository $productRepository, private EventDispatcherInterface $eventDispatcher)
     {
     }
 
@@ -44,11 +46,13 @@ class ProductController extends AbstractFormController
     {
         $this->setTemplateName('admin/product/index.html.twig');
 
+        // query builder for pagination : gets All products
         $qb = $this->productRepository->getAllQueryBuilder();
+
+        //setup pagination
         $pagination = new Pagerfanta(
             new QueryAdapter($qb)
         );
-
         $pagination->setMaxPerPage(10);
         $pagination->setCurrentPage($page);
 
@@ -95,6 +99,10 @@ class ProductController extends AbstractFormController
                 $this->getService()->add($entity);
                 $this->addFlash(static::SUCCESS, $this->getMessage());
 
+                //create log in dynamo db
+                $event = new ProductCRUDEvent($entity, 'Create');
+                $this->eventDispatcher->dispatch($event, ProductCRUDEvent::class);
+
                 return $this->redirectToRoute($this->getRedirectRoute());
             } catch (\Exception $e) {
                 $this->addFlash(static::ERROR, $e->getMessage());
@@ -118,10 +126,46 @@ class ProductController extends AbstractFormController
         $product = $this->productService->getOneById($id);
         $originalImagePath = toString($product->getImagePath());
 
-        $this->setData($originalImagePath);
+        $this->form = $this->createForm(ProductFormType::class, $product);
+        $this->form->handleRequest($request);
 
-        $result = parent::update($product, $request);
+        if ($this->form->isSubmitted() && $this->form->isValid()) {
+            $editedProduct = $this->form->getData();
 
+            $imagePath = $this->form->get('imagePath')->getData();
+
+            if ($imagePath) {
+                $newFileName = uniqid() . '.' . $imagePath->guessExtension();
+
+                try {
+                    $imagePath->move(
+                        $this->getParameter('kernel.project_dir') . '/assets/images/uploads',
+                        $newFileName
+                    );
+
+                    $editedProduct->setImagePath("./images/uploads/{$newFileName}") ;
+                } catch (\Exception $e) {
+                    dd($e->getMessage());
+                }
+            }
+
+            if (null == $imagePath) {
+                $editedProduct->setImagePath($originalImagePath);
+            }
+
+            try {
+                $this->productService->edit($editedProduct);
+
+                //create log in dynamo db
+                $event = new ProductCRUDEvent($product, 'Update');
+                $this->eventDispatcher->dispatch($event, ProductCRUDEvent::class);
+
+                return $this->redirectToRoute($this->getRedirectRoute());
+            } catch (\Exception $e) {
+                $this->addFlash(static::ERROR, $e->getMessage());
+                return $this->redirectToRoute($this->getRedirectRoute());
+            }
+        }
         $this->setTemplateData(['form' => $this->form, 'product' => $product]);
 
         return parent::read();
@@ -131,12 +175,21 @@ class ProductController extends AbstractFormController
     #[Route('/admin/product/delete/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function deleteProduct(int $id): Response
     {
-        $this->setRedirectRoute('admin_product');
+        $this->setRedirectRoute('app_admin_product');
         $this->setMessage('Product with id ' . $id . 'deleted successfully');
 
-        return parent::delete($id);
-    }
 
+        try {
+            $product = $this->productRepository->findOneById($id);
+            //create log in dynamo db
+            $event = new ProductCRUDEvent($product, 'Delete');
+            $this->eventDispatcher->dispatch($event, ProductCRUDEvent::class);
+            return parent::delete($id);
+        } catch (\Exception $e) {
+            $this->addFlash(static::ERROR, $e->getMessage());
+            return $this->redirectToRoute($this->getRedirectRoute());
+        }
+    }
     // User page for products
     #[Route('/product/{page<\d+>}', name: 'app_product')]
     public function userProducts(int $page = 1): Response

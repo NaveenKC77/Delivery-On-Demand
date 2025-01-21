@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class UserRegisteredEVentSubscriber implements EventSubscriberInterface
+class UserRegisteredEventSubscriber implements EventSubscriberInterface
 {
     public function __construct(private HttpClientInterface $client, private MailerInterface $mailer)
     {
@@ -17,6 +17,11 @@ class UserRegisteredEVentSubscriber implements EventSubscriberInterface
     {
         $signedUrl = $event->getSignedUrl();
         $user = $event->getUser();
+
+        dd($user);
+        // log in dynamo db
+
+
         // $data = ['message' => [
         //     'email' => $user->getEmail(),
         //     'mailBody' => $signedUrl,

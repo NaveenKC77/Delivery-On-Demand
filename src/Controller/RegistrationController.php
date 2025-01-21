@@ -44,6 +44,9 @@ class RegistrationController extends AbstractController
             $signedUrl = $this->userRegistrationService->generateSignedUrl($user);
             $this->addFlash('success', 'Confirm your email at :' . $signedUrl);
 
+            $event = new UserRegisteredEvent($signedUrl, $user);
+            $this->eventDispatcher->dispatch($event, UserRegisteredEvent::class);
+
             return $this->redirectToRoute('app_login');
         }
 
