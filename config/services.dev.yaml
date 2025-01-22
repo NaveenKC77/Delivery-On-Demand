@@ -18,7 +18,13 @@ services:
     Aws\DynamoDb\DynamoDbClient:
         class: Aws\DynamoDb\DynamoDbClient
         arguments:
-            $args: { region: 'us-west-2', version: 'latest', endpoint: 'https://localhost.localstack.cloud:4566', credentials: false }
+            $args:
+                region: 'us-west-2'               # Replace with your preferred region
+                version: 'latest'                # API version
+                endpoint: 'https://localhost.localstack.cloud:4566' # LocalStack endpoint
+                credentials:
+                    key: 'test'                  # Dummy key for LocalStack
+                    secret: 'test'               # Dummy secret for LocalStack
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
