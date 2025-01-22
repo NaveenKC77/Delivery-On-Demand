@@ -2,13 +2,13 @@
 
 ## Overview
 
-This **Ecommerce Application** is a fully developed solution built with **Symfony 7**, offering a robust **admin dashboard** and a seamless **customer interface**. The application is designed with scalability, security, and modularity in mind to ensure maintainability and high performance. Advanced technologies like **AWS API Gateway**, **SQS**, and **Lambda** are integrated to handle email registration and verification securely.
+This **Ecommerce Application** is a fully developed solution built with **Symfony 7**, offering a robust **admin dashboard** and a seamless **customer interface**. The application is designed with scalability, security, and modularity in mind to ensure maintainability and high performance. SQL is used as primary databse , and DynamoDB is used to store logs and for analytical purpose. Advanced technologies like **AWS API Gateway**, **SQS**, and **Lambda** are integrated to handle email registration and verification securely.
 
 ## Key Features
 
-- **Responsive Frontend**: Built using **Twig templates** and **Bootstrap 5**, ensuring a mobile-optimized, user-friendly experience across devices.
+- **Responsive Frontend**: Built using **Twig templates** and **Bootstrap 5**, ensuring a mobile-optimized, user-friendly experience across devices. Uses **Chart.js** for responsive and dynamic charts and diagrams for analytics.
 - **Backend with Symfony 7**: Powered by **Symfony 7**, utilizing **Doctrine ORM** for efficient database management and object-relational mapping.
-- **Database**: Utilizes **MySQL**, with database migrations handled seamlessly through **Phinx** for version control and smooth updates.
+- **Database**: Utilizes **MySQL**, with database migrations handled seamlessly through **Phinx** for version control and smooth updates. Utilizes **DynamoDb** for storing logs and analytical purposes.
 - **Advanced Security**: Implements **AWS API Gateway**, **SQS**, and **Lambda** for secure email registration and verification, integrated with **Mailtrap** for email handling.
 - **Scalability**: **Terraform-ready** infrastructure, allowing for easy scaling and cloud deployment.
 - **Modular Architecture**: Follows best practices in modular design and clean code, ensuring maintainability and flexibility for future enhancements.

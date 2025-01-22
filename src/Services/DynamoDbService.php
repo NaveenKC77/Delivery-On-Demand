@@ -179,7 +179,8 @@ class DynamoDbService
         return $this->resultstoObjectArrays($logs);
     }
 
-    public function getLogsByTimeInterval(string $entityType,string $startDateString,string $endDateString){
+    public function getLogsByTimeInterval(string $entityType, string $startDateString, string $endDateString)
+    {
         $queryParam = [
             'TableName' => self::TABLE_NAME,
             'IndexName' => 'Entity-Date-Index',
@@ -193,7 +194,7 @@ class DynamoDbService
             'ExpressionAttributeValues' => [
                 ':entityType' => ['S' => $entityType],
                 ':startDate' => ['S' => $startDateString],
-                ':endDate'=>['S'=> $endDateString]
+                ':endDate' => ['S' => $endDateString]
             ]
         ];
 
@@ -202,7 +203,8 @@ class DynamoDbService
         return $this->resultstoObjectArrays($logs);
     }
 
-    public function getLogsByentityItem($entityType,$entityId){
+    public function getLogsByentityItem($entityType, $entityId)
+    {
         $queryParam = [
             'TableName' => self::TABLE_NAME,
             'IndexName' => 'Entity-Item-Index',

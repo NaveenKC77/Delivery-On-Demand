@@ -25,8 +25,8 @@ class UserService
     /**
      * Summary of getAllAdmin
      * @return array
-     * used for sorting logs
-     * adds 'All Admin with id 0' to the start of array
+     *               used for sorting logs
+     *               adds 'All Admin with id 0' to the start of array
      */
     public function getAllAdmin()
     {
@@ -34,7 +34,7 @@ class UserService
         $admins = $this->userRepository->findAllAdmins();
 
         // adding 0 for All Admin Options in Sort By Admin in Logs
-        array_unshift($admins, ['id'=>0,'username'=>'All Admins']);
+        array_unshift($admins, ['id' => 0,'username' => 'All Admins']);
         return $admins;
     }
 }

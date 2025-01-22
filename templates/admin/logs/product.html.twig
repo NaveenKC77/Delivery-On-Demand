@@ -37,7 +37,7 @@
         <h3>Specific Product</h3>
         <select class="form-select" aria-label="Default select example" onchange="location.href = this.value;">
            <option value="/admin/logs/product/product/0" {{selectedOptions['productId']== 0 ? 'selected' : ''}}>All</option>
-            {% for product in products %}
+            {% for product in items  %}
             <option value="/admin/logs/product/product/{{product.id}}" {{ selectedOptions['productId'] == product.id ? 'selected' : '' }}>{{product.name}}</option>
             {% endfor %}
         </select>
@@ -57,7 +57,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{% for log in productLogs %}
+					{% for log in itemLogs %}
 						<tr>
 							<th scope="row">{{log.EntityId}}</th>
 							<td>
@@ -71,6 +71,9 @@
 					
 				</tbody>
                 {% endfor %}
+
+                {% block chartScripts %}
+                {% endblock %}
 			</div>
 
 
