@@ -36,5 +36,7 @@
 ###< friendsofphp/php-cs-fixer ###
 
 
+###> node_modules ###
 /node_modules
+###< node_modules ###
 
