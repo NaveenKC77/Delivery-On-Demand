@@ -206,6 +206,7 @@ class ProductController extends AbstractFormController
 
         $this->setTemplateData(['pager' => $pagination]);
 
+
         return parent::read();
     }
 

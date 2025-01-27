@@ -108,7 +108,7 @@ class Product implements EntityInterface
 
     public function getImagePath(): ?string
     {
-        return $this->imagePath;
+        return $this->imagePath ? $this->imagePath : "./images/no_image.png";
     }
 
     public function setImagePath(mixed $imagePath): static

@@ -41,7 +41,7 @@ class Cart
         targetEntity: CartItem::class,
         mappedBy: 'cart',
         cascade: ['persist', 'remove'],
-        orphanRemoval: true,
+        orphanRemoval: false,
         fetch: 'EXTRA_LAZY'
     )]
     private Collection $cartItems;
@@ -143,6 +143,10 @@ class Cart
     {
         $this->setDiscount(0);
         $this->setQuantity(0);
+
+        foreach ($this->cartItems as $item) {
+            $this->removeCartItem($item);
+        }
     }
 
     /**

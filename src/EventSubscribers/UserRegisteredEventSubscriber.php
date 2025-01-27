@@ -18,7 +18,7 @@ class UserRegisteredEventSubscriber implements EventSubscriberInterface
         $signedUrl = $event->getSignedUrl();
         $user = $event->getUser();
 
-        dd($user);
+
         // log in dynamo db
 
 

@@ -3,15 +3,22 @@
 namespace App\Controller;
 
 use App\Entity\CartItem;
+use App\Entity\Order;
+use App\Entity\OrderDetails;
 use App\Entity\User;
+use App\Event\Events\OrderPlacedEvent;
+use App\Form\OrderDetailsFormType;
 use App\Services\CartItemService;
 use App\Services\CartService;
+use App\Services\OrderService;
 use App\Services\ProductService;
 use App\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CartController extends AbstractController
 {
@@ -20,9 +27,10 @@ class CartController extends AbstractController
         private CartItemService $cartItemService,
         private UserService $userService,
         private ProductService $productService,
+        private OrderService $orderService,
+        private EventDispatcherInterface $eventDispatcher
     ) {
     }
-
     #[Route('/cart', name: 'app_cart')]
     #[IsGranted('ROLE_CUSTOMER')]
     public function index(): Response
@@ -97,5 +105,70 @@ class CartController extends AbstractController
         }
 
         return $this->redirectToRoute('app_cart');
+    }
+
+    #[Route('cart/checkout', 'cart-checkout')]
+
+    public function checkout(Request $request)
+    {
+
+        $customer = $this->getUser()->getCustomer();
+
+        $orderDetails = new OrderDetails();
+
+        $orderDetails->setShippingAddress($customer->getAddress());
+        $orderDetails->setPostalAddress($customer->getAddress());
+        $orderDetails->setEmail($customer->getUser()->getEmail());
+
+        $cart = $customer->getCart();
+
+        $form = $this->createForm(OrderDetailsFormType::class, $orderDetails);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $orderDetails = $form->getData();
+            $order = new Order();
+
+            // Set the order details and subtotal
+            $order->setOrderDetails($orderDetails);
+            $order->setSubtotal($cart->getTotal());
+
+            // Add cart items to the order
+            foreach ($cart->getCartItems() as $item) {
+                $order->addCartItem($item);
+            }
+
+            // Automatically calculate tax and total based on subtotal
+            $order->setTax($order->calculateTax(10)); // Assuming a 10% tax rate
+            $order->setTotal($order->calculateTotal());
+            $order->setCustomer($customer);
+            // Reset the cart
+            $cart->resetCart();
+
+            // Add a success flash message
+            $this->addFlash('success', 'Order Confirmed');
+
+            try{
+                // persist order
+            $this->orderService->add($order);
+
+            // raise orderPlacedEvent
+            $event = new OrderPlacedEvent($order);
+            $this->eventDispatcher->dispatch($event, OrderPlacedEvent::class);
+            }
+            catch(\Exception $e){
+                $this->addFlash('error', $e->getMessage());
+            }
+           
+
+            return $this->redirectToRoute('app_cart');
+
+
+        }
+
+        return $this->render('cart/checkout.html.twig', [
+            'cart' => $cart,
+            'form' => $form->createView(),
+        ]);
     }
 }

@@ -34,7 +34,6 @@ final class ProductFactory extends PersistentProxyObjectFactory
         return [
             'category' => CategoryFactory::random(),
             'description' => self::faker()->text(),
-            'imagePath' => 'images\uploads\66f9587f899b8.avif',
             'name' => self::faker()->text(7),
             'price' => self::faker()->randomNumber(2),
             'stock' => self::faker()->randomNumber(2),

@@ -22,7 +22,7 @@ class VerificationEventSubscriber implements EventSubscriberInterface
      * checks if user is verified
      * @param \Symfony\Component\Security\Http\Event\CheckPassportEvent $event
      * @throws \Exception
-     * @throws \EmailNotVerifiedException
+     * @throws \App\EmailNotVerifiedException
      * @return void
      */
     public function onCheckPassport(CheckPassportEvent $event): void
@@ -39,7 +39,7 @@ class VerificationEventSubscriber implements EventSubscriberInterface
         }
 
         if (!$user->getIsVerified()) {
-            throw new EmailNotVerifiedException();
+            throw new \App\EmailNotVerifiedException();
         }
     }
 
@@ -47,7 +47,7 @@ class VerificationEventSubscriber implements EventSubscriberInterface
     {
         $exception = $event->getException();
 
-        if (!$exception instanceof \EmailNotVerifiedException) {
+        if (!$exception instanceof \App\EmailNotVerifiedException) {
             return;
         }
 

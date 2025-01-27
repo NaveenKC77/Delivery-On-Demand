@@ -2,21 +2,25 @@
 
 namespace App\Services;
 
-class LogFilterService {
-    public function __construct() {}
+class LogFilterService
+{
+    public function __construct()
+    {
+    }
 
     /**
      * Summary of filterLogsByTimeInterval
      * @param string $timeInterval
      * @param array $logs
      * @return array
-     * filter arrays using timeInterval String
+     *               filter arrays using timeInterval String
      */
-    public function filterLogsByTimeInterval(string $timeInterval,array $logs){
+    public function filterLogsByTimeInterval(string $timeInterval, array $logs)
+    {
         $currentDateTime = new \DateTime('now', new \DateTimeZone('UTC')); // Current time in UTC
         $endDateString = $currentDateTime->format('Y-m-d\TH:i:s\Z'); // ISO 8601 format
 
-        switch($timeInterval) {
+        switch ($timeInterval) {
             case 'day':
                 $startDateString = (clone $currentDateTime)->modify('-24 hours')->format('Y-m-d\TH:i:s\Z');
                 break;

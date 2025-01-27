@@ -6,7 +6,7 @@ use App\Repository\CartRepository;
 
 class CartService
 {
-    public function __construct(private CartRepository $cartRepository)
+    public function __construct(public CartRepository $cartRepository)
     {
     }
 
