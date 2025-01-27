@@ -15,8 +15,6 @@ class AdminController extends AbstractController
     {
     }
 
-
-
     #[Route('/admin', name: 'app_admin')]
     #[IsGranted('ROLE_ADMIN')]
     public function index(): Response

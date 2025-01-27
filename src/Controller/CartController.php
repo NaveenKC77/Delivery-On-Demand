@@ -148,18 +148,17 @@ class CartController extends AbstractController
             // Add a success flash message
             $this->addFlash('success', 'Order Confirmed');
 
-            try{
+            try {
                 // persist order
-            $this->orderService->add($order);
+                $this->orderService->add($order);
 
-            // raise orderPlacedEvent
-            $event = new OrderPlacedEvent($order);
-            $this->eventDispatcher->dispatch($event, OrderPlacedEvent::class);
-            }
-            catch(\Exception $e){
+                // raise orderPlacedEvent
+                $event = new OrderPlacedEvent($order);
+                $this->eventDispatcher->dispatch($event, OrderPlacedEvent::class);
+            } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
             }
-           
+
 
             return $this->redirectToRoute('app_cart');
 

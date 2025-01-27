@@ -8,7 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class OrderPlacedEvent extends Event
 {
     public function __construct(
-       private Order $order
+        private Order $order
     ) {
     }
 

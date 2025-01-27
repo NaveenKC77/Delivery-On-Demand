@@ -11,22 +11,22 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class OrderEventSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private HttpClientInterface $client, private MailerInterface $mailer,private EntityManagerInterface $entityManager)
+    public function __construct(private HttpClientInterface $client, private MailerInterface $mailer, private EntityManagerInterface $entityManager)
     {
     }
 
     public function onOrderPlaced(OrderPlacedEvent $event): void
     {
-       
+
         //reduce product stock
         $order = $event->getOrder();
-       
+
         if ($order instanceof Order) {
             $this->reduceStock($order);
         }
         //send mail
 
-        // log in dynamo db  
+        // log in dynamo db
     }
 
     public static function getSubscribedEvents()
@@ -36,7 +36,8 @@ class OrderEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function reduceStock(Order $order){
+    public function reduceStock(Order $order)
+    {
 
         $orderItems = $order->getCartItems();
 
