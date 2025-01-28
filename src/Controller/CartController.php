@@ -20,6 +20,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Summary of CartController
+ * controls cart page
+ */
 class CartController extends AbstractController
 {
     public function __construct(
@@ -31,15 +35,21 @@ class CartController extends AbstractController
         private EventDispatcherInterface $eventDispatcher
     ) {
     }
+
+    /**
+     * loads cart for each customer
+     */
     #[Route('/cart', name: 'app_cart')]
     #[IsGranted('ROLE_CUSTOMER')]
     public function index(): Response
     {
+        // getting authorized user
         $user = $this->getUser();
 
         if (!$user instanceof User) {
             throw new \Exception('wrong type of User passed');
         }
+        // checking if user is customer and getting its customer id and then cart associated
         $customerId = $user->getCustomer()->getId();
         $cart = $this->cartService->getCartFromCustomerId($customerId);
 
@@ -48,6 +58,9 @@ class CartController extends AbstractController
         ]);
     }
 
+    /**
+     * add item to cart
+     */
     #[Route('/cart/add/{id<\d+>}', name: 'add_item_to_cart')]
     public function addItem(int $id): Response
     {
@@ -55,7 +68,7 @@ class CartController extends AbstractController
         $user = $this->getUser();
 
         if (!$user instanceof User) {
-            throw new \Exception('');
+            throw new \Exception('Wrong type of user');
         }
         try {
             $cart = $user->getCustomer()->getCart();
@@ -111,15 +124,9 @@ class CartController extends AbstractController
 
     public function checkout(Request $request)
     {
-
         $customer = $this->getUser()->getCustomer();
 
-        $orderDetails = new OrderDetails();
-
-        $orderDetails->setShippingAddress($customer->getAddress());
-        $orderDetails->setPostalAddress($customer->getAddress());
-        $orderDetails->setEmail($customer->getUser()->getEmail());
-
+        $orderDetails = new OrderDetails($customer);
         $cart = $customer->getCart();
 
         $form = $this->createForm(OrderDetailsFormType::class, $orderDetails);

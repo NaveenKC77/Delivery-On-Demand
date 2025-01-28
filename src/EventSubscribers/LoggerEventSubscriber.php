@@ -2,8 +2,14 @@
 
 namespace App\EventSubscribers;
 
+use App\Entity\EntityInterface;
+use App\Event\Events\CategoryCreatedEvent;
 use App\Event\Events\CategoryCRUDEvent;
-use App\Event\Events\ProductCRUDEvent;
+use App\Event\Events\CategoryDeletedEvent;
+use App\Event\Events\CategoryUpdatedEvent;
+use App\Event\Events\ProductCreatedEvent;
+use App\Event\Events\ProductDeletedEvent;
+use App\Event\Events\ProductUpdatedEvent;
 use App\Event\Events\UserRegisteredEvent;
 use App\Services\DynamoDbService;
 use Aws\Exception\AwsException;
@@ -12,7 +18,6 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use App\Entity\Product;
 use App\Entity\User;
 
 class LoggerEventSubscriber implements EventSubscriberInterface
@@ -21,9 +26,10 @@ class LoggerEventSubscriber implements EventSubscriberInterface
         private HttpClientInterface $client,
         private MailerInterface $mailer,
         private DynamoDbService $dynamoDb,
-        private Security $security
+        private Security $security,
     ) {
     }
+
 
     public function getAdmin()
     {
@@ -48,69 +54,59 @@ class LoggerEventSubscriber implements EventSubscriberInterface
 
     }
 
-    public function onProductCRUD(ProductCRUDEvent $event): void
+    public function onProductCreated(ProductCreatedEvent $event): void
     {
         // product
         $product = $event->getProduct();
 
-        // CRUD action type eg:Create
-        $action = $event->getAction();
-        $date = new \DateTimeImmutable();
+        $this->createLog($product, $event->getEntityType(), $event->getAction());
 
-        // get Authenticated Admin
-        $admin = $this->getAdmin();
-        $adminId = $this->getAdmin()->getId();
+    }
 
-        // unique uuid for storing LogId in Dynamo
-        $logId = Guid::uuid4()->toString();
+    public function onProductUpdated(ProductUpdatedEvent $event): void
+    {
+        $product = $event->getProduct();
 
-        $item = [
-            'PK' => [
-                'S' => "USER#$adminId"
-            ],
-            'SK' => [
-                'S' => "Product#$logId"
-            ],
-            'Entity' => [
-                'S' => 'Product'
-            ],
-            'EntityId' => [
-                'N' => $product->getId()
-            ],
-            'AdminId' => [
-                'S' => $admin->getId()
-            ],
-            'Action' => [
-                'S' => $action
-            ],
-            'Date' => [
-                'S' => $date->format(\DateTime::ATOM)
-            ],
-            'Admin' => [
-                    'S' => $admin->getUsername()
-                ]
-            ];
+        $this->createLog($product, $event->getEntityType(), $event->getAction());
 
-        //log in dynamo db
+    }
 
-        try {
-            $this->dynamoDb->putItem($item);
+    public function onProductDeleted(ProductDeletedEvent $event): void
+    {
+        $product = $event->getProduct();
 
-        } catch (AwsException $e) {
-            dd($e->getMessage());
-        }
-
+        $this->createLog($product, $event->getEntityType(), $event->getAction());
 
     }
 
 
-    public function onCategoryCRUD(CategoryCRUDEvent $event): void
+    public function onCategoryCreated(CategoryCreatedEvent $event): void
     {
-        // category
+        // product
         $category = $event->getCategory();
 
-        // CRUD action type eg:Create
-        $action = $event->getAction();
+        $this->createLog($category, $event->getEntityType(), $event->getAction());
+
+    }
+
+    public function onCategoryUpdated(CategoryUpdatedEvent $event): void
+    {
+        $category = $event->getCategory();
+
+        $this->createLog($category, $event->getEntityType(), $event->getAction());
+
+    }
+
+    public function onCategoryDeleted(CategoryDeletedEvent $event): void
+    {
+        $category = $event->getCategory();
+
+        $this->createLog($category, $event->getEntityType(), $event->getAction());
+
+    }
+
+    public function createLog(EntityInterface $entity, string $entityType, string $action)
+    {
         $date = new \DateTimeImmutable();
 
         // get Authenticated Admin
@@ -125,13 +121,13 @@ class LoggerEventSubscriber implements EventSubscriberInterface
                 'S' => "USER#$adminId"
             ],
             'SK' => [
-                'S' => "Category#$logId"
+                'S' => "$entityType#$logId"
             ],
             'Entity' => [
-                'S' => 'Category'
+                'S' => $entityType
             ],
             'EntityId' => [
-                'N' => $category->getId()
+                'N' => $entity->getId()
             ],
             'AdminId' => [
                 'S' => $admin->getId()
@@ -155,16 +151,18 @@ class LoggerEventSubscriber implements EventSubscriberInterface
         } catch (AwsException $e) {
             dd($e->getMessage());
         }
-
-
     }
-
     public static function getSubscribedEvents()
     {
         return [
             UserRegisteredEvent::class => ['onUserRegistered'],
-            ProductCRUDEvent::class => ['onProductCRUD',-10],
-            CategoryCRUDEvent::class => ['onCategoryCRUD'],
+            ProductCreatedEvent::class => ['onProductCreated'],
+            ProductUpdatedEvent::class => ['onProductUpdated'],
+            ProductDeletedEvent::class => ['onProductDeleted'],
+            CategoryCreatedEvent::class => ['onCategoryCreated'],
+            CategoryUpdatedEvent::class => ['onCategoryUpdated'],
+            CategoryDeletedEvent::class => ['onCategoryDeleted'],
+
 
         ];
     }

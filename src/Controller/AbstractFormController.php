@@ -18,8 +18,19 @@ abstract class AbstractFormController extends AbstractController
 {
     use FormControllerTrait;
 
+    /**
+     * Summary of getUploadDir
+     * @return string
+     *                returns upload Directory for files uploaded via form
+     */
     abstract protected function getUploadDir(): string;
 
+    /**
+     * Summary of create
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @return \Symfony\Component\Form\FormInterface|\Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response|null
+     *                                                                                                                                                  creates new object of provided entity type if form submitted , else returns form for rendering twig template
+     */
     protected function create(Request $request): FormInterface|RedirectResponse|Response|null
     {
         $this->form = $this->createForm($this->getFormType(), $this->getData());
@@ -47,6 +58,14 @@ abstract class AbstractFormController extends AbstractController
         return $this->form;
     }
 
+    /**
+     * Summary of update
+     * @param \App\Entity\EntityInterface $entity
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @return \Symfony\Component\Form\FormInterface|\Symfony\Component\HttpFoundation\RedirectResponse
+     *                                                                                                  nt\HttpFoundation\Response|null
+     *                                                                                                  creates new object of provided entity type if form submitted , else returns form for rendering twig template
+     */
     protected function update(EntityInterface $entity, Request $request): FormInterface|RedirectResponse
     {
         $this->form = $this->createForm($this->getFormType(), $entity);
@@ -73,6 +92,12 @@ abstract class AbstractFormController extends AbstractController
         return $this->form;
     }
 
+    /**
+     * Summary of delete
+     * @param mixed $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     *                                                    deletes the object and redirects to the provided redireaction route
+     */
     protected function delete($id): Response
     {
         try {
@@ -83,7 +108,6 @@ abstract class AbstractFormController extends AbstractController
             return $this->redirectToRoute($this->getRedirectRoute());
         } catch (\Exception $e) {
             $this->addFlash(static::ERROR, $e->getMessage());
-
             return $this->redirectToRoute($this->getRedirectRoute());
         }
     }

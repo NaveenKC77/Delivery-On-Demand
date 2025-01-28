@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CartRepository::class)]
-class Cart
+class Cart implements EntityInterface
 {
     #[ORM\PrePersist]
     #[ORM\PreUpdate]

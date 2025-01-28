@@ -2,19 +2,41 @@
 
 namespace App\Services;
 
+use App\Entity\Product;
 use App\Repository\ProductRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
-class ProductService implements ServicesInterface
+class ProductService implements NonUserTypeServicesInterface
 {
     public function __construct(private ProductRepository $productRepository)
     {
     }
 
+    /**
+     * Summary of getAllQueryBuilder
+     * @return \Doctrine\ORM\QueryBuilder
+     *                                    queryBuilder to get All Products with categories joined
+     */
+    public function getAllQueryBuilder(): QueryBuilder
+    {
+        return $this->productRepository->getAllQueryBuilder();
+    }
+
+    /**
+     * Summary of getAll
+     * @return array of all products joined with categories
+     */
     public function getAll(): array
     {
         return $this->productRepository->findAllWithCategories();
     }
+
+    public function getOneById(int $id): Product | null
+    {
+        return $this->productRepository->findOneById($id);
+    }
+
 
     public function add($entity): void
     {
@@ -22,12 +44,12 @@ class ProductService implements ServicesInterface
         $this->productRepository->getEntityManager()->flush();
     }
 
-    public function delete($id)
+    public function delete($entity)
     {
-        $object = $this->productRepository->find($id);
-        $this->productRepository->getEntityManager()->remove($object);
+        $this->productRepository->getEntityManager()->remove($entity);
         $this->productRepository->getEntityManager()->flush();
     }
+
 
     public function edit($entity)
     {
@@ -35,10 +57,6 @@ class ProductService implements ServicesInterface
         $this->productRepository->getEntityManager()->flush();
     }
 
-    public function getOneById(int $id)
-    {
-        return $this->productRepository->findOneById($id);
-    }
 
     // set a unique name for uploaded file, uploads it, and returns new FileName
     public function processUpload($imagePath, $uploadDir): string

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Entity\Cart;
 use App\Repository\CartRepository;
 
 class CartService
@@ -10,7 +11,7 @@ class CartService
     {
     }
 
-    public function getOneById(int $id)
+    public function getOneById(int $id): Cart | null
     {
         return $this->cartRepository->findOneById($id);
     }

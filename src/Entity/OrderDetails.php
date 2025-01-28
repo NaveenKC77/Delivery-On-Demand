@@ -29,6 +29,13 @@ class OrderDetails
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
+    public function __construct(Customer $customer)
+    {
+        $this->shippingAddress = $customer->getAddress();
+        $this->postalAddress = $customer->getAddress();
+        $this->email = $customer->getUser()->getEmail();
+    }
+
     public function getId(): ?int
     {
         return $this->id;

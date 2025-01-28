@@ -2,28 +2,14 @@
 
 namespace App\Services;
 
+use App\Entity\Customer;
 use App\Repository\CustomerRepository;
+use Doctrine\ORM\QueryBuilder;
 
-class CustomerService implements ServicesInterface
+class CustomerService implements UserTypeServicesInterface
 {
     public function __construct(private CustomerRepository $customerRepository)
     {
-    }
-
-    public function add($entity): void
-    {
-    }
-
-    public function delete($entity)
-    {
-        $this->customerRepository->getEntityManager()->remove($entity);
-        $this->customerRepository->getEntityManager()->flush();
-    }
-
-    public function edit($entity)
-    {
-        $this->customerRepository->getEntityManager()->persist($entity);
-        $this->customerRepository->getEntityManager()->flush();
     }
 
     public function getAll(): array
@@ -31,18 +17,20 @@ class CustomerService implements ServicesInterface
         return $this->customerRepository->findAll();
     }
 
-    public function getOneById(int $id)
+    public function getOneById(int $id): Customer | null
     {
         return $this->customerRepository->findOneById($id);
     }
 
-    public function getAllQueryBuilder()
+    public function getAllQueryBuilder(): QueryBuilder
     {
         return $this->customerRepository->getAllQueryBuilder();
     }
 
-    public function getAllVerifiedQueryBuilder()
+    public function getAllVerifiedQueryBuilder(): QueryBuilder
     {
         return $this->customerRepository->getAllVerifiedQueryBuilder();
     }
+
+
 }

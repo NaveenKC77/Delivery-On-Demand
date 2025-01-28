@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Event\Events\ProductCreatedEvent;
 use App\Event\Events\ProductCRUDEvent;
+use App\Event\Events\ProductDeletedEvent;
+use App\Event\Events\ProductUpdatedEvent;
 use App\Form\ProductFormType;
-use App\Repository\ProductRepository;
 use App\Services\ProductService;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
@@ -16,9 +18,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use function Cake\Core\toString;
 
+/**
+ * Summary of ProductController
+ * Route for product related operations
+ */
 class ProductController extends AbstractFormController
 {
-    public function __construct(private ProductService $productService, private ProductRepository $productRepository, private EventDispatcherInterface $eventDispatcher)
+    public function __construct(private ProductService $productService, private EventDispatcherInterface $eventDispatcher)
     {
     }
 
@@ -47,7 +53,7 @@ class ProductController extends AbstractFormController
         $this->setTemplateName('admin/product/index.html.twig');
 
         // query builder for pagination : gets All products
-        $qb = $this->productRepository->getAllQueryBuilder();
+        $qb = $this->productService->getAllQueryBuilder();
 
         //setup pagination
         $pagination = new Pagerfanta(
@@ -79,7 +85,7 @@ class ProductController extends AbstractFormController
     {
         $this->setTemplateName('admin/product/create.html.twig');
         $this->setRedirectRoute('app_admin_product');
-        $this->setMessage(' New product added successfully');
+        $this->setMessage(' New product added successfully.');
 
         $product = new Product();
         $this->setData($product);
@@ -100,8 +106,8 @@ class ProductController extends AbstractFormController
                 $this->addFlash(static::SUCCESS, $this->getMessage());
 
                 //create log in dynamo db
-                $event = new ProductCRUDEvent($entity, 'Create');
-                $this->eventDispatcher->dispatch($event, ProductCRUDEvent::class);
+                $event = new ProductCreatedEvent($entity);
+                $this->eventDispatcher->dispatch($event, ProductCreatedEvent::class);
 
                 return $this->redirectToRoute($this->getRedirectRoute());
             } catch (\Exception $e) {
@@ -124,6 +130,7 @@ class ProductController extends AbstractFormController
         $this->setMessage('Product Updated successfully');
 
         $product = $this->productService->getOneById($id);
+        // keeping originalImage Path , incase user doen't update the image
         $originalImagePath = toString($product->getImagePath());
 
         $this->form = $this->createForm(ProductFormType::class, $product);
@@ -145,10 +152,12 @@ class ProductController extends AbstractFormController
 
                     $editedProduct->setImagePath("./images/uploads/{$newFileName}") ;
                 } catch (\Exception $e) {
-                    dd($e->getMessage());
+                    $this->addFlash(static::ERROR, $e->getMessage());
+
+                    return $this->redirectToRoute($this->getRedirectRoute());
                 }
             }
-
+            //set to original ImagePath if no image uploaded
             if (null == $imagePath) {
                 $editedProduct->setImagePath($originalImagePath);
             }
@@ -157,9 +166,10 @@ class ProductController extends AbstractFormController
                 $this->productService->edit($editedProduct);
 
                 //create log in dynamo db
-                $event = new ProductCRUDEvent($product, 'Update');
-                $this->eventDispatcher->dispatch($event, ProductCRUDEvent::class);
+                $event = new ProductUpdatedEvent($product);
+                $this->eventDispatcher->dispatch($event, ProductUpdatedEvent::class);
 
+                $this->addFlash(static::SUCCESS, $this->getMessage());
                 return $this->redirectToRoute($this->getRedirectRoute());
             } catch (\Exception $e) {
                 $this->addFlash(static::ERROR, $e->getMessage());
@@ -177,14 +187,12 @@ class ProductController extends AbstractFormController
     {
         $this->setRedirectRoute('app_admin_product');
         $this->setMessage('Product with id ' . $id . 'deleted successfully');
-
-
         try {
-            $product = $this->productRepository->findOneById($id);
+            $product = $this->productService->getOneById($id);
             //create log in dynamo db
-            $event = new ProductCRUDEvent($product, 'Delete');
-            $this->eventDispatcher->dispatch($event, ProductCRUDEvent::class);
-            return parent::delete($id);
+            $event = new ProductDeletedEvent($product, 'Delete');
+            $this->eventDispatcher->dispatch($event, ProductDeletedEvent::class);
+            return parent::delete($product);
         } catch (\Exception $e) {
             $this->addFlash(static::ERROR, $e->getMessage());
             return $this->redirectToRoute($this->getRedirectRoute());
@@ -196,7 +204,7 @@ class ProductController extends AbstractFormController
     {
         $this->setTemplateName('product/index.html.twig');
 
-        $qb = $this->productRepository->getAllQueryBuilder();
+        $qb = $this->productService->getAllQueryBuilder();
         $pagination = new Pagerfanta(
             new QueryAdapter($qb)
         );

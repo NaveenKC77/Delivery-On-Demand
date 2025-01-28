@@ -6,7 +6,7 @@ use App\Repository\EmployeeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EmployeeRepository::class)]
-class Employee
+class Employee implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

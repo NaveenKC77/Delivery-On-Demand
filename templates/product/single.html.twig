@@ -36,12 +36,20 @@
 					</div>
 					<!-- Add to Cart Button -->
 					{% if(app.user) %}
+
+					{% if product.stock == 0 %}
+						<div class="mt-4">
+							<a href="/product" class="btn btn-lg btn-primary w-100">
+								Out Of Stock .... Sorry !!
+							</a>
+						</div>
+					{% else %}
 						<div class="mt-4">
 							<a href="/cart/add/{{ product.id }}" class="btn btn-cart btn-lg btn-primary w-100">
 								Add to Cart
 							</a>
 						</div>
-
+{% endif %}
 					{% else %}
 						<div class="mt-4">
 							<a href="/login" class="btn btn-cart btn-lg btn-primary w-100">

@@ -5,12 +5,12 @@ namespace App\Entity;
 use App\Repository\ProductRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product implements EntityInterface
 {
+    // updates created_at and updated_at
     use TimestampableEntity;
 
     #[ORM\Id]
@@ -21,16 +21,15 @@ class Product implements EntityInterface
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
-    #[Gedmo\Slug(fields: ['name'])]
-    private ?string $slug = null;
-
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
     #[ORM\Column]
     private ?int $price = null;
 
+    /**
+     * stock of product available for sell
+     */
     #[ORM\Column]
     private ?int $stock = null;
 
@@ -58,17 +57,6 @@ class Product implements EntityInterface
         return $this;
     }
 
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(string $slug): static
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
 
     public function getDescription(): ?string
     {

@@ -30,7 +30,7 @@
 			{% for product in pager %}
 				<!-- Product Card -->
 				<div class="col-md-6 col-lg-4 col-xl-3">
-					<div class="card product-card">
+				<div class="{{ product.stock == 0 ? 'card product-card border border-danger ' : 'card product-card ' }}">
 						<img src="{{asset(product.imagePath)}}" class="card-img-top product-image" alt="Product Image">
 						<div class="card-body">
 							<h5 class="card-title text-truncate">{{product.name}}</h5>
@@ -40,7 +40,6 @@
 						</div>
 					</div>
 				</div>
-				<!-- Repeat Product Cards -->
 			{% endfor %}
 		</div>
 		{{pagerfanta(pager)}}

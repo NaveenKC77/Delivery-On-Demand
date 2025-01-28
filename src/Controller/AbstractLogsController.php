@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Services\DynamoDbService;
-use App\Services\ProductService;
 use App\Services\ServicesInterface;
 use App\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

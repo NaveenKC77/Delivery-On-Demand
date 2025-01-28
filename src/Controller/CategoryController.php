@@ -3,7 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Event\Events\CategoryCreatedEvent;
 use App\Event\Events\CategoryCRUDEvent;
+use App\Event\Events\CategoryDeletedEvent;
+use App\Event\Events\CategoryUpdatedEvent;
 use App\Form\CategoryFormType;
 use App\Repository\CategoryRepository;
 use App\Services\CategoryService;
@@ -84,8 +87,8 @@ class CategoryController extends AbstractFormController
 
             try {
                 // triggering event to store log in dynamodb
-                $event = new CategoryCRUDEvent($this->data, 'Create');
-                $this->eventDispatcher->dispatch($event, CategoryCRUDEvent::class);
+                $event = new CategoryCreatedEvent($this->data);
+                $this->eventDispatcher->dispatch($event, CategoryCreatedEvent::class);
 
                 return $result;
             } catch (\Exception $e) {
@@ -116,8 +119,8 @@ class CategoryController extends AbstractFormController
             try {
 
                 // triggering event to store log in dynamodb
-                $event = new CategoryCRUDEvent($this->getData(), 'Update');
-                $this->eventDispatcher->dispatch($event, CategoryCRUDEvent::class);
+                $event = new CategoryUpdatedEvent($this->getData());
+                $this->eventDispatcher->dispatch($event, CategoryUpdatedEvent::class);
 
                 return $result;
             } catch (\Exception $e) {
@@ -142,8 +145,8 @@ class CategoryController extends AbstractFormController
         try {
             $category = $this->categoryService->getOneById($id);
             // triggering event to store log in dynamodb
-            $event = new CategoryCRUDEvent($category, 'Create');
-            $this->eventDispatcher->dispatch($event, CategoryCRUDEvent::class);
+            $event = new CategoryDeletedEvent($category);
+            $this->eventDispatcher->dispatch($event, CategoryDeletedEvent::class);
 
             return parent::delete($id);
         } catch (\Exception $e) {

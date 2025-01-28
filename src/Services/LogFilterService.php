@@ -4,10 +4,6 @@ namespace App\Services;
 
 class LogFilterService
 {
-    public function __construct()
-    {
-    }
-
     /**
      * Summary of filterLogsByTimeInterval
      * @param string $timeInterval

@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Services\DynamoDbService;
+use App\Services\LoggerService;
 use App\Services\LogFilterService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,17 +11,19 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AdminController extends AbstractController
 {
-    public function __construct(private DynamoDbService $dynamoDbService, private LogFilterService $logFilterService)
+    public function __construct(private LoggerService $loggerService, private LogFilterService $logFilterService)
     {
     }
 
+    /**
+     * admin dashboard page
+     */
     #[Route('/admin', name: 'app_admin')]
     #[IsGranted('ROLE_ADMIN')]
     public function index(): Response
     {
-
         // get all logs of product added
-        $productsAdded = $this->dynamoDbService->getLogsByEntityAction('Product', 'Create');
+        $productsAdded = $this->loggerService->getLogsByEntityAction('Product', 'Create');
 
         // chart data for products added in last [day,week,month]
         $productsAddedData = [
@@ -31,7 +33,7 @@ class AdminController extends AbstractController
         ];
 
         //get all logs for categories added
-        $categoriesAdded = $this->dynamoDbService->getLogsByEntityAction('Category', 'Create');
+        $categoriesAdded = $this->loggerService->getLogsByEntityAction('Category', 'Create');
 
         // chart data for categories added in last [day,week,month]
         $categoriesAddedData = [
@@ -45,8 +47,6 @@ class AdminController extends AbstractController
             'categories' => $categoriesAddedData,
             'users' => [5,20,6]
         ];
-
-
 
         return $this->render('admin/dashboard.html.twig', [
             'data' => $data
