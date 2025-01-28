@@ -74,11 +74,4 @@ class UserRegistrationService
         return $signedUrl;
     }
 
-    public function verifyEmail()
-    {
-    }
-
-    public function resendVerificationEmail()
-    {
-    }
 }

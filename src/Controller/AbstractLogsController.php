@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Services\DynamoDbService;
+use App\Services\LoggerService;
 use App\Services\ServicesInterface;
 use App\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -83,7 +84,7 @@ abstract class AbstractLogsController extends AbstractController
     abstract protected function getService(): ServicesInterface;
 
     public function __construct(
-        private DynamoDbService $dynamoDbService,
+        private LoggerService $loggerService,
         private UserService $userService,
     ) {
 
@@ -154,14 +155,7 @@ abstract class AbstractLogsController extends AbstractController
         return $admins;
     }
 
-    //dashboard
-    #[Route(path:"/admin/logs", name:"logs_main")]
-    public function index(Request $request)
-    {
-
-    }
-
-
+   
     public function getAllLogs(Request $request, $itemId)
     {
 
@@ -172,7 +166,7 @@ abstract class AbstractLogsController extends AbstractController
 
 
         // Get product logs by entity type
-        $itemLogs = $this->dynamoDbService->getLogsByEntityType($this->getEntityType());
+        $itemLogs = $this->loggerService->getLogsByEntityType($this->getEntityType());
 
         // Apply filters one by one
 

@@ -32,7 +32,7 @@
 			{% block nav %}
 				<nav class="navbar navbar-expand-lg navbar-light bg-light">
 					<div class="container-fluid">
-						<a class="navbar-brand" href="#">Navbar</a>
+						<a class="navbar-brand" href="#"><img class="" style="width: 40px; height: 40px;" src="{{asset('./images/logo.png')}}" ></img></a>
 						<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 							<span class="navbar-toggler-icon"></span>
 						</button>
@@ -111,7 +111,7 @@
 
 		<main>
 			{% block main %}
-				<section class="content">
+				<section class="mb-3">
 					{% block content %}{% endblock %}
 				</section>
 
@@ -121,7 +121,7 @@
 
 		<footer>
 			{% block footer %}
-				<footer class="bg-dark text-white py-4">
+				<footer class="bg-dark text-white py-4 fixed fixed-bottom">
 		<div class="container text-center">
 			<p class="mb-0">© 2024 Your E-commerce Store. All Rights Reserved.</p>
 		</div>

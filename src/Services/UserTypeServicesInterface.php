@@ -7,7 +7,7 @@ interface UserTypeServicesInterface extends ServicesInterface
     /**
      * Summary of getAllVerifiedQueryBuilder
      * @return void
-     *              returns all verified type users , in querybuilder type
+     * returns all verified type users , in querybuilder type
      */
     public function getAllVerifiedQueryBuilder();
 }
