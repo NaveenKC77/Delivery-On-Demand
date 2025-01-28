@@ -42,6 +42,14 @@ class ProductRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findFeaturedProducts(){
+        return $this->getAllQueryBuilder()
+        ->setMaxResults(3)
+        ->getQuery()
+        ->getResult();
+    }
+
     //    /**
     //     * @return Product[] Returns an array of Product objects
     //     */

@@ -37,6 +37,10 @@ class ProductService implements NonUserTypeServicesInterface
         return $this->productRepository->findOneById($id);
     }
 
+    public function getFeaturedProducts(){
+        return $this->productRepository->findFeaturedProducts(); 
+    }
+
 
     public function add($entity): void
     {

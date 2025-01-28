@@ -39,7 +39,7 @@
 						<div class="collapse navbar-collapse" id="navbarSupportedContent">
 							<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 								<li class="nav-item">
-									<a class="nav-link active" aria-current="page" href="#">Home</a>
+									<a class="nav-link active" aria-current="page" href="/">Home</a>
 								</li>
 								<li class="nav-item">
 									<a class="nav-link" href="#">About Us</a>
@@ -111,10 +111,6 @@
 
 		<main>
 			{% block main %}
-
-				<aside>
-					{% block aside %}{% endblock %}
-				</aside>
 				<section class="content">
 					{% block content %}{% endblock %}
 				</section>
@@ -124,7 +120,13 @@
 		</main>
 
 		<footer>
-			{% block footer %}{% endblock %}
+			{% block footer %}
+				<footer class="bg-dark text-white py-4">
+		<div class="container text-center">
+			<p class="mb-0">© 2024 Your E-commerce Store. All Rights Reserved.</p>
+		</div>
+	</footer>
+			{% endblock %}
 		</footer>
 
 
