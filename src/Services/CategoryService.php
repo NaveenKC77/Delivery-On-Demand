@@ -28,21 +28,19 @@ class CategoryService implements NonUserTypeServicesInterface
 
     public function add($entity): void
     {
-        $this->categoryRepository->getEntityManager()->persist($entity);
-        $this->categoryRepository->getEntityManager()->flush();
+        $this->categoryRepository->save($entity);   
     }
 
     public function delete($id)
     {
         $object = $this->categoryRepository->findOneById($id);
-        $this->categoryRepository->getEntityManager()->remove($object);
-        $this->categoryRepository->getEntityManager()->flush();
+        $this->categoryRepository->delete($object);
+       
     }
 
     public function edit($entity)
     {
-        $this->categoryRepository->getEntityManager()->persist($entity);
-        $this->categoryRepository->getEntityManager()->flush();
+        $this->categoryRepository->save($entity);
     }
 
 }

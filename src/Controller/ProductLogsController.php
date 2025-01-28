@@ -2,7 +2,8 @@
 
 namespace App\Controller;
 
-use App\Services\DynamoDbService;
+use App\Services\LogFilterService;
+use App\Services\LoggerService;
 use App\Services\ProductService;
 use App\Services\ServicesInterface;
 use App\Services\UserService;
@@ -12,10 +13,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ProductLogsController extends AbstractLogsController
 {
-    public function __construct(private ProductService $productService, private DynamoDbService $dynamoDbService, private UserService $userService)
+    public function __construct(private ProductService $productService, private LoggerService $loggerService, private UserService $userService,private LogFilterService $logFilterService)
     {
 
-        parent::__construct($this->dynamoDbService, $this->userService);
+        parent::__construct($this->loggerService, $this->userService,$this->logFilterService);
     }
 
     public function getEntityType(): string

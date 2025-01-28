@@ -27,7 +27,7 @@ class EmployeeService implements UserTypeServicesInterface
         return $this->employeeRepository->getAllQueryBuilder();
     }
 
-    public function getAllVerifiedQueryBuilder()
+    public function getAllVerifiedQueryBuilder(): QueryBuilder
     {
         return $this->employeeRepository->getAllVerifiedQueryBuilder();
     }

@@ -2,90 +2,72 @@
 
 namespace App\Controller;
 
-use App\Services\DynamoDbService;
+
+use App\Services\LogFilterService;
 use App\Services\LoggerService;
 use App\Services\ServicesInterface;
 use App\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+
 
 abstract class AbstractLogsController extends AbstractController
 {
     /**
-     * Summary of admins
-     * @var array
-     *            list of admins in the system
+     *  list of admins in the system
      */
     private array $admins = [];
 
     /**
-     * Summary of items
-     * @var array
-     *            all the items to be used for specific log sort
+     *all the items to be used for specific log sort
      */
     private array $items = [];
 
-    /**
-     * Summary of templateName
-     * @var string
-     *             twig template
+    /*
+     *twig template
      */
     private string $templateName;
 
     /**
-     * Summary of action
-     * @var string
-     *             sort logs : Create, Update , Delete
+     *sort logs : Create, Update , Delete
      */
     private string $action = 'All';
 
     /**
-     * Summary of adminId
-     * @var int
-     *          Selected admin  for sorting logs
+     *Selected admin  for sorting logs
      */
     private int $adminId = 0;
 
     /**
-     * Summary of timeInterval
-     * @var string
-     *             to sort logs for last 24hrs, 7 days etc.
+     * to sort logs for last 24hrs, 7 days etc.
      */
     private string $timeInterval = 'All';
 
     /**
-     * Summary of itemId
-     * @var int
-     *          variable to store item id for sorting logs by specific item
+     *variable to store item id for sorting logs by specific item
      */
     private int $itemId = 0;
 
     /**
-     * Summary of getItems
-     * @return array
-     *               returns list of items for sorting , eg: products for productLogs and categoried for category logs
+     *returns list of items for sorting , eg: products for productLogs and categoried for category logs
      */
 
     abstract protected function getEntityType(): string;
 
     /**
-     * Summary of getRedirectRoute
-     * @return string
-     *                return sredirect route string , after completion of sorting functions
+     *return sredirect route string , after completion of sorting functions
      */
     abstract protected function getRedirectRoute(): string;
 
     /**
-     * Summary of getService
-     * @return \App\Services\ServicesInterface
-     *                                         specific for each logs
+     * specific for each logs
      */
     abstract protected function getService(): ServicesInterface;
 
     public function __construct(
         private LoggerService $loggerService,
         private UserService $userService,
+        private LogFilterService $logFilterService,
     ) {
 
     }
@@ -155,7 +137,7 @@ abstract class AbstractLogsController extends AbstractController
         return $admins;
     }
 
-   
+
     public function getAllLogs(Request $request, $itemId)
     {
 
@@ -186,28 +168,7 @@ abstract class AbstractLogsController extends AbstractController
 
         // Filter by Time Interval (e.g., last 24 hours, last week, last month)
         if ($timeInterval !== 'All') {
-            $currentDateTime = new \DateTime('now', new \DateTimeZone('UTC')); // Current time in UTC
-            $endDateString = $currentDateTime->format('Y-m-d\TH:i:s\Z'); // ISO 8601 format
-
-            switch ($timeInterval) {
-                case 'day':
-                    $startDateString = (clone $currentDateTime)->modify('-24 hours')->format('Y-m-d\TH:i:s\Z');
-                    break;
-                case 'week':
-                    $startDateString = (clone $currentDateTime)->modify('-7 days')->format('Y-m-d\TH:i:s\Z');
-                    break;
-                case 'month':
-                    $startDateString = (clone $currentDateTime)->modify('-30 days')->format('Y-m-d\TH:i:s\Z');
-                    break;
-                default:
-                    $startDateString = $endDateString; // No filtering
-            }
-
-            // Apply time interval filter
-            $itemLogs = array_filter($itemLogs, function ($log) use ($startDateString, $endDateString) {
-                $logDate = new \DateTime($log->Date);
-                return $logDate >= new \DateTime($startDateString) && $logDate <= new \DateTime($endDateString);
-            });
+           $itemLogs = $this->logFilterService->filterLogsByTimeInterval($timeInterval,$itemLogs);
         }
 
         // Filter by ItemId

@@ -13,7 +13,9 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class MainController extends AbstractController
 {
-    public function __construct(private ProductService $productService){}
+    public function __construct(private ProductService $productService)
+    {
+    }
     #[Route('/', name: 'app_main')]
     public function index(): Response
     {

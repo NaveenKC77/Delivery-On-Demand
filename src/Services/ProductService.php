@@ -5,77 +5,66 @@ namespace App\Services;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
+
 
 class ProductService implements NonUserTypeServicesInterface
 {
-    public function __construct(private ProductRepository $productRepository)
+    public function __construct(private ProductRepository $productRepository, private FileUploadService $fileUploadService)
     {
     }
 
     /**
-     * Summary of getAllQueryBuilder
-     * @return \Doctrine\ORM\QueryBuilder
-     *                                    queryBuilder to get All Products with categories joined
-     */
-    public function getAllQueryBuilder(): QueryBuilder
-    {
-        return $this->productRepository->getAllQueryBuilder();
-    }
-
-    /**
-     * Summary of getAll
-     * @return array of all products joined with categories
+     * return array of all products joined with categories
      */
     public function getAll(): array
     {
         return $this->productRepository->findAllWithCategories();
     }
-
+    /**
+     *return single row of product
+     */
     public function getOneById(int $id): Product | null
     {
         return $this->productRepository->findOneById($id);
     }
 
-    public function getFeaturedProducts(){
-        return $this->productRepository->findFeaturedProducts(); 
+    /**
+     * Returns first 3 products
+     */
+    public function getFeaturedProducts()
+    {
+        return $this->productRepository->findFeaturedProducts();
     }
 
-
+    /**
+     * Adds a new product
+     */
     public function add($entity): void
     {
-        $this->productRepository->getEntityManager()->persist($entity);
-        $this->productRepository->getEntityManager()->flush();
+        $this->productRepository->save($entity);
     }
 
+    /**
+     * Deletes a product
+     */
     public function delete($entity)
     {
-        $this->productRepository->getEntityManager()->remove($entity);
-        $this->productRepository->getEntityManager()->flush();
+        $this->productRepository->delete($entity);
     }
 
-
+    /**
+     * Updates already existing product
+     */
     public function edit($entity)
     {
-        $this->productRepository->getEntityManager()->persist($entity);
-        $this->productRepository->getEntityManager()->flush();
+        $this->productRepository->save($entity);
     }
 
-
-    // set a unique name for uploaded file, uploads it, and returns new FileName
-    public function processUpload($imagePath, $uploadDir): string
+        /**
+     *    queryBuilder to get All Products with categories joined
+     */
+    public function getAllQueryBuilder(): QueryBuilder
     {
-        $newFileName = uniqid() . '.' . $imagePath->guessExtension();
-
-        try {
-            $imagePath->move(
-                $uploadDir,
-                $newFileName
-            );
-        } catch (FileException $e) {
-            return $e->getMessage();
-        }
-
-        return $newFileName;
+        return $this->productRepository->getAllQueryBuilder();
     }
 }

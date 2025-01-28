@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Services\AdminDashboardService;
 use App\Services\LoggerService;
 use App\Services\LogFilterService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,7 +12,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AdminController extends AbstractController
 {
-    public function __construct(private LoggerService $loggerService, private LogFilterService $logFilterService)
+    public function __construct(private AdminDashboardService $adminDashboardService)
     {
     }
 
@@ -22,37 +23,13 @@ class AdminController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function index(): Response
     {
-        // get all logs of product added
-        $productsAdded = $this->loggerService->getLogsByEntityAction('Product', 'Create');
-
-        // chart data for products added in last [day,week,month]
-        $productsAddedData = [
-            count($this->logFilterService->filterLogsByTimeInterval('day', $productsAdded)),
-            count($this->logFilterService->filterLogsByTimeInterval('week', $productsAdded)),
-            count($this->logFilterService->filterLogsByTimeInterval('month', $productsAdded)),
-        ];
-
-        //get all logs for categories added
-        $categoriesAdded = $this->loggerService->getLogsByEntityAction('Category', 'Create');
-
-        // chart data for categories added in last [day,week,month]
-        $categoriesAddedData = [
-            count($this->logFilterService->filterLogsByTimeInterval('day', $categoriesAdded)),
-            count($this->logFilterService->filterLogsByTimeInterval('week', $categoriesAdded)),
-            count($this->logFilterService->filterLogsByTimeInterval('month', $categoriesAdded)),
-        ];
-
-        $data = [
-            'products' => $productsAddedData, // [last 24 hours, last week, last month]
-            'categories' => $categoriesAddedData,
-            'users' => [5,20,6]
-        ];
+        //Get Dashboard Chart Data
+        $data = $this->adminDashboardService->getDashboardData();
 
         return $this->render('admin/dashboard.html.twig', [
             'data' => $data
         ]);
 
     }
-
 
 }

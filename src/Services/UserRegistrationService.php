@@ -2,18 +2,17 @@
 
 namespace App\Services;
 
-use App\Entity\Cart;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\Form;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
+
 
 class UserRegistrationService
 {
     public function __construct(
-        private VerifyEmailHelperInterface $verifyEmailHelper,
-        private UserPasswordHasherInterface $userPasswordHasher,
+        private PasswordService $passwordService,
+        private RoleService $roleService,
+        private CartService $cartService,
         private EntityManagerInterface $entityManager,
     ) {
     }
@@ -25,18 +24,16 @@ class UserRegistrationService
 
         try {
             // encode the plain password
-            $user->setPassword($this->userPasswordHasher->hashPassword($user, $plainPassword));
+            $user->setPassword($this->passwordService->hashPassword($user, $plainPassword));
 
             // set role
-            $user->setRoles(['ROLE_CUSTOMER']);
+            $this->roleService->assignRole($user,'ROLE_CUSTOMER');
 
             // initialize cart
-            $cart = new Cart();
-            $cart->setCustomer($user->getCustomer());
+            $this->cartService->initializeCart($user);
 
             // save in db
             $this->entityManager->persist($user);
-            $this->entityManager->persist($cart);
             $this->entityManager->flush();
         } catch (\Exception $e) {
             throw new \Exception($e);
@@ -49,7 +46,7 @@ class UserRegistrationService
 
         try {
             // encode the plain password
-            $user->setPassword($this->userPasswordHasher->hashPassword($user, $plainPassword));
+            $user->setPassword($this->passwordService->hashPassword($user, $plainPassword));
             $user->setRoles(['IS_EMPLOYEE']);
 
             $this->entityManager->persist($user);
@@ -59,19 +56,5 @@ class UserRegistrationService
         }
     }
 
-    public function generateSignedUrl(User $user)
-    {
-        // Verification
-        $signatureComponents = $this->verifyEmailHelper->generateSignature(
-            'app_verify_email',
-            $user->getId(),
-            $user->getEmail(),
-            ['id' => $user->getId()]
-        );
-
-        $signedUrl = $signatureComponents->getSignedUrl();
-
-        return $signedUrl;
-    }
-
+  
 }

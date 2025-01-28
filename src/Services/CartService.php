@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Entity\Cart;
 use App\Repository\CartRepository;
+use App\Entity\User;
 
 class CartService
 {
@@ -35,5 +36,12 @@ class CartService
     public function getCartFromCustomerId($customerId)
     {
         return $this->cartRepository->findOneByCustomerId($customerId);
+    }
+
+    public function initializeCart(User $user){
+        $cart = new Cart();
+        $cart->setCustomer($user->getCustomer());
+        $this->cartRepository->getEntityManager()->persist($cart);
+
     }
 }

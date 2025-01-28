@@ -17,6 +17,20 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
+    public function save(Product $product): void
+    {
+        $em = $this->getEntityManager();
+        $em->persist($product);
+        $em->flush();
+    }
+
+    public function delete(Product $product): void
+    {
+        $em = $this->getEntityManager();
+        $em->remove($product);
+        $em->flush();
+    }
+
     /**
      * Returns query builder for pagerfanta pagination.
      *
@@ -43,7 +57,8 @@ class ProductRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findFeaturedProducts(){
+    public function findFeaturedProducts()
+    {
         return $this->getAllQueryBuilder()
         ->setMaxResults(3)
         ->getQuery()

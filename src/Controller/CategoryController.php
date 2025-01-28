@@ -3,15 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Category;
-use App\Event\Events\CategoryCreatedEvent;
-use App\Event\Events\CategoryCRUDEvent;
-use App\Event\Events\CategoryDeletedEvent;
-use App\Event\Events\CategoryUpdatedEvent;
 use App\Form\CategoryFormType;
 use App\Repository\CategoryRepository;
+use App\Services\CategoryEventDispatcherService;
 use App\Services\CategoryService;
 use App\Services\ServicesInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +18,7 @@ class CategoryController extends AbstractFormController
     public function __construct(
         private CategoryService $categoryService,
         private CategoryRepository $categoryRepository,
-        private EventDispatcherInterface $eventDispatcher
+        private CategoryEventDispatcherService  $eventDispatcherService
     ) {
     }
 
@@ -42,6 +38,30 @@ class CategoryController extends AbstractFormController
     public function getUploadDir(): string
     {
         return $this->getParameter('kernel.project_dir') . '/assets/images/uploads';
+    }
+
+         /**
+     * Hook for post-create actions.
+     */
+    protected function postCreateHook(object $entity): void
+    {
+        $this->eventDispatcherService->dispatchCategoryCreatedEvent($entity);
+    }
+
+    /**
+     * Hook for post-update actions.
+     */
+    protected function postUpdateHook(object $entity): void
+    {
+        $this->eventDispatcherService->dispatchCategoryUpdatedEvent($entity);
+    }
+
+    /**
+     * Hook for post-delete actions.
+     */
+    protected function postDeleteHook(object $entity): void
+    {
+        $this->eventDispatcherService->dispatchCategoryDeletedEvent($entity);
     }
 
     // display page
@@ -87,8 +107,7 @@ class CategoryController extends AbstractFormController
 
             try {
                 // triggering event to store log in dynamodb
-                $event = new CategoryCreatedEvent($this->data);
-                $this->eventDispatcher->dispatch($event, CategoryCreatedEvent::class);
+                $this->postCreateHook($this->getData());
 
                 return $result;
             } catch (\Exception $e) {
@@ -119,8 +138,7 @@ class CategoryController extends AbstractFormController
             try {
 
                 // triggering event to store log in dynamodb
-                $event = new CategoryUpdatedEvent($this->getData());
-                $this->eventDispatcher->dispatch($event, CategoryUpdatedEvent::class);
+                $this->postUpdateHook($this->getData());
 
                 return $result;
             } catch (\Exception $e) {
@@ -145,8 +163,7 @@ class CategoryController extends AbstractFormController
         try {
             $category = $this->categoryService->getOneById($id);
             // triggering event to store log in dynamodb
-            $event = new CategoryDeletedEvent($category);
-            $this->eventDispatcher->dispatch($event, CategoryDeletedEvent::class);
+            $this->postDeleteHook($category);
 
             return parent::delete($id);
         } catch (\Exception $e) {

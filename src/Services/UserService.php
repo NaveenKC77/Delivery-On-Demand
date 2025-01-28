@@ -40,15 +40,12 @@ class UserService implements UserTypeServicesInterface
     public function deleteUser($id)
     {
         $user = $this->getUser($id);
-        $this->userRepository->getEntityManager()->remove($user);
-        $this->userRepository->getEntityManager()->flush();
+       $this->userRepository->delete($user);
     }
 
     /**
-     * Summary of getAllAdmin
-     * @return array
-     *               used for sorting logs
-     *               adds 'All Admin with id 0' to the start of array
+     *  used for sorting logs
+     *  adds 'All Admin with id 0' to the start of array
      */
     public function getAllAdmin()
     {

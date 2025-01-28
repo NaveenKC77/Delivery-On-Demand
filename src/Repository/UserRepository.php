@@ -33,6 +33,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    public function save(User $user){
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
+    }
+
+    public function delete(User $user){
+        $this->getEntityManager()->remove($user);
+        $this->getEntityManager()->flush();
+    }
+
     /**
      * Get all users with the "Admin" role.
      *

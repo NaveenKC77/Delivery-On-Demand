@@ -3,20 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Product;
-use App\Event\Events\ProductCreatedEvent;
-use App\Event\Events\ProductCRUDEvent;
-use App\Event\Events\ProductDeletedEvent;
-use App\Event\Events\ProductUpdatedEvent;
 use App\Form\ProductFormType;
+use App\Services\FileUploadService;
+use App\Services\ProductEventDispatcherService;
 use App\Services\ProductService;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use function Cake\Core\toString;
 
 /**
  * Summary of ProductController
@@ -24,7 +20,11 @@ use function Cake\Core\toString;
  */
 class ProductController extends AbstractFormController
 {
-    public function __construct(private ProductService $productService, private EventDispatcherInterface $eventDispatcher)
+    public function __construct(
+        private ProductService $productService,
+        private FileUploadService $fileUploadService,
+        private ProductEventDispatcherService $eventDispatcherService,
+        )
     {
     }
 
@@ -45,6 +45,30 @@ class ProductController extends AbstractFormController
     {
         return $this->getParameter('kernel.project_dir') . '/assets/images/uploads';
     }
+       /**
+     * Hook for post-create actions.
+     */
+    protected function postCreateHook(object $entity): void
+    {
+        $this->eventDispatcherService->dispatchProductCreatedEvent($entity);
+    }
+
+    /**
+     * Hook for post-update actions.
+     */
+    protected function postUpdateHook(object $entity): void
+    {
+        $this->eventDispatcherService->dispatchProductUpdatedEvent($entity);
+    }
+
+    /**
+     * Hook for post-delete actions.
+     */
+    protected function postDeleteHook(object $entity): void
+    {
+        $this->eventDispatcherService->dispatchProductDeletedEvent($entity);
+    }
+
 
     // display page
     #[Route('/admin/product/{page<\d+>}', name: 'app_admin_product')]
@@ -98,22 +122,17 @@ class ProductController extends AbstractFormController
             $imagePath = $this->form->get('imagePath')->getData();
 
             if ($imagePath) {
-                $newFileName = $this->getService()->processUpload($imagePath, $this->getUploadDir());
+                $newFileName = $this->fileUploadService->upload($imagePath, $this->getUploadDir());
                 $entity->setImagePath('./images/uploads/' . $newFileName);
             }
             try {
                 $this->getService()->add($entity);
+
+                $this->postCreateHook($entity);
                 $this->addFlash(static::SUCCESS, $this->getMessage());
-
-                //create log in dynamo db
-                $event = new ProductCreatedEvent($entity);
-                $this->eventDispatcher->dispatch($event, ProductCreatedEvent::class);
-
                 return $this->redirectToRoute($this->getRedirectRoute());
             } catch (\Exception $e) {
                 $this->addFlash(static::ERROR, $e->getMessage());
-
-                return $this->redirectToRoute($this->getRedirectRoute());
             }
         }
 
@@ -123,61 +142,39 @@ class ProductController extends AbstractFormController
     }
 
     #[Route('/admin/product/edit/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function editProduct(int $id, Request $request)
+    public function edit(int $id, Request $request): Response
     {
         $this->setTemplateName('admin/product/edit.html.twig');
         $this->setRedirectRoute('app_admin_product');
-        $this->setMessage('Product Updated successfully');
 
         $product = $this->productService->getOneById($id);
-        // keeping originalImage Path , incase user doen't update the image
-        $originalImagePath = toString($product->getImagePath());
+        $originalImagePath = $product->getImagePath();
 
-        $this->form = $this->createForm(ProductFormType::class, $product);
-        $this->form->handleRequest($request);
+        $form = $this->createForm(ProductFormType::class, $product);
+        $form->handleRequest($request);
 
-        if ($this->form->isSubmitted() && $this->form->isValid()) {
-            $editedProduct = $this->form->getData();
-
-            $imagePath = $this->form->get('imagePath')->getData();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $imagePath = $form->get('imagePath')->getData();
 
             if ($imagePath) {
-                $newFileName = uniqid() . '.' . $imagePath->guessExtension();
-
-                try {
-                    $imagePath->move(
-                        $this->getParameter('kernel.project_dir') . '/assets/images/uploads',
-                        $newFileName
-                    );
-
-                    $editedProduct->setImagePath("./images/uploads/{$newFileName}") ;
-                } catch (\Exception $e) {
-                    $this->addFlash(static::ERROR, $e->getMessage());
-
-                    return $this->redirectToRoute($this->getRedirectRoute());
-                }
-            }
-            //set to original ImagePath if no image uploaded
-            if (null == $imagePath) {
-                $editedProduct->setImagePath($originalImagePath);
+                $newFileName = $this->fileUploadService->upload($imagePath, $this->getUploadDir());
+                $product->setImagePath('./images/uploads/' . $newFileName);
+            } else {
+                $product->setImagePath($originalImagePath);
             }
 
             try {
-                $this->productService->edit($editedProduct);
+                $this->productService->edit($product);
+                $this->postUpdateHook($product);    
 
-                //create log in dynamo db
-                $event = new ProductUpdatedEvent($product);
-                $this->eventDispatcher->dispatch($event, ProductUpdatedEvent::class);
-
-                $this->addFlash(static::SUCCESS, $this->getMessage());
-                return $this->redirectToRoute($this->getRedirectRoute());
+                $this->addFlash('success', 'Product updated successfully.');
+                return $this->redirectToRoute('app_admin_product');
             } catch (\Exception $e) {
-                $this->addFlash(static::ERROR, $e->getMessage());
-                return $this->redirectToRoute($this->getRedirectRoute());
+                $this->addFlash('error', $e->getMessage());
             }
         }
-        $this->setTemplateData(['form' => $this->form, 'product' => $product]);
 
+        $this->setTemplateData(['form' => $form->createView()]);
         return parent::read();
     }
 
@@ -190,8 +187,7 @@ class ProductController extends AbstractFormController
         try {
             $product = $this->productService->getOneById($id);
             //create log in dynamo db
-            $event = new ProductDeletedEvent($product, 'Delete');
-            $this->eventDispatcher->dispatch($event, ProductDeletedEvent::class);
+          $this->postDeleteHook( $product);
             return parent::delete($product);
         } catch (\Exception $e) {
             $this->addFlash(static::ERROR, $e->getMessage());
@@ -230,4 +226,6 @@ class ProductController extends AbstractFormController
 
         return parent::read();
     }
+
+
 }

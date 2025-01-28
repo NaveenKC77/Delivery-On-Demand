@@ -6,8 +6,8 @@ use App\Entity\User;
 use App\Event\Events\UserRegisteredEvent;
 use App\Form\CustomerRegistrationFormType;
 use App\Form\EmployeeRegistrationFormType;
-use App\Repository\UserRepository;
 use App\Services\UserRegistrationService;
+use App\Services\UserVerificationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,15 +15,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
-use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
+
 
 class RegistrationController extends AbstractController
 {
     public function __construct(
-        private VerifyEmailHelperInterface $verifyEmailHelper,
-        private UserRepository $userRepository,
         private EventDispatcherInterface $eventDispatcher,
         private UserRegistrationService $userRegistrationService,
+        private UserVerificationService $userVerificationService
     ) {
     }
 
@@ -40,14 +39,23 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userRegistrationService->registerCustomer($user, $form);
-            $signedUrl = $this->userRegistrationService->generateSignedUrl($user);
-            $this->addFlash('success', 'Confirm your email at :' . $signedUrl);
+            try {
+                // Register customer
+                $this->userRegistrationService->registerCustomer($user, $form);
 
-            $event = new UserRegisteredEvent($signedUrl, $user);
-            $this->eventDispatcher->dispatch($event, UserRegisteredEvent::class);
+                // Generate signed URL for email verification
+                $signedUrl = $this->userVerificationService->generateSignedUrl($user);
 
-            return $this->redirectToRoute('app_login');
+                // Dispatch the UserRegisteredEvent
+                $event = new UserRegisteredEvent($signedUrl, $user);
+                $this->eventDispatcher->dispatch($event, UserRegisteredEvent::class);
+
+                $this->addFlash('success', 'Registration successful! Confirm your email at: ' . $signedUrl);
+
+                return $this->redirectToRoute('app_login');
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Registration failed: ' . $e->getMessage());
+            }
         }
 
         return $this->render('registration/register.html.twig', [
@@ -69,18 +77,23 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /* @var string $plainPassword */
+            try {
+                // Register employee
+                $this->userRegistrationService->registerEmployee($user, $form);
 
-            $this->userRegistrationService->registerEmployee($user, $form);
-            $this->addFlash('success', 'You have successfully registered an employee');
+                // Generate signed URL for email verification
+                $signedUrl = $this->userVerificationService->generateSignedUrl($user);
 
-            $signedUrl = $this->userRegistrationService->generateSignedUrl($user);
-            // do anything else you need here, like send an email
+                // Dispatch the UserRegisteredEvent
+                $event = new UserRegisteredEvent($signedUrl, $user);
+                $this->eventDispatcher->dispatch($event, UserRegisteredEvent::class);
 
-            $event = new UserRegisteredEvent($signedUrl, $user);
-            $this->eventDispatcher->dispatch($event, UserRegisteredEvent::class);
+                $this->addFlash('success', 'Employee registered successfully.');
 
-            return $this->redirectToRoute('app_admin');
+                return $this->redirectToRoute('app_admin');
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Employee registration failed: ' . $e->getMessage());
+            }
         }
 
         return $this->render('registration/employee.html.twig', [
@@ -91,22 +104,13 @@ class RegistrationController extends AbstractController
     #[Route('/verify', name: 'app_verify_email')]
     public function verifyUserEmail(Request $request)
     {
-        $user = $this->userRepository->findOneById($request->query->get('id'));
-
-        if (!$user) {
-            throw $this->createNotFoundException();
-        }
         try {
-            $this->verifyEmailHelper->validateEmailConfirmationFromRequest($request, $user->getId(), $user->getEmail());
+            $this->userVerificationService->verifyEmail($request);
+            $this->addFlash('success', 'Verified Successfully! You can now log in.');
         } catch (VerifyEmailExceptionInterface $e) {
-            $this->addFlash('error', $e->getReason());
-
+            $this->addFlash('error', $e->getMessage());
             return $this->redirectToRoute('app_register');
         }
-
-        $user->setIsVerified(true);
-        $this->userRepository->getEntityManager()->flush();
-        $this->addFlash('success', 'Verified Successfully ! You can now login.');
 
         return $this->redirectToRoute('app_login');
     }
@@ -114,12 +118,15 @@ class RegistrationController extends AbstractController
     #[Route('/verify/resend/{username}', name: 'app_verify_resend_email')]
     public function resendVerifyEmail($username, Request $request)
     {
-        $user = $this->userRepository->findOneBy(['username' => $username]);
+        try {
+            // Return signedUrl for resending
+            $signedUrl = $this->userVerificationService->resendVerificationEmail($username);
 
-        $signedUrl = $this->userRegistrationService->generateSignedUrl($user);
+            $this->addFlash('success', 'Verification email sent. Confirm your email at: ' . $signedUrl);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Failed to resend verification email: ' . $e->getMessage());
+        }
 
-        $this->addFlash('success', 'Confirm your email at :' . $signedUrl);
-
-        return $this->redirectToRoute('app_main');
+        return $this->redirectToRoute('app_login');
     }
 }

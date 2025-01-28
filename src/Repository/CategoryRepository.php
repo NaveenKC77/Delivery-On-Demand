@@ -32,6 +32,21 @@ class CategoryRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+
+    public function save(Category $category): void
+    {
+        $em = $this->getEntityManager();
+        $em->persist($category);
+        $em->flush();
+    }
+
+    public function delete(Category $category): void
+    {
+        $em = $this->getEntityManager();
+        $em->remove($category);
+        $em->flush();
+    }
+
     //    /**
     //     * @return Category[] Returns an array of Category objects
     //     */

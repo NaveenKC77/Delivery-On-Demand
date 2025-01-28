@@ -4,7 +4,6 @@ namespace App\EventSubscribers;
 
 use App\Entity\EntityInterface;
 use App\Event\Events\CategoryCreatedEvent;
-use App\Event\Events\CategoryCRUDEvent;
 use App\Event\Events\CategoryDeletedEvent;
 use App\Event\Events\CategoryUpdatedEvent;
 use App\Event\Events\ProductCreatedEvent;
