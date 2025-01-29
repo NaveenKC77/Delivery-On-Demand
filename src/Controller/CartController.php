@@ -39,23 +39,24 @@ class CartController extends AbstractController
     ) {
     }
     //helper method to get cart from current logged in user
-    private function getCart(): Cart|null{
-         // getting authorized user
-         $user = $this->security->getUser();
+    private function getCart(): Cart|null
+    {
+        // getting authorized user
+        $user = $this->security->getUser();
 
-         if (!$user instanceof User) {
-             throw new \Exception('wrong type of User passed');
-         }
-         // checking if user is customer and getting its customer id and then cart associated
-         $customer = $user->getCustomer();
- 
-     
-         if(!$customer instanceof Customer) {
-          throw new \Exception('wrong type of User passed');
-         }
-         $cart = $customer->getCart();
+        if (!$user instanceof User) {
+            throw new \Exception('wrong type of User passed');
+        }
+        // checking if user is customer and getting its customer id and then cart associated
+        $customer = $user->getCustomer();
 
-         return $cart;
+
+        if (!$customer instanceof Customer) {
+            throw new \Exception('wrong type of User passed');
+        }
+        $cart = $customer->getCart();
+
+        return $cart;
     }
 
     /**
@@ -79,12 +80,17 @@ class CartController extends AbstractController
     public function addItem(int $productId): Response
     {
         $product = $this->productService->getOneById($productId);
-       
+
         try {
             $cart = $this->getCart();
             $cartItem = new CartItem($product, $cart);
+
+            if ($this->cartService->checkItemExists($cart, $cartItem)) {
+                $this->addFlash('error', 'Item Already Exists in the Cart');
+                return $this->redirectToRoute('app_cart');
+            }
             $this->cartService->addCartItem($cart, $cartItem);
-            $this->addFlash('success', sprintf('Product "%s" successfully added.', $product->getName()));
+
 
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
@@ -157,9 +163,8 @@ class CartController extends AbstractController
 
             $orderDetails = $form->getData();
 
-
             try {
-                //create new order
+                //create new order and returns that order
                 $order = $this->orderService->createOrder($customer, $cart, $orderDetails);
 
                 // Add a success flash message
@@ -168,11 +173,13 @@ class CartController extends AbstractController
                 // raise orderPlacedEvent
                 $event = new OrderPlacedEvent($order);
                 $this->eventDispatcher->dispatch($event, OrderPlacedEvent::class);
+
+                return $this->redirectToRoute('app_main');
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
             }
 
-            return $this->redirectToRoute('app_cart');
+            return $this->redirectToRoute('app_main');
         }
 
         return $this->render('cart/checkout.html.twig', [

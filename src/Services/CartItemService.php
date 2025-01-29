@@ -7,7 +7,7 @@ use App\Repository\CartItemRepository;
 
 class CartItemService
 {
-    public function __construct(private CartItemRepository $cartItemRepository,private CartItemCalculatorService $cartItemCalculatorService)
+    public function __construct(private CartItemRepository $cartItemRepository, private CartItemCalculatorService $cartItemCalculatorService)
     {
     }
 
@@ -57,7 +57,8 @@ class CartItemService
         $this->cartItemRepository->save($cartItem);
     }
 
-    public function resetCartItemNumbers($cartItem): void{
+    public function resetCartItemNumbers($cartItem): void
+    {
         //calculate new total
         $newTotal = $this->cartItemCalculatorService->calculateTotal($cartItem);
         $cartItem->setTotal($newTotal);

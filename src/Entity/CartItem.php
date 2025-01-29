@@ -104,7 +104,8 @@ class CartItem
     }
 
     //get unit Price for calculation
-    public function getUnitPrice(): int|null{
+    public function getUnitPrice(): int|null
+    {
         return $this->getProduct()->getPrice();
     }
 }

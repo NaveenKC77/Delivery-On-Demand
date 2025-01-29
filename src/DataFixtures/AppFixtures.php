@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Factory\CartFactory;
+
 use App\Factory\CategoryFactory;
 use App\Factory\EmployeeFactory;
 use App\Factory\ProductFactory;
@@ -26,7 +26,7 @@ class AppFixtures extends Fixture
                 'isVerified' => true]
         );
 
-        CartFactory::new()->createMany(10);
+       
         EmployeeFactory::new()->createMany(2);
 
         CategoryFactory::new()->createMany(4);

@@ -3,10 +3,10 @@
 namespace App\Event\Events;
 
 use App\Entity\User;
-use App\Services\DynamoDbService;
+
 use Symfony\Contracts\EventDispatcher\Event;
 
-class UserRegisteredEvent extends Event
+class UserRegisteredEvent extends AbstractUserEvent
 {
     public function __construct(
         private string $signedUrl,
@@ -22,5 +22,9 @@ class UserRegisteredEvent extends Event
     public function getUser(): User
     {
         return $this->user;
+    }
+
+    public function getAction(): string{
+        return $this::REGISTER;
     }
 }

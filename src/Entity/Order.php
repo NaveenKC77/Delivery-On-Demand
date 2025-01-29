@@ -24,7 +24,7 @@ class Order
     /**
      * @var Collection<int, CartItem>
      */
-    #[ORM\OneToMany(targetEntity: CartItem::class, mappedBy: Order::class )]
+    #[ORM\OneToMany(targetEntity: CartItem::class, mappedBy: Order::class)]
     private Collection $cartItems;
 
     #[ORM\Column]
@@ -50,10 +50,10 @@ class Order
     public function __construct()
     {
         $this->cartItems = new ArrayCollection();
-        $this->subtotal=0;
-        $this->tax= 0;
-        $this->shipping= 0;
-        $this->total=0;
+        $this->subtotal = 0;
+        $this->tax = 0;
+        $this->shipping = 0;
+        $this->total = 0;
 
     }
 

@@ -10,7 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: CartRepository::class)]
 class Cart implements EntityInterface
 {
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -22,8 +21,6 @@ class Cart implements EntityInterface
     #[ORM\Column]
     private ?int $total = 0;
 
-    #[ORM\Column]
-    private ?int $discount = 0;
 
     #[ORM\OneToOne(inversedBy: 'cart', cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY')]
     #[ORM\JoinColumn(nullable: false)]
@@ -53,7 +50,7 @@ class Cart implements EntityInterface
         return $this->id;
     }
 
-    
+
     public function getQuantity(): ?int
     {
         return $this->quantity;
@@ -72,7 +69,7 @@ class Cart implements EntityInterface
         return $this->total;
     }
 
-   
+
     public function setTotal($total): static
     {
         $this->total = $total;
@@ -80,17 +77,6 @@ class Cart implements EntityInterface
         return $this;
     }
 
-    public function getDiscount(): ?int
-    {
-        return $this->discount;
-    }
-
-    public function setDiscount(int $discount): static
-    {
-        $this->discount = $discount;
-
-        return $this;
-    }
 
     public function getCustomer(): ?Customer
     {
@@ -107,8 +93,9 @@ class Cart implements EntityInterface
 
     public function resetCart()
     {
-        $this->setDiscount(0);
+
         $this->setQuantity(0);
+        $this->setTotal(0);
 
         foreach ($this->cartItems as $item) {
             $this->removeCartItem($item);
@@ -129,7 +116,7 @@ class Cart implements EntityInterface
             $this->cartItems->add($cartItem);
             $cartItem->setCart($this);
         }
-       return $this;
+        return $this;
     }
 
     public function removeCartItem(CartItem $cartItem): static

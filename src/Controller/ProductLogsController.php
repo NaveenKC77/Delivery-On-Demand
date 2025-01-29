@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Services\DynamoDbService;
 use App\Services\LogFilterService;
 use App\Services\LoggerService;
 use App\Services\ProductService;
@@ -13,10 +14,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ProductLogsController extends AbstractLogsController
 {
-    public function __construct(private ProductService $productService, private LoggerService $loggerService, private UserService $userService, private LogFilterService $logFilterService)
+    public function __construct(private ProductService $productService, private LoggerService $loggerService, private UserService $userService,private LogFilterService $logFilterService)
     {
 
-        parent::__construct($this->loggerService, $this->userService, $this->logFilterService);
+        parent::__construct($this->loggerService, $this->userService,$this->logFilterService);
     }
 
     public function getEntityType(): string
@@ -54,9 +55,7 @@ class ProductLogsController extends AbstractLogsController
     #[Route(path:"/admin/logs/product/action/{action}", name:"product_logs_action")]
     public function sortProductLogsByAction(string $action, Request $request)
     {
-        $request->getSession()->set('action', $action);
-
-        return $this->redirectToRoute($this->getRedirectRoute());
+        return parent::sortLogsByAction($action, $request);
     }
 
     #[Route(path:"/admin/logs/product/admin/{adminId}", name:"")]

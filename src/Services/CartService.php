@@ -9,7 +9,7 @@ use App\Entity\User;
 
 class CartService
 {
-    public function __construct(private CartRepository $cartRepository,private CartCalculatorService $cartCalculatorService,private CartItemService $cartItemService)
+    public function __construct(private CartRepository $cartRepository, private CartCalculatorService $cartCalculatorService, private CartItemService $cartItemService)
     {
     }
 
@@ -27,11 +27,12 @@ class CartService
     {
         $cart = new Cart();
         $cart->setCustomer($user->getCustomer());
-       $this->cartRepository->save($cart);
+        $this->cartRepository->save($cart);
 
     }
 
-    public function addCartItem(Cart $cart, CartItem $cartItem): void{
+    public function addCartItem(Cart $cart, CartItem $cartItem): void
+    {
 
         $this->cartItemService->resetCartItemNumbers($cartItem);
 
@@ -43,7 +44,8 @@ class CartService
 
     }
 
-    public function removeCartItem(Cart $cart, CartItem $cartItem): void{
+    public function removeCartItem(Cart $cart, CartItem $cartItem): void
+    {
 
         $cart->removeCartItem($cartItem);
 
@@ -53,16 +55,29 @@ class CartService
 
     }
 
-    public function resetCartNumbers(Cart $cart): void{
+    public function resetCartNumbers(Cart $cart): void
+    {
 
-         //calculate quantity and total
-         $quantity = $this->cartCalculatorService->calculateQuantity($cart->getCartItems());
-         $total = $this->cartCalculatorService->calculateTotal($cart->getCartItems());
- 
-         $cart->setTotal($total);
-         $cart->setQuantity($quantity);
+        //calculate quantity and total
+        $quantity = $this->cartCalculatorService->calculateQuantity($cart->getCartItems());
+        $total = $this->cartCalculatorService->calculateTotal($cart->getCartItems());
 
-         $this->cartRepository->save($cart);
+        $cart->setTotal($total);
+        $cart->setQuantity($quantity);
+
+        $this->cartRepository->save($cart);
     }
 
+    public function checkItemExists(Cart $cart, CartItem $cartItem): bool
+    {
+
+        $cartItems = $cart->getCartItems()->toArray();
+
+        $itemIdArray = array_map(function (CartItem $cartItem) {
+            return $cartItem->getProduct()->getId();
+        }, $cartItems);
+
+        return in_array($cartItem->getProduct()->getId(), $itemIdArray);
+
+    }
 }

@@ -11,8 +11,16 @@ class OrderCalculatorService
         return (int) (($subtotal * $taxRate) / 100);
     }
 
+
     public function calculateTotal(int $subtotal, int $tax, int $shipping): int
     {
         return $subtotal + $tax + $shipping;
     }
+
+
+    public function calculateShipping(): int
+    {
+        return 0;
+    }
+
 }

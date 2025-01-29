@@ -44,14 +44,7 @@ class LoggerEventSubscriber implements EventSubscriberInterface
         return $user;
 
     }
-    public function onUserRegistered(UserRegisteredEvent $event): void
-    {
-        $signedUrl = $event->getSignedUrl();
-        $user = $event->getUser();
-
-        // log in dynamo db
-
-    }
+ 
 
     public function onProductCreated(ProductCreatedEvent $event): void
     {
@@ -81,7 +74,7 @@ class LoggerEventSubscriber implements EventSubscriberInterface
 
     public function onCategoryCreated(CategoryCreatedEvent $event): void
     {
-        // product
+    
         $category = $event->getCategory();
 
         $this->createLog($category, $event->getEntityType(), $event->getAction());
@@ -101,6 +94,13 @@ class LoggerEventSubscriber implements EventSubscriberInterface
         $category = $event->getCategory();
 
         $this->createLog($category, $event->getEntityType(), $event->getAction());
+
+    }
+
+    public function onUserRegistered(UserRegisteredEvent $event): void{
+        $user = $event->getUser();
+
+        $this->createUserLog($user, $event->getEntityType(), $event->getAction());
 
     }
 
@@ -151,6 +151,50 @@ class LoggerEventSubscriber implements EventSubscriberInterface
             dd($e->getMessage());
         }
     }
+
+    public function createUserLog(EntityInterface $entity, string $entityType, string $action){
+        $date = new \DateTimeImmutable();
+
+        // unique uuid for storing LogId in Dynamo
+        $logId = Guid::uuid4()->toString();
+
+        $item = [
+            'PK' => [
+                'S' => "USER#null"
+            ],
+            'SK' => [
+                'S' => "$entityType#$logId"
+            ],
+            'Entity' => [
+                'S' => $entityType
+            ],
+            'EntityId' => [
+                'N' => $entity->getId()
+            ],
+            'AdminId' => [
+                'S' => '0'
+            ],
+            'Action' => [
+                'S' => $action
+            ],
+            'Date' => [
+                'S' => $date->format(\DateTime::ATOM)
+            ],
+            'Admin' => [
+                    'S' => 'none'
+                ]
+            ];
+
+        //log in dynamo db
+
+        try {
+            $this->dynamoDb->putItem($item);
+
+        } catch (AwsException $e) {
+            dd($e->getMessage());
+        }
+    }
+    
     public static function getSubscribedEvents()
     {
         return [
@@ -161,6 +205,7 @@ class LoggerEventSubscriber implements EventSubscriberInterface
             CategoryCreatedEvent::class => ['onCategoryCreated'],
             CategoryUpdatedEvent::class => ['onCategoryUpdated'],
             CategoryDeletedEvent::class => ['onCategoryDeleted'],
+            UserRegisteredEvent::class => ['onUserRegistered'],
 
 
         ];

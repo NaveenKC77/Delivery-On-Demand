@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class LogFilterService
 {
     /**
@@ -37,5 +39,12 @@ class LogFilterService
         });
 
         return $logs;
+    }
+
+    public function resetFilters(Request $request){
+        $request->getSession()->set('action', 'All');
+        $request->getSession()->set('adminId', 0);
+        $request->getSession()->set('timeInterval', 'All');
+        $request->getSession()->set('itemId', 0);   
     }
 }

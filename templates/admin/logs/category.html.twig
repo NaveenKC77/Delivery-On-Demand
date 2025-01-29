@@ -36,9 +36,9 @@
        <div class="container mt-4">
         <h3>Specific Category</h3>
         <select class="form-select" aria-label="Default select example" onchange="location.href = this.value;">
-           <option value="/admin/logs/category/category/0" {{selectedOptions['productId']== 0 ? 'selected' : ''}}>All</option>
+           <option value="/admin/logs/category/category/0" {{selectedOptions['itemId']== 0 ? 'selected' : ''}}>All</option>
             {% for category in items  %}
-            <option value="/admin/logs/category/category/{{category.id}}" {{ selectedOptions['productId'] == category.id ? 'selected' : '' }}>{{category.name}}</option>
+            <option value="/admin/logs/category/category/{{category.id}}" {{ selectedOptions['itemId'] == category.id ? 'selected' : '' }}>{{category.name}}</option>
             {% endfor %}
         </select>
     </div>
