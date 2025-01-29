@@ -10,12 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: CartRepository::class)]
 class Cart implements EntityInterface
 {
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
-    public function updateTotal(): void
-    {
-        $this->resetTotal();
-    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -58,15 +53,7 @@ class Cart implements EntityInterface
         return $this->id;
     }
 
-    public function calculateQuantity()
-    {
-        $total = array_reduce($this->cartItems->toArray(), function ($q, $item) {
-            return $q + $item->getQuantity();
-        }, 0);
-
-        return $total;
-    }
-
+    
     public function getQuantity(): ?int
     {
         return $this->quantity;
@@ -79,37 +66,16 @@ class Cart implements EntityInterface
         return $this;
     }
 
-    public function resetQuantity(): static
-    {
-        $this->quantity = $this->calculateQuantity();
-
-        return $this;
-    }
 
     public function getTotal(): ?int
     {
         return $this->total;
     }
 
-    public function calculateTotal(): ?int
-    {
-        $total = array_reduce($this->cartItems->toArray(), function ($sum, $item) {
-            return $sum + $item->getTotal();
-        }, 0);
-
-        return $total;
-    }
-
+   
     public function setTotal($total): static
     {
         $this->total = $total;
-
-        return $this;
-    }
-
-    public function resetTotal()
-    {
-        $this->total = $this->calculateTotal();
 
         return $this;
     }
@@ -163,10 +129,7 @@ class Cart implements EntityInterface
             $this->cartItems->add($cartItem);
             $cartItem->setCart($this);
         }
-        $this->resetTotal();
-        $this->resetQuantity();
-
-        return $this;
+       return $this;
     }
 
     public function removeCartItem(CartItem $cartItem): static
@@ -177,9 +140,6 @@ class Cart implements EntityInterface
                 $cartItem->setCart(null);
             }
         }
-        $this->resetTotal();
-        $this->resetQuantity();
-
         return $this;
     }
 }

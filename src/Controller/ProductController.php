@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-
 /**
  * Summary of ProductController
  * Route for product related operations
@@ -24,8 +23,7 @@ class ProductController extends AbstractFormController
         private ProductService $productService,
         private FileUploadService $fileUploadService,
         private ProductEventDispatcherService $eventDispatcherService,
-        )
-    {
+    ) {
     }
 
     // get form type
@@ -45,7 +43,7 @@ class ProductController extends AbstractFormController
     {
         return $this->getParameter('kernel.project_dir') . '/assets/images/uploads';
     }
-       /**
+    /**
      * Hook for post-create actions.
      */
     protected function postCreateHook(object $entity): void
@@ -165,7 +163,7 @@ class ProductController extends AbstractFormController
 
             try {
                 $this->productService->edit($product);
-                $this->postUpdateHook($product);    
+                $this->postUpdateHook($product);
 
                 $this->addFlash('success', 'Product updated successfully.');
                 return $this->redirectToRoute('app_admin_product');
@@ -187,7 +185,7 @@ class ProductController extends AbstractFormController
         try {
             $product = $this->productService->getOneById($id);
             //create log in dynamo db
-          $this->postDeleteHook( $product);
+            $this->postDeleteHook($product);
             return parent::delete($product);
         } catch (\Exception $e) {
             $this->addFlash(static::ERROR, $e->getMessage());

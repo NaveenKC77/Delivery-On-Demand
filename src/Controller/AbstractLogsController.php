@@ -2,14 +2,12 @@
 
 namespace App\Controller;
 
-
 use App\Services\LogFilterService;
 use App\Services\LoggerService;
 use App\Services\ServicesInterface;
 use App\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-
 
 abstract class AbstractLogsController extends AbstractController
 {
@@ -168,7 +166,7 @@ abstract class AbstractLogsController extends AbstractController
 
         // Filter by Time Interval (e.g., last 24 hours, last week, last month)
         if ($timeInterval !== 'All') {
-           $itemLogs = $this->logFilterService->filterLogsByTimeInterval($timeInterval,$itemLogs);
+            $itemLogs = $this->logFilterService->filterLogsByTimeInterval($timeInterval, $itemLogs);
         }
 
         // Filter by ItemId

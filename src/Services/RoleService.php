@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Entity\User;
 
-class RoleService 
+class RoleService
 {
     public function assignRole(User $user, string $role): void
     {

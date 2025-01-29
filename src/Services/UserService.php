@@ -40,7 +40,7 @@ class UserService implements UserTypeServicesInterface
     public function deleteUser($id)
     {
         $user = $this->getUser($id);
-       $this->userRepository->delete($user);
+        $this->userRepository->delete($user);
     }
 
     /**

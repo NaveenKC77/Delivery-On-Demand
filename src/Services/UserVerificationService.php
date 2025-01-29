@@ -9,7 +9,7 @@ use SymfonyCasts\Bundle\VerifyEmail\Model\VerifyEmailSignatureComponents;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class UserVerificationService 
+class UserVerificationService
 {
     public function __construct(
         private UserRepository $userRepository,
@@ -36,17 +36,18 @@ class UserVerificationService
         $this->userRepository->getEntityManager()->flush();
     }
 
-    public function resendVerificationEmail(string $username): string{
+    public function resendVerificationEmail(string $username): string
+    {
         $user = $this->userRepository->findOneBy(['username' => $username]);
 
         if (!$user) {
             throw new \Exception('User not found.');
         }
 
-      $signedUrl = $this->generateSignedUrl($user);
+        $signedUrl = $this->generateSignedUrl($user);
 
-      return $signedUrl;
-    
+        return $signedUrl;
+
     }
 
     public function generateSignedUrl(User $user)

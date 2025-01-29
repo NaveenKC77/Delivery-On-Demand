@@ -2,32 +2,34 @@
 
 namespace App\Services;
 
+use App\Entity\CartItem;
 use App\Repository\CartItemRepository;
 
 class CartItemService
 {
-    public function __construct(private CartItemRepository $cartItemRepository)
+    public function __construct(private CartItemRepository $cartItemRepository,private CartItemCalculatorService $cartItemCalculatorService)
     {
     }
 
-    public function add($entity): void
+    public function add(CartItem $cartItem): void
     {
-        $this->cartItemRepository->getEntityManager()->persist($entity);
-        $this->cartItemRepository->getEntityManager()->flush();
+        //calculate new total
+        $newTotal = $this->cartItemCalculatorService->calculateTotal($cartItem);
+        $cartItem->setTotal($newTotal);
+        $this->cartItemRepository->save($cartItem);
     }
 
-    public function delete($entity)
+    public function delete($entity): void
     {
-        $this->cartItemRepository->getEntityManager()->remove($entity);
-        $this->cartItemRepository->getEntityManager()->flush();
+        $this->cartItemRepository->delete($entity);
     }
 
-    public function getOneById(int $id)
+    public function getOneById(int $id): mixed
     {
         return $this->cartItemRepository->findOneById($id);
     }
 
-    public function plusQuantity($id)
+    public function plusQuantity($id): void
     {
         $cartItem = $this->getOneById($id);
         // get stock of the product selected
@@ -36,12 +38,12 @@ class CartItemService
         $quantity = $cartItem->getQuantity();
         // quantity cannot exceed the product stock
         ($quantity >= $stock) ? $cartItem->setQuantity($stock) : $cartItem->setQuantity($quantity + 1);
-
-        $this->cartItemRepository->getEntityManager()->persist($cartItem);
-        $this->cartItemRepository->getEntityManager()->flush();
+        //calculate new total
+        $this->resetCartItemNumbers($cartItem);
+        $this->cartItemRepository->save($cartItem);
     }
 
-    public function minusQuantity($id)
+    public function minusQuantity($id): void
     {
         $cartItem = $this->getOneById($id);
 
@@ -50,7 +52,14 @@ class CartItemService
         // if quantity == 0 , delete the item
         ($quantity == 1) ? $this->delete($cartItem) : $cartItem->setQuantity($quantity - 1);
 
-        $this->cartItemRepository->getEntityManager()->persist($cartItem);
-        $this->cartItemRepository->getEntityManager()->flush();
+        //calculate new total
+        $this->resetCartItemNumbers($cartItem);
+        $this->cartItemRepository->save($cartItem);
+    }
+
+    public function resetCartItemNumbers($cartItem): void{
+        //calculate new total
+        $newTotal = $this->cartItemCalculatorService->calculateTotal($cartItem);
+        $cartItem->setTotal($newTotal);
     }
 }

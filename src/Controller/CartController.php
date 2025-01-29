@@ -2,8 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Cart;
 use App\Entity\CartItem;
-use App\Entity\Order;
+use App\Entity\Customer;
 use App\Entity\OrderDetails;
 use App\Entity\User;
 use App\Event\Events\OrderPlacedEvent;
@@ -14,6 +15,7 @@ use App\Services\OrderService;
 use App\Services\ProductService;
 use App\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -32,8 +34,28 @@ class CartController extends AbstractController
         private UserService $userService,
         private ProductService $productService,
         private OrderService $orderService,
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher,
+        private Security $security,
     ) {
+    }
+    //helper method to get cart from current logged in user
+    private function getCart(): Cart|null{
+         // getting authorized user
+         $user = $this->security->getUser();
+
+         if (!$user instanceof User) {
+             throw new \Exception('wrong type of User passed');
+         }
+         // checking if user is customer and getting its customer id and then cart associated
+         $customer = $user->getCustomer();
+ 
+     
+         if(!$customer instanceof Customer) {
+          throw new \Exception('wrong type of User passed');
+         }
+         $cart = $customer->getCart();
+
+         return $cart;
     }
 
     /**
@@ -43,15 +65,7 @@ class CartController extends AbstractController
     #[IsGranted('ROLE_CUSTOMER')]
     public function index(): Response
     {
-        // getting authorized user
-        $user = $this->getUser();
-
-        if (!$user instanceof User) {
-            throw new \Exception('wrong type of User passed');
-        }
-        // checking if user is customer and getting its customer id and then cart associated
-        $customerId = $user->getCustomer()->getId();
-        $cart = $this->cartService->getCartFromCustomerId($customerId);
+        $cart = $this->getCart();
 
         return $this->render('cart/index.html.twig', [
             'cart' => $cart,
@@ -61,20 +75,17 @@ class CartController extends AbstractController
     /**
      * add item to cart
      */
-    #[Route('/cart/add/{id<\d+>}', name: 'add_item_to_cart')]
-    public function addItem(int $id): Response
+    #[Route('/cart/add/{productId<\d+>}', name: 'add_item_to_cart')]
+    public function addItem(int $productId): Response
     {
-        $product = $this->productService->getOneById($id);
-        $user = $this->getUser();
-
-        if (!$user instanceof User) {
-            throw new \Exception('Wrong type of user');
-        }
+        $product = $this->productService->getOneById($productId);
+       
         try {
-            $cart = $user->getCustomer()->getCart();
+            $cart = $this->getCart();
             $cartItem = new CartItem($product, $cart);
-            $this->cartService->addCartItem($cartItem);
-            $this->addFlash('success', 'Product' . $product->getName() . 'successfully added');
+            $this->cartService->addCartItem($cart, $cartItem);
+            $this->addFlash('success', sprintf('Product "%s" successfully added.', $product->getName()));
+
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
@@ -82,12 +93,13 @@ class CartController extends AbstractController
         return $this->redirectToRoute('app_cart');
     }
 
-    #[Route('/cart/remove/{id<\d+>}', name: 'remove_item_from_cart')]
-    public function removeItem(int $id): Response
+    #[Route('/cart/remove/{cartItemId<\d+>}', name: 'remove_item_from_cart')]
+    public function removeItem(int $cartItemId): Response
     {
         try {
-            $cartItem = $this->cartItemService->getOneById($id);
-            $this->cartService->removeCartItem($cartItem);
+            $cart = $this->getCart();
+            $cartItem = $this->cartItemService->getOneById($cartItemId);
+            $this->cartService->removeCartItem($cart, $cartItem);
             $this->addFlash('success', 'Item' . $cartItem->getProduct()->getName() . 'successfully removed');
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
@@ -96,11 +108,14 @@ class CartController extends AbstractController
         return $this->redirectToRoute('app_cart');
     }
 
-    #[Route('/cart/plusQuantity/{id<\d+>}', name: 'add_quantity_item')]
-    public function addItemQuantity(int $id): Response
+    #[Route('/cart/plusQuantity/{cartItemId<\d+>}', name: 'add_quantity_item')]
+    public function addItemQuantity(int $cartItemId): Response
     {
         try {
-            $this->cartItemService->plusQuantity($id);
+            $cart = $this->getCart();
+            $this->cartItemService->plusQuantity($cartItemId);
+            //reset cart total
+            $this->cartService->resetCartNumbers($cart);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
@@ -108,11 +123,14 @@ class CartController extends AbstractController
         return $this->redirectToRoute('app_cart');
     }
 
-    #[Route('/cart/minusQuantity/{id<\d+>}', name: 'minus_quantity_item')]
-    public function minusItemQuantity(int $id): Response
+    #[Route('/cart/minusQuantity/{cartItemId<\d+>}', name: 'minus_quantity_item')]
+    public function minusItemQuantity(int $cartItemId): Response
     {
         try {
-            $this->cartItemService->minusQuantity($id);
+            $cart = $this->getCart();
+            $this->cartItemService->minusQuantity($cartItemId);
+            //reset cart total
+            $this->cartService->resetCartNumbers($cart);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
@@ -124,7 +142,11 @@ class CartController extends AbstractController
 
     public function checkout(Request $request)
     {
-        $customer = $this->getUser()->getCustomer();
+        $user = $this->security->getUser();
+        if (!$user instanceof User) {
+            throw new \Exception('wrong type of User passed');
+        }
+        $customer = $user->getCustomer();
 
         $orderDetails = new OrderDetails($customer);
         $cart = $customer->getCart();
@@ -134,30 +156,14 @@ class CartController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $orderDetails = $form->getData();
-            $order = new Order();
 
-            // Set the order details and subtotal
-            $order->setOrderDetails($orderDetails);
-            $order->setSubtotal($cart->getTotal());
-
-            // Add cart items to the order
-            foreach ($cart->getCartItems() as $item) {
-                $order->addCartItem($item);
-            }
-
-            // Automatically calculate tax and total based on subtotal
-            $order->setTax($order->calculateTax(10)); // Assuming a 10% tax rate
-            $order->setTotal($order->calculateTotal());
-            $order->setCustomer($customer);
-            // Reset the cart
-            $cart->resetCart();
-
-            // Add a success flash message
-            $this->addFlash('success', 'Order Confirmed');
 
             try {
-                // persist order
-                $this->orderService->add($order);
+                //create new order
+                $order = $this->orderService->createOrder($customer, $cart, $orderDetails);
+
+                // Add a success flash message
+                $this->addFlash('success', 'Order Confirmed');
 
                 // raise orderPlacedEvent
                 $event = new OrderPlacedEvent($order);
@@ -166,10 +172,7 @@ class CartController extends AbstractController
                 $this->addFlash('error', $e->getMessage());
             }
 
-
             return $this->redirectToRoute('app_cart');
-
-
         }
 
         return $this->render('cart/checkout.html.twig', [

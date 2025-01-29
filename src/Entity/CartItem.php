@@ -8,12 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: CartItemRepository::class)]
 class CartItem
 {
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
-    public function updateTotal(): void
-    {
-        $this->resetTotal();
-    }
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -56,11 +50,6 @@ class CartItem
     public function setQuantity(int $quantity): static
     {
         $this->quantity = $quantity;
-        $this->resetTotal();
-        if ($this->cart) {
-            $this->cart->resetTotal();
-            $this->cart->resetQuantity();
-        }
 
         return $this;
     }
@@ -70,17 +59,6 @@ class CartItem
         return $this->total;
     }
 
-    public function calculateTotal(): ?int
-    {
-        return $this->getProduct()->getPrice() * $this->getQuantity();
-    }
-
-    public function resetTotal(): static
-    {
-        $this->total = $this->calculateTotal();
-
-        return $this;
-    }
 
     public function setTotal($total): static
     {
@@ -123,5 +101,10 @@ class CartItem
         $this->order = $order;
 
         return $this;
+    }
+
+    //get unit Price for calculation
+    public function getUnitPrice(): int|null{
+        return $this->getProduct()->getPrice();
     }
 }

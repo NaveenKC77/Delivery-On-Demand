@@ -40,7 +40,7 @@ class CategoryController extends AbstractFormController
         return $this->getParameter('kernel.project_dir') . '/assets/images/uploads';
     }
 
-         /**
+    /**
      * Hook for post-create actions.
      */
     protected function postCreateHook(object $entity): void

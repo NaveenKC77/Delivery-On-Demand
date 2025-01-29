@@ -6,7 +6,6 @@ use App\Entity\Product;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\QueryBuilder;
 
-
 class ProductService implements NonUserTypeServicesInterface
 {
     public function __construct(private ProductRepository $productRepository, private FileUploadService $fileUploadService)
@@ -60,7 +59,7 @@ class ProductService implements NonUserTypeServicesInterface
         $this->productRepository->save($entity);
     }
 
-        /**
+    /**
      *    queryBuilder to get All Products with categories joined
      */
     public function getAllQueryBuilder(): QueryBuilder

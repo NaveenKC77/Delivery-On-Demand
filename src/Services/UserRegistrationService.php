@@ -6,7 +6,6 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\Form;
 
-
 class UserRegistrationService
 {
     public function __construct(
@@ -27,7 +26,7 @@ class UserRegistrationService
             $user->setPassword($this->passwordService->hashPassword($user, $plainPassword));
 
             // set role
-            $this->roleService->assignRole($user,'ROLE_CUSTOMER');
+            $this->roleService->assignRole($user, 'ROLE_CUSTOMER');
 
             // initialize cart
             $this->cartService->initializeCart($user);
@@ -56,5 +55,5 @@ class UserRegistrationService
         }
     }
 
-  
+
 }

@@ -16,6 +16,17 @@ class CartItemRepository extends ServiceEntityRepository
         parent::__construct($registry, CartItem::class);
     }
 
+    public function save(CartItem $cartItem): void
+    {
+        $this->getEntityManager()->persist($cartItem);
+        $this->getEntityManager()->flush();
+    }
+
+    public function delete(CartItem $cartItem): void
+    {
+        $this->getEntityManager()->remove($cartItem);
+        $this->getEntityManager()->flush();
+    }
     //    /**
     //     * @return CartItem[] Returns an array of CartItem objects
     //     */

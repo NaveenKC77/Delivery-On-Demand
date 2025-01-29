@@ -14,10 +14,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CategoryLogsController extends AbstractLogsController
 {
-    public function __construct(private CategoryService $categoryService, private LoggerService $loggerService, private UserService $userService,private LogFilterService $logFilterService)
+    public function __construct(private CategoryService $categoryService, private LoggerService $loggerService, private UserService $userService, private LogFilterService $logFilterService)
     {
 
-        parent::__construct($this->loggerService, $this->userService,$this->logFilterService);
+        parent::__construct($this->loggerService, $this->userService, $this->logFilterService);
     }
 
     public function getEntityType(): string

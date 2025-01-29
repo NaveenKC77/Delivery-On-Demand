@@ -25,12 +25,18 @@ abstract class AbstractFormController extends AbstractController
      */
     abstract protected function getUploadDir(): string;
 
-        /**
+    /**
      * Hooks for subclasses to perform additional actions post-CRUD.
      */
-    protected function postCreateHook(object $entity): void {}
-    protected function postUpdateHook(object $entity): void {}
-    protected function postDeleteHook(object $entity): void {}
+    protected function postCreateHook(object $entity): void
+    {
+    }
+    protected function postUpdateHook(object $entity): void
+    {
+    }
+    protected function postDeleteHook(object $entity): void
+    {
+    }
 
     /**
      * Summary of create

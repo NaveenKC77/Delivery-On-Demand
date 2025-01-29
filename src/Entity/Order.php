@@ -6,6 +6,7 @@ use App\Repository\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
@@ -23,19 +24,24 @@ class Order
     /**
      * @var Collection<int, CartItem>
      */
-    #[ORM\OneToMany(targetEntity: CartItem::class, mappedBy: 'orderNumber')]
+    #[ORM\OneToMany(targetEntity: CartItem::class, mappedBy: Order::class )]
     private Collection $cartItems;
 
     #[ORM\Column]
+    #[Assert\PositiveOrZero]
     private int $subtotal = 0;
 
     #[ORM\Column]
+    #[Assert\PositiveOrZero]
+
     private int $tax = 0;
 
     #[ORM\Column]
+    #[Assert\PositiveOrZero]
     private int $shipping = 0;
 
     #[ORM\Column]
+    #[Assert\PositiveOrZero]
     private int $total = 0;
 
     #[ORM\OneToOne(mappedBy: 'order', cascade: ['persist', 'remove'])]
@@ -44,6 +50,10 @@ class Order
     public function __construct()
     {
         $this->cartItems = new ArrayCollection();
+        $this->subtotal=0;
+        $this->tax= 0;
+        $this->shipping= 0;
+        $this->total=0;
 
     }
 
@@ -166,21 +176,21 @@ class Order
         return $this;
     }
 
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
-    public function calculateAmounts(): void
-    {
-        $this->tax = $this->calculateTax(10); // Assuming 10% tax rate
-        $this->total = $this->calculateTotal();
-    }
+    // #[ORM\PrePersist]
+    // #[ORM\PreUpdate]
+    // public function calculateAmounts(): void
+    // {
+    //     $this->tax = $this->calculateTax(10); // Assuming 10% tax rate
+    //     $this->total = $this->calculateTotal();
+    // }
 
-    public function calculateTax(int $taxRate = 10): int
-    {
-        return (int) (($this->subtotal * $taxRate) / 100);
-    }
+    // public function calculateTax(int $taxRate = 10): int
+    // {
+    //     return (int) (($this->subtotal * $taxRate) / 100);
+    // }
 
-    public function calculateTotal(): int
-    {
-        return $this->subtotal + $this->tax + $this->shipping;
-    }
+    // public function calculateTotal(): int
+    // {
+    //     return $this->subtotal + $this->tax + $this->shipping;
+    // }
 }

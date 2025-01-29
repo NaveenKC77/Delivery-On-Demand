@@ -3,12 +3,13 @@
 namespace App\Services;
 
 use App\Entity\Cart;
+use App\Entity\CartItem;
 use App\Repository\CartRepository;
 use App\Entity\User;
 
 class CartService
 {
-    public function __construct(public CartRepository $cartRepository)
+    public function __construct(private CartRepository $cartRepository,private CartCalculatorService $cartCalculatorService,private CartItemService $cartItemService)
     {
     }
 
@@ -17,31 +18,51 @@ class CartService
         return $this->cartRepository->findOneById($id);
     }
 
-    public function addCartItem($cartItem)
-    {
-        $cart = $this->cartRepository->findOneById($cartItem->getCart()->getId());
-        $cart->addCartItem($cartItem);
-        $this->cartRepository->getEntityManager()->persist($cart);
-        $this->cartRepository->getEntityManager()->flush();
-    }
-
-    public function removeCartItem($cartItem)
-    {
-        $cart = $this->cartRepository->findOneById($cartItem->getCart()->getId());
-        $cart->removeCartItem($cartItem);
-        $this->cartRepository->getEntityManager()->persist($cart);
-        $this->cartRepository->getEntityManager()->flush();
-    }
-
-    public function getCartFromCustomerId($customerId)
+    public function getCartFromCustomerId($customerId): Cart|null
     {
         return $this->cartRepository->findOneByCustomerId($customerId);
     }
 
-    public function initializeCart(User $user){
+    public function initializeCart(User $user): void
+    {
         $cart = new Cart();
         $cart->setCustomer($user->getCustomer());
-        $this->cartRepository->getEntityManager()->persist($cart);
+       $this->cartRepository->save($cart);
 
     }
+
+    public function addCartItem(Cart $cart, CartItem $cartItem): void{
+
+        $this->cartItemService->resetCartItemNumbers($cartItem);
+
+        $cart->addCartItem($cartItem);
+
+        $this->resetCartNumbers($cart);
+
+        $this->cartRepository->save($cart);
+
+    }
+
+    public function removeCartItem(Cart $cart, CartItem $cartItem): void{
+
+        $cart->removeCartItem($cartItem);
+
+        $this->resetCartNumbers($cart);
+
+        $this->cartRepository->save($cart);
+
+    }
+
+    public function resetCartNumbers(Cart $cart): void{
+
+         //calculate quantity and total
+         $quantity = $this->cartCalculatorService->calculateQuantity($cart->getCartItems());
+         $total = $this->cartCalculatorService->calculateTotal($cart->getCartItems());
+ 
+         $cart->setTotal($total);
+         $cart->setQuantity($quantity);
+
+         $this->cartRepository->save($cart);
+    }
+
 }

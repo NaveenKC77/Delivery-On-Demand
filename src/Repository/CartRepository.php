@@ -28,6 +28,12 @@ class CartRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function save(Cart $cart): void
+    {
+        $this->getEntityManager()->persist($cart);
+        $this->getEntityManager()->flush();
+    }
+
     //    /**
     //     * @return Cart[] Returns an array of Cart objects
     //     */
