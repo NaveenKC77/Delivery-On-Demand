@@ -11,10 +11,10 @@ return
         'default_environment' => 'development',
         'production' => [
             'adapter' => 'mysql',
-            'host' => 'localhost',
-            'name' => 'production_db',
+            'host' => '127.0.0.1',
+            'name' => 'db_dod',
             'user' => 'root',
-            'pass' => '',
+            'pass' => 'Root1234',
             'port' => '3306',
             'charset' => 'utf8',
         ],
@@ -29,7 +29,7 @@ return
         ],
         'development' => [
             'adapter' => 'mysql',
-            'host' => 'localhost',
+            'host' => '127.0.0.1',
             'name' => 'db_dod',
             'user' => 'root',
             'pass' => 'Root1234',

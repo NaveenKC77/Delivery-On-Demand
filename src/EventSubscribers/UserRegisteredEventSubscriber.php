@@ -39,7 +39,7 @@ class UserRegisteredEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            UserRegisteredEvent::class => ['onUserRegistered', -10],
+            UserRegisteredEvent::class => ['onUserRegistered'],
         ];
     }
 }

@@ -30,9 +30,9 @@
        <div class="container mt-4">
         <h3>Specific User</h3>
         <select class="form-select" aria-label="Default select example" onchange="location.href = this.value;">
-           <option value="/admin/logs/user/user/0" {{selectedOptions['productId']== 0 ? 'selected' : ''}}>All</option>
+           <option value="/admin/logs/user/user/0" {{selectedOptions['itemId']== 0 ? 'selected' : ''}}>All</option>
             {% for user in items  %}
-            <option value="/admin/logs/user/user/{{user.id}}" {{ selectedOptions['productId'] == user.id ? 'selected' : '' }}>{{user.username}}</option>
+            <option value="/admin/logs/user/user/{{user.id}}" {{ selectedOptions['itemId'] == user.id ? 'selected' : '' }}>{{user.username}}</option>
             {% endfor %}
         </select>
     </div>

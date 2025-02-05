@@ -11,13 +11,14 @@ use App\Services\UserService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class CategoryLogsController extends AbstractLogsController
 {
-    public function __construct(private CategoryService $categoryService, private LoggerService $loggerService, private UserService $userService,private LogFilterService $logFilterService)
+    public function __construct(private CategoryService $categoryService, private LoggerService $loggerService, private UserService $userService,private LogFilterService $logFilterService,private CacheInterface $logsCache)
     {
 
-        parent::__construct($this->loggerService, $this->userService,$this->logFilterService);
+        parent::__construct($this->loggerService, $this->userService,$this->logFilterService,$this->logsCache);
     }
 
     public function getEntityType(): string

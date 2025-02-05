@@ -8,6 +8,8 @@ use App\Services\ServicesInterface;
 use App\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 abstract class AbstractLogsController extends AbstractController
 {
@@ -66,6 +68,7 @@ abstract class AbstractLogsController extends AbstractController
         private LoggerService $loggerService,
         private UserService $userService,
         private LogFilterService $logFilterService,
+        private CacheInterface $logsCache
     ) {
 
     }
@@ -138,15 +141,23 @@ abstract class AbstractLogsController extends AbstractController
 
     public function getAllLogs(Request $request, $itemId)
     {
-
         // Retrieve filters from the request
         $action = $request->getSession()->get('action', $this->getAction());
         $adminId = $request->getSession()->get('adminId', $this->getAdminId());
         $timeInterval = $request->getSession()->get('timeInterval', $this->getTimeInterval());
 
+        //pass into cache function
+        $entityType = $this->getEntityType();
 
-        // Get product logs by entity type
-        $itemLogs = $this->loggerService->getLogsByEntityType($this->getEntityType());
+        // Get logs by entity type
+        // get item logs from cache , if empty , from dynamo Db
+        $itemLogs = $this->logsCache->get('logs',function(ItemInterface $item)use($entityType){
+           $item->expiresAfter(600);
+            return $this->loggerService->getLogsByEntityType($entityType);
+        });
+
+        // $itemLogs = $this->loggerService->getLogsByEntityType($this->getEntityType());
+    
 
         // Apply filters one by one
 
@@ -192,7 +203,7 @@ abstract class AbstractLogsController extends AbstractController
                     'action' => $action,
                     'admin' => $adminId,
                     'timeInterval' => $timeInterval,
-                    'productId' => $itemId,
+                    'itemId' => $itemId,
                 ],
                 'admins' => $this->getAdmins(),
                 'items' => $this->getItems(),

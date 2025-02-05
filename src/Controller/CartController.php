@@ -16,11 +16,13 @@ use App\Services\ProductService;
 use App\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * Summary of CartController
@@ -41,6 +43,8 @@ class CartController extends AbstractController
     //helper method to get cart from current logged in user
     private function getCart(): Cart|null
     {
+
+        $cache = new FilesystemAdapter();
         // getting authorized user
         $user = $this->security->getUser();
 
@@ -54,8 +58,15 @@ class CartController extends AbstractController
         if (!$customer instanceof Customer) {
             throw new \Exception('wrong type of User passed');
         }
-        $cart = $customer->getCart();
+        // $cart = $cache->get('Cart',function (ItemInterface $item)use($customer): Cart|null{
+        //     $item->expiresAfter(10);
 
+        //     return $customer->getCart();
+
+        // });
+
+        $cart = $customer->getCart();
+        // $cart = $customer->getCart();
         return $cart;
     }
 
