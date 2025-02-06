@@ -21,8 +21,7 @@ class MainController extends AbstractController
     #[Route('/', name: 'app_main')]
     public function index(): Response
     {
-        $this->appCacheService->check();
-        $this->logger->info('From the controller');
+       
         $featuredProducts = $this->productService->getFeaturedProducts();
         return $this->render('main/homepage.html.twig', [
             'featuredProducts' => $featuredProducts,

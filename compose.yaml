@@ -25,6 +25,16 @@ services:
     volumes: 
       - localstack-data:/var/lib/localstack
       - "/var/run/docker.sock:/var/run/docker.sock"
+  
+  app:
+    container_name: my-app
+    image: my-app
+    ports: 
+      - 8001:80
+    environment:
+      - DATABASE_URL=mysql://root:Root1234@db/db_dod
+    depends_on:
+      - db
 
 volumes: 
   db-data:

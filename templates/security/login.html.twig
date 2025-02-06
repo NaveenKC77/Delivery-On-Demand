@@ -11,7 +11,7 @@
 		<img class="img-fluid" src="{{ asset('./images/login.jpeg') }}" alt="login image"/>
 	</div>
 
-	<div class="form container mx-auto login-form column col-lg-6 my-auto">
+	<div class="form container mx-auto login-form column col-lg-6 mb-6">
 		{% for flash in app.flashes('success') %}
 			<p class="alert alert-success">{{flash}}</p>
 		{% endfor %}
