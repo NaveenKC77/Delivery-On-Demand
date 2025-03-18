@@ -1,0 +1,108 @@
+{% extends 'admin/dashboard.html.twig' %}
+
+{% block title %}
+	{{category.name}}
+{% endblock %}
+
+{% block cards %}
+	<!-- Dashboard Cards -->
+	<div class="container mt-4">
+		<div
+			class="row">
+			<!-- Card 1 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-light shadow-sm border-dark">
+					<div class="card-body">
+						<h5 class="card-title text-dark">26K Users</h5>
+						<p class="card-text text-muted">-12.4%</p>
+					</div>
+				</div>
+			</div>
+			<!-- Card 2 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-secondary shadow-sm border-0">
+					<div class="card-body">
+						<h5 class="card-title text-white">6,200 Income</h5>
+						<p class="card-text text-light">40.9% ↑</p>
+					</div>
+				</div>
+			</div>
+			<!-- Card 3 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-dark shadow-sm border-0">
+					<div class="card-body">
+						<h5 class="card-title text-white">2.49% Conversion Rate</h5>
+						<p class="card-text text-light">84.7% ↑</p>
+					</div>
+				</div>
+			</div>
+			<!-- Card 4 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-secondary shadow-sm border-0">
+					<div class="card-body">
+						<h5 class="card-title text-white">44K Sessions</h5>
+						<p class="card-text text-light">-3.5%</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+
+{% block content %}
+
+	<div class="container-fluid mx-auto mt-5">
+
+		<div class="row">
+
+			<h2 class="text-center">
+				{{category.name}}</h2>
+			<div class="col col-md-7 mx-auto">
+				<div class="table-responsive">
+
+					<table class="table table-borderless align-middle shadow-sm font-weight-bold">
+
+						<tr>
+							<td>
+								ID
+							</td>
+							<td>{{category.id}}
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Name
+							</td>
+							<td>{{category.name}}
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Description
+							</td>
+							<td>{{category.description}}
+							</td>
+						</tr>
+
+					</p>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<a href="/admin/category/edit/{{category.id}}" class="btn btn-md bg-light border-dark text-success px-4">Edit</button>
+
+				</td>
+				<td>
+					<a href="/admin/category/delete/{{category.id}}" class="btn bg-light border-dark text-danger ">Delete</button>
+
+				</td>
+			</tr>
+		</table>
+	</div>
+</div></div></div>{% endblock %}
+{% block chartScripts %}
+
+
+{% endblock %}

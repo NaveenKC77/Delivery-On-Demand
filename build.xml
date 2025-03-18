@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="personaldod" default="build">
+    <property name="base.dir" value="${project.basedir}" />
+    <property name="scripts.dir" value="${project.basedir}/app/scripts" />
+    <property name="properties.dir" value="${base.dir}/app/build/properties" />
+    <property name="vendor.dir" value="${base.dir}/vendor" />
+    <property name="src.dir" value="${base.dir}/src" /> 
+    <condition property="build.env" value="dev">
+        <not>
+            <isset property="build.env" />
+        </not>
+    </condition>
+
+    <echo msg="==============" />
+    <echo msg="ENVIRONMENT:${build.env}" />
+    <echo msg="WORKSPACE:${base.dir}" />
+    <echo msg="=============" />
+
+    <property file="${properties.dir}/${build.env}.properties" />
+    <property file="${properties.dir}/default.properties" />
+
+    <target name="build" description="Build the Project">
+        <phingcall target="dotenv"></phingcall>
+        <phingcall target="composer-install"></phingcall>
+        <phingcall target="phinxMigrations"></phingcall>
+        <phingcall target="loadFixtures"></phingcall>
+        <phingcall target="ci"></phingcall>
+
+    </target>
+
+    <target name="composer-install" description="Runs composer install" depends="dotenv">
+        <exec executable="composer install" logoutput="true" escape="false" />
+    </target>
+
+    <target name="dotenv" description="Generate env file">
+        <echo msg="Populating env file" />
+        <echo msg="${build.env}" />
+        <if>
+            <not>
+                <equals arg1="${build.env}" arg2="dev" />
+            </not>
+            <then>
+                <copy file="${base.dir}/.env.dist" tofile="${base.dir}/.env" overwrite="true">
+                    <filterchain>
+                        <expandproperties />
+                        <replaceregexp>
+                            <regexp ignoreCase="true" multiline="true"
+                                pattern="# START VAULT VALUES #(.+)# END VAULT VALUES #" replace="" />
+                            <regexp pattern="\#\!prop\s" replace="" />
+                        </replaceregexp>
+                        <striplinecomments>
+                            <comment value="#" />
+                        </striplinecomments>
+                        <stripwhitespace />
+                    </filterchain>
+                </copy>
+            </then>
+            <else>
+                <copy file="${base.dir}/.env.dist" tofile="${base.dir}/.env" overwrite="true">
+                    <filterchain>
+                        <replaceregexp>
+                            <regexp pattern="\#\!prop\s" replace="" />
+                        </replaceregexp>
+                        <expandproperties />
+                        <stripwhitespace />
+                    </filterchain>
+                </copy>
+            </else>
+        </if>
+        <property file="${base.dir}/.env" override="true" />
+    </target>
+
+
+    <target name="phinxMigrations" description="Create rollback and run migrations">
+        <if>
+            <equals arg1="${build.env}" arg2="dev" />
+            <then>
+                <echo message="Creating rollbacks and running phinx migrations" />
+                <echo message="Running rollback to reset all migrations" />
+
+                <!-- Corrected ExecTask with executable and arguments -->
+                <exec executable="php" passthru="true" logoutput="true" checkreturn="true">
+                    <arg value="vendor/bin/phinx" />
+                    <arg value="rollback" />
+                    <arg value="-e" />
+                    <arg value="development" />
+                    <arg value="-t" />
+                    <arg value="0" />
+                </exec>
+
+                <echo message="running migrations" />
+                <exec executable="php" passthru="true" logoutput="true" checkreturn="true">
+                    <arg value="vendor/bin/phinx" />
+                    <arg value="migrate" />
+                    <arg value="-e" />
+                    <arg value="development" />
+                </exec>
+
+            </then>
+
+            <else>
+                <echo message="Creating rollbacks and running phinx migrations" />
+                <echo message="Running rollback to reset all migrations" />
+
+                <!-- Corrected ExecTask for non-dev environments -->
+                <exec executable="php" passthru="true" logoutput="true" checkreturn="true">
+                    <arg value="vendor/bin/phinx" />
+                    <arg value="rollback" />
+                    <arg value="-e" />
+                    <arg value="${build.env}" />
+                    <arg value="-t" />
+                    <arg value="0" />
+                </exec>
+
+                <echo message="running migrations" />
+                <exec executable="php" passthru="true" logoutput="true" checkreturn="true">
+                    <arg value="vendor/bin/phinx" />
+                    <arg value="migrate" />
+                    <arg value="-e" />
+                    <arg value="${build.env}" />
+                </exec>
+            </else>
+        </if>
+    </target>
+
+
+    <target name="loadFixtures" description="Load Doctrine fixtures" >
+        <echo message="Loading Doctrine Fixtures..." />
+
+        <!-- Run the Symfony Doctrine fixtures command -->
+        <exec executable="php" passthru="true" logoutput="true" checkreturn="true">
+            <arg value="bin/console" />
+            <arg value="doctrine:fixtures:load" />
+            <arg value="--no-interaction" />
+        </exec>
+
+        <echo message="Doctrine Fixtures Loaded." />
+    </target>
+
+    <target name="ci" depends="phpmd, phpcs, phpcpd" />
+
+    <target name="phpmd">
+        <echo msg="Running phpmd" />
+        <exec passthru="true" logoutput="true" executable="${vendor.dir}/bin/phpmd"
+            checkreturn="true">
+            <arg value="${src.dir}" />
+            <arg value="xml" />
+            <arg value="${base.dir}/phpmd.xml" />
+            <arg value="--reportfile-xml" />
+            <arg value="${base.dir}/pmd.xml" />
+            <arg value="--reportfile-html" />
+            <arg value="${base.dir}/pmd.html" />
+            <arg value="--exclude" />
+            <arg value="Migrations" />
+        </exec>
+    </target>
+
+    <target name="phpcs" description="Generate PHPCS Checkstyle Report">
+        <echo message="Running PHP_CodeSniffer..." />
+
+        <!-- Run PHP_CodeSniffer to generate a checkstyle report -->
+        <exec executable="php" passthru="true" logoutput="true" checkreturn="true">
+            <arg value="./vendor/bin/phpcs" /> <!-- Path to PHPCS executable -->
+            <arg value="--report=checkstyle" /> <!-- Specify the report format -->
+            <arg value="--report-file=${base.dir}/checkstyle-results.xml" /> <!-- Report output file -->
+            <arg value="--standard=PSR12" /> <!-- Coding standard (e.g., PSR12, PSR2) -->
+            <arg value="--ignore=Exceptions.php,*_view.php" /> <!-- Ignore files or directories, e.g., tests -->
+            <arg value="${src.dir}" /> <!-- Directory to scan (e.g., src, app) -->
+        </exec>
+
+        <echo message="PHP_CodeSniffer report generated: phpcs-report.xml" />
+    </target>
+
+    <target name="phpcpd" description="Generate pmd-cpd.xml using PHPCPD">
+        <echo msg="Generate pmd-cpd.xml using PHPCPD" />
+        <exec passthru="true" logoutput="true" checkreturn="true"
+            executable="${vendor.dir}/bin/phpcpd">
+            <arg value="--log-pmd" />
+            <arg value="${base.dir}/pmd-cpd.xml" />
+            <arg value="${src.dir}" />
+        </exec>
+    </target>
+
+   
+    <target name="php-fix-cs" description="Fixing unused imports on src using PHP Code Fixer">
+        <echo msg="Fixing unused imports with PHP Code Fixer" />
+        <exec passthru="true" logoutput="true" checkreturn="true"
+            excecutable="${vendor.dir}/bin/php-cs-fixer
+                        --rules=no_unused_imports,ordered_imports
+                        fix ${src.dir}" />
+    </target>
+</project>

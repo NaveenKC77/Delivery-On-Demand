@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Categories
+{% endblock %}
+
+{% block main %}
+    <!-- Header -->
+    <header class="bg-primary text-white py-4">
+        <div class="container text-center">
+            <h1 class="mb-0">Our Categories</h1>
+        </div>
+    </header>
+
+    <!-- Categories Section -->
+    <main class="container my-5">
+        <div class="row">
+            {% for flash in app.flashes('success') %}
+                <p class="alert alert-success">{{ flash }}</p>
+            {% endfor %}
+            {% for flash in app.flashes('error') %}
+                <p class="alert alert-danger">{{ flash }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="row g-4">
+            {% for category in pager %}
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <!-- Category Card -->
+                    <div class="card border">
+                    
+                        <div class="card-body">
+                            <h5 class="card-title">{{ category.name }}</h5>
+                            <p class="card-text text-muted small">{{ category.description | slice(0, 70) }}...</p>
+                            <a href="{{ path('category_view', {'id': category.id,'page':1}) }}" class="btn btn-outline-primary mt-3 w-100">View Products</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Products within Categories Section -->
+        {% for category in pager %}
+            <h2 class="mt-5">{{ category.name }} - Products</h2>
+            <div class="row g-4">
+                {% for product in category.products | slice(0, 5) %}
+                    <div class="col-md-6 col-lg-4 col-xl-3">
+                        <!-- Product Card -->
+                        <div class="{{ product.stock == 0 ? 'card product-card border border-danger' : 'card product-card' }}">
+                            <img src="{{ asset(product.imagePath) }}" class="card-img-top product-image" alt="{{ product.name }}">
+                            <div class="card-body">
+                                <h5 class="card-title text-truncate">{{ product.name }}</h5>
+                                <p class="card-text text-muted small">{{ product.description | slice(0, 70) }}...</p>
+                                <div class="price">AUD{{ product.price }}</div>
+                                <a href="/product/single/{{ product.id }}" class="btn btn-outline-primary mt-3 w-100">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </main>
+{% endblock %}

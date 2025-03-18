@@ -1,0 +1,6 @@
+env: 
+          - name: DATABASE_URL
+            valueFrom: 
+              configMapKeyRef:
+                name: mysql-config
+                key:  DATABASE_URL 

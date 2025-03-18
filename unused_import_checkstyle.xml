@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="PHP CS Fixer 3.65.0 Persian Successor by Fabien Potencier, Dariusz Ruminski and contributors.">
+  <file name="src\Controller\ProductController.php">
+    <error severity="warning" source="PHP-CS-Fixer.ordered_imports" message="Found violation(s) of type: ordered_imports"/>
+  </file>
+</checkstyle>

@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello CartController!
+{% endblock %}
+
+{% block main %}
+
+
+	<div class="container mt-5">
+		<h1 class="mb-4">Order Details</h1>
+		<div class="row">
+			<div
+				class="col-md-8">
+				<!-- Cart Items Table -->
+				<table class="table table-hover">
+					<thead class="table-dark">
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Product</th>
+							<th scope="col">Price</th>
+							<th scope="col">Quantity</th>
+							<th scope="col">Subtotal</th>
+	
+						</tr>
+					</thead>
+					<tbody>
+
+						{% for item in cart.cartItems %}
+
+
+							<tr>
+								<th scope="row">1</th>
+								<td>
+									<div class="d-flex align-items-center">
+										<img src="{{asset(item.product.imagePath)}}" alt="Product Image" class="img-fluid rounded me-3" style="width: 50px;">
+										<span>{{item.product.name}}</span>
+									</div>
+								</td>
+								<td>{{item.product.price}}</td>
+								<td>
+								
+
+									{{item.quantity}}
+									
+									
+									
+								</td>
+								<td>{{item.total}}</td>
+								
+							</tr>
+						{% endfor %}
+
+
+					</tbody>
+				</table>
+			</div>
+			<div
+				class="col-md-4">
+				<!-- Cart Summary -->
+				<div class="card">
+					<div class="card-header bg-dark text-white">
+						<h5>Cart Summary</h5>
+					</div>
+					<div class="card-body">
+						<p class="d-flex justify-content-between">
+							<span>Subtotal:</span>
+							<span>{{cart.total}}</span>
+						</p>
+						<p class="d-flex justify-content-between">
+							<span>Tax:</span>
+							<span>0</span>
+						</p>
+						<hr>
+						<h5 class="d-flex justify-content-between">
+							<span>Total:</span>
+							<span>{{cart.total}}</span>
+						</h5>
+					
+					</div>
+				</div>
+			</div>
+		</div>
+
+        <div class="row">
+            <h2>Fill in your Personal Details</h2>
+            <div class="col-lg-6 ">
+		{{ form_start(form) }}
+		<div class="">{{ form_errors(form) }}</div>
+
+
+		<div class="form-group mt-2">
+			{{form_label(form.name)}}
+			{{form_widget(form.name)}}
+		</div>
+		<div class="form-group mt-2">
+			{{form_label(form.shippingAddress)}}
+			{{form_widget(form.shippingAddress)}}
+		</div>
+		<div class="form-group mt-2">
+			{{form_label(form.postalAddress)}}
+			{{form_widget(form.postalAddress)}}
+		</div>
+		<div class="form-group mt-2">
+			{{form_label(form.email)}}
+			{{form_widget(form.email)}}
+		</div>
+		
+		<button type="submit" class="btn btn-dark mt-2">Submit</button>
+		{{ form_end(form) }}
+
+	</div>
+        </div>
+	</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+services:
+    Aws\DynamoDb\DynamoDbClient:
+        arguments:
+            $args:
+                region: 'us-west-2'               # Replace with your preferred region
+                version: 'latest'                # API version
+                endpoint: 'https://localhost.localstack.cloud:4566' # LocalStack endpoint
+                credentials:
+                    key: 'test'                  # Dummy key for LocalStack
+                    secret: 'test'               # Dummy secret for LocalStack

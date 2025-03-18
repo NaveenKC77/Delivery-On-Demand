@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Customer
+{% endblock %}
+
+{% block banner %}{% endblock %}
+
+
+{% block content %}
+
+	<div class="container-fluid my-5">
+
+		<div class="col col-lg-6">
+			<div class="form container mx-auto login-form column col-lg-6 my-auto">
+				{{ form_start(form) }}
+				<div>{{ form_errors(form) }}</div>
+				<h1 class="h3 mb-1 font-weight-normal">Edit Customer</h1>
+
+
+				<button type="submit" class="btn btn-dark mt-2">Submit</button>
+				{{ form_end(form) }}
+
+			</div>
+
+		</div>
+
+	</div>
+</div>{% endblock %}
+{% block chartScripts %}
+
+
+{% endblock %}

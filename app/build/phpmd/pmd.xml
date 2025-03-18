@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<pmd version="@package_version@" tool="phpmd" timestamp="2024-09-19T05:02:34+02:00">
+  <file name="C:\Users\jungk\Sites\Github Repos\ProjectFiles\src\Controller\MainController.php">
+    <violation beginline="9" endline="22" rule="CamelCasePropertyName" ruleset="Controversial Rules" package="App\Controller" externalInfoUrl="#" class="MainController" priority="1">
+      The property $Apple is not named in camelCase.
+    </violation>
+  </file>
+</pmd>

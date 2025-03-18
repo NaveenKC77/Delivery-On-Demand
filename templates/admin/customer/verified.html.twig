@@ -1,0 +1,122 @@
+{% extends 'admin/dashboard.html.twig' %}
+
+{% block title %}
+	Verified Customers
+{% endblock %}
+
+{% block cards %}
+	<!-- Dashboard Cards -->
+	<div class="container mt-4">
+		<div
+			class="row">
+			<!-- Card 1 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-light shadow-sm border-dark">
+					<div class="card-body">
+						<h5 class="card-title text-dark">26K Users</h5>
+						<p class="card-text text-muted">-12.4%</p>
+					</div>
+				</div>
+			</div>
+			<!-- Card 2 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-secondary shadow-sm border-0">
+					<div class="card-body">
+						<h5 class="card-title text-white">6,200 Income</h5>
+						<p class="card-text text-light">40.9% ↑</p>
+					</div>
+				</div>
+			</div>
+			<!-- Card 3 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-dark shadow-sm border-0">
+					<div class="card-body">
+						<h5 class="card-title text-white">2.49% Conversion Rate</h5>
+						<p class="card-text text-light">84.7% ↑</p>
+					</div>
+				</div>
+			</div>
+			<!-- Card 4 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-secondary shadow-sm border-0">
+					<div class="card-body">
+						<h5 class="card-title text-white">44K Sessions</h5>
+						<p class="card-text text-light">-3.5%</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block content %}
+	<div class="container-fluid">
+
+
+		<div class="row">
+			{% for flash in app.flashes('success') %}
+				<p class="alert alert-success">{{flash}}</p>
+			{% endfor %}
+			{% for flash in app.flashes('error') %}
+				<p class="alert alert-danger">{{flash}}</p>
+			{% endfor %}
+
+		</div>
+
+		<a href="{{path('app_customer')}}" class="btn btn-md btn-primary my-2">Show All Customers
+		</a>
+
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-bordered align-middle shadow-sm">
+
+				<thead class="table-dark">
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Username</th>
+						<th scope="col">Email</th>
+						<th scope="col">Verified</th>
+						<th scope="col">UserId</th>
+						<th scope="col">Address</th>
+
+						<th scope="col">Delete</th>
+
+
+					</tr>
+				</thead>
+				<tbody>
+					{% for customer in pager %}
+						<tr>
+							<th scope="row">{{customer.id}}</th>
+							<td>
+								<a class="text-decoration-none text-primary" href="/admin/product/single/{{customer.id}}">{{customer.user.username}}</a>
+
+							</td>
+							<td>{{customer.user.email}}</td>
+
+
+							<td class="text-center">{{customer.user.isVerified? "<h4 class='bi bi-check2 text-success'></h4>" : "<h4 class='text-danger'>X</h4>"}}</td>
+
+
+							<td>{{customer.user.id }}</td>
+							<td>{{customer.address}}</td>
+
+							<td>
+								<a href="/admin/user/delete/{{customer.user.id}}" class="btn btn-md border border-danger text-danger bg-light ">
+									<i class="bi bi-trash"></i>
+								</button>
+							</td>
+
+
+						</tr>
+					</tbody>
+				</tbody>
+			</div>
+
+
+		{% endfor %}
+
+
+	</tbody>
+</table></div>{{pagerfanta(pager)}}{% endblock %}
+{% block chartScripts %}
+{% endblock %}

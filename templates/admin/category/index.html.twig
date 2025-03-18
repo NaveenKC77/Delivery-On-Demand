@@ -1,0 +1,109 @@
+{% extends 'admin/dashboard.html.twig' %}
+
+{% block title %}Categories
+{% endblock %}
+
+{% block cards %}
+	<!-- Dashboard Cards -->
+	<div class="container mt-4">
+		<div
+			class="row">
+			<!-- Card 1 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-light shadow-sm border-dark">
+					<div class="card-body">
+						<h5 class="card-title text-dark">26K Users</h5>
+						<p class="card-text text-muted">-12.4%</p>
+					</div>
+				</div>
+			</div>
+			<!-- Card 2 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-secondary shadow-sm border-0">
+					<div class="card-body">
+						<h5 class="card-title text-white">6,200 Income</h5>
+						<p class="card-text text-light">40.9% ↑</p>
+					</div>
+				</div>
+			</div>
+			<!-- Card 3 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-dark shadow-sm border-0">
+					<div class="card-body">
+						<h5 class="card-title text-white">2.49% Conversion Rate</h5>
+						<p class="card-text text-light">84.7% ↑</p>
+					</div>
+				</div>
+			</div>
+			<!-- Card 4 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-secondary shadow-sm border-0">
+					<div class="card-body">
+						<h5 class="card-title text-white">44K Sessions</h5>
+						<p class="card-text text-light">-3.5%</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+
+{% block content %}
+
+
+	<div class="container-fluid">
+		<div class="row">
+			{% for flash in app.flashes('success') %}
+				<p class="alert alert-success">{{flash}}</p>
+			{% endfor %}
+			{% for flash in app.flashes('error') %}
+				<p class="alert alert-danger">{{flash}}</p>
+			{% endfor %}
+
+		</div>
+
+
+		<a href="/admin/category/create" class="btn btn-md btn-primary my-2">Add Categories</a>
+
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-bordered align-middle shadow-sm">
+
+				<thead class="table-dark">
+					<tr>
+						<th scope="col" class="text-center">#</th>
+						<th scope="col">Name</th>
+						<th scope="col">Description</th>
+						<th scope="col" class="text-center">Number of Products</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					{%  for category in pager %}
+						<tr>
+							<th scope="row" class="text-center">{{category.id}}</th>
+
+							<td>
+								<a class="text-decoration-none text-primary" href="/admin/category/single/{{category.id}}">{{category.name}}</a>
+
+							</td>
+							<td>{{category.description}}</td>
+							<td class="text-center">{{category.products|length}}</td>
+
+
+						</tr>
+
+					{% endfor %}
+
+				</tbody>
+			</table>
+
+		</div>
+
+	</div>
+	{{pagerfanta(pager)}}
+{% endblock %}
+{% block chartScripts %}
+
+
+{% endblock %}

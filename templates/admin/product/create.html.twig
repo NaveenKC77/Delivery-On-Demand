@@ -1,0 +1,50 @@
+{% extends 'admin/dashboard.html.twig' %}
+
+{% block title %}Add Product
+{% endblock %}
+
+{% block cards %}{% endblock %}
+
+
+{% block content %}
+
+
+	<div class="form container mx-auto mb-5 mt-2 p-2 login-form column col-lg-6 ">
+		{{ form_start(form) }}
+		<div class="">{{ form_errors(form) }}</div>
+		<h1 class="h3 mb-3 py-2 font-weight-normal text-center ">Add Product</h1>
+
+		<div class="form-group mt-2">
+			{{form_label(form.name)}}
+			{{form_widget(form.name)}}
+		</div>
+		<div class="form-group mt-2">
+			{{form_label(form.description)}}
+			{{form_widget(form.description)}}
+		</div>
+		<div class="form-group mt-2">
+			{{form_label(form.price)}}
+			{{form_widget(form.price)}}
+		</div>
+		<div class="form-group mt-2">
+			{{form_label(form.stock)}}
+			{{form_widget(form.stock)}}
+		</div>
+		<div class="form-group mt-2">
+			{{form_label(form.category)}}
+			{{form_widget(form.category)}}
+		</div>
+		<div class="form-group mt-2">
+			{{form_label(form.imagePath)}}
+			{{form_widget(form.imagePath)}}
+		</div>
+
+		<button type="submit" class="btn btn-dark mt-2">Submit</button>
+		{{ form_end(form) }}
+
+	</div>
+
+
+{% endblock %}
+{% block chartScripts %}
+{% endblock %}

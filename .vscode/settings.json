@@ -1,0 +1,6 @@
+{
+    "phpCodeSniffer.standard": "PSR12",
+    "phpCodeSniffer.autoExecutable": true,
+    "phpCodeSniffer.autoloadPHPCSIntegration": false,
+    "editor.formatOnSave" : false,
+}

@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello CartController!
+{% endblock %}
+
+{% block main %}
+
+
+	<div class="container mt-5">
+	<div class="row">
+			{% for flash in app.flashes('success') %}
+				<p class="alert alert-success">{{flash}}</p>
+			{% endfor %}
+			{% for flash in app.flashes('error') %}
+				<p class="alert alert-danger">{{flash}}</p>
+			{% endfor %}
+
+		</div>
+		<h1 class="mb-4">Shopping Cart</h1>
+		<div class="row">
+			<div
+				class="col-md-8">
+				<!-- Cart Items Table -->
+				<table class="table table-hover">
+					<thead class="table-dark">
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Product</th>
+							<th scope="col">Price</th>
+							<th scope="col">Quantity</th>
+							<th scope="col">Subtotal</th>
+							<th scope="col">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+
+						{% for item in cart.cartItems %}
+
+
+							<tr>
+								<th scope="row">1</th>
+								<td>
+									<div class="d-flex align-items-center">
+										<img src="{{asset(item.product.imagePath)}}" alt="Product Image" class="img-fluid rounded me-3" style="width: 50px;">
+										<span>{{item.product.name}}</span>
+									</div>
+								</td>
+								<td>{{item.product.price}}</td>
+								<td>
+								<div class="d-flex"><a class=" btn text-decoration-none text-danger" href="/cart/minusQuantity/{{item.id}}">
+										<i class="bi bi-dash"></i>
+									</a>
+
+									{{item.quantity}}
+									<a class=" btn text-decoration-none text-success" href="/cart/plusQuantity/{{item.id}} ">
+										<i class="bi bi-plus"></i>
+									</a> </div>
+									In stock : {{item.product.stock}}
+									
+								</td>
+								<td>{{item.total}}</td>
+								<td>
+									<a href="/cart/remove/{{item.id}}" class="btn btn-sm btn-danger">
+										<i class="bi bi-trash"></i>
+										Remove</a>
+								</td>
+							</tr>
+						{% endfor %}
+
+
+					</tbody>
+				</table>
+			</div>
+			<div
+				class="col-md-4">
+				<!-- Cart Summary -->
+				<div class="card">
+					<div class="card-header bg-dark text-white">
+						<h5>Cart Summary</h5>
+					</div>
+					<div class="card-body">
+						<p class="d-flex justify-content-between">
+							<span>Subtotal:</span>
+							<span>{{cart.total}}</span>
+						</p>
+						<p class="d-flex justify-content-between text-primary">
+							Tax , Shipping and Discount Applied on Checkout.
+						</p>
+						<hr>
+						<h5 class="d-flex justify-content-between">
+							<span>Total:</span>
+							<span>{{cart.total}}</span>
+						</h5>
+						<a href="/cart/checkout"class="btn btn-primary w-100 mt-3">Proceed to Checkout</a>
+						<a href="{{path('app_product')}}" class="btn btn-outline-secondary w-100 mt-2">Continue Shopping</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

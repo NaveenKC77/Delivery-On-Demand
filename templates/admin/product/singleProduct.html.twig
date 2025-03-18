@@ -1,0 +1,128 @@
+{% extends 'admin/dashboard.html.twig' %}
+
+{% block title %}
+	{{product.name}}
+{% endblock %}
+
+{% block cards %}
+	<!-- Dashboard Cards -->
+	<div class="container mt-4">
+		<div
+			class="row">
+			<!-- Card 1 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-light shadow-sm border-dark">
+					<div class="card-body">
+						<h5 class="card-title text-dark">26K Users</h5>
+						<p class="card-text text-muted">-12.4%</p>
+					</div>
+				</div>
+			</div>
+			<!-- Card 2 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-secondary shadow-sm border-0">
+					<div class="card-body">
+						<h5 class="card-title text-white">6,200 Income</h5>
+						<p class="card-text text-light">40.9% ↑</p>
+					</div>
+				</div>
+			</div>
+			<!-- Card 3 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-dark shadow-sm border-0">
+					<div class="card-body">
+						<h5 class="card-title text-white">2.49% Conversion Rate</h5>
+						<p class="card-text text-light">84.7% ↑</p>
+					</div>
+				</div>
+			</div>
+			<!-- Card 4 -->
+			<div class="col-lg-3 col-md-6 mb-4">
+				<div class="card bg-secondary shadow-sm border-0">
+					<div class="card-body">
+						<h5 class="card-title text-white">44K Sessions</h5>
+						<p class="card-text text-light">-3.5%</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+
+{% block content %}
+
+	<div class="container-fluid mx-auto mt-5">
+
+		<div class="row">
+
+			<div class="col col-md-6">
+				{% if product.imagePath == null %}
+					<img class="img-fluid my-5 ms-4" src="{{asset('/images/no_image.png')}}"></img>
+			{% else %}
+				<img class="img-fluid my-5 ms-4" src="{{asset(product.imagePath)}}"></img>
+		{% endif %}
+
+	</div>
+
+	<div class="col col-md-6 ">
+
+		<div class="table-responsive">
+			<table class="table table-borderless align-middle shadow-sm font-weight-bold">
+
+				<tr>
+					<td>
+						ID
+					</td>
+					<td>{{product.id}}
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Name
+					</td>
+					<td>{{product.name}}
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Description
+					</td>
+					<td>{{product.description}}
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Price
+					</td>
+					<td>AUD
+						{{product.price}}
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Stock
+					</td>
+					<td>{{product.stock}}</td>
+				</tr>
+				<tr>
+					<td>
+						Category
+					</td>
+					<td>{{product.category.name}}</td>
+				</tr>
+			</p>
+		</td>
+	</tr>
+	<tr class="d-flex justify-content-center">
+		<td>
+			<a href="/admin/product/edit/{{product.id}}" class="btn btn-md bg-light border-dark text-success px-4">Edit</button>
+		</td>
+		<td>
+			<a href="/admin/product/delete/{{product.id}}" class="btn bg-light border-dark text-danger">Delete</button>
+
+		</td>
+	</tr>
+</table></div></div></div></div>{% endblock %}
+{% block chartScripts %}
+{% endblock %}

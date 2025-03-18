@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ category.name }} - Products{% endblock %}
+
+{% block main %}
+    <!-- Category Header -->
+    <header class="bg-primary text-white py-4">
+        <div class="container text-center">
+            <h1 class="mb-0">{{ category.name }} - Products</h1>
+            <p class="lead">{{ category.description }}</p>
+        </div>
+    </header>
+
+    <!-- Products Section -->
+    <main class="container my-5">
+        <div class="row">
+            {% for flash in app.flashes('success') %}
+                <p class="alert alert-success">{{ flash }}</p>
+            {% endfor %}
+            {% for flash in app.flashes('error') %}
+                <p class="alert alert-danger">{{ flash }}</p>
+            {% endfor %}
+        </div>
+
+        <!-- Display Products for the Category -->
+        <div class="row g-4">
+            {% for product in pager %}
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="{{ product.stock == 0 ? 'card product-card border border-danger' : 'card product-card' }}">
+                        <img src="{{ asset(product.imagePath) }}" class="card-img-top product-image" alt="{{ product.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate">{{ product.name }}</h5>
+                            <p class="card-text text-muted small">{{ product.description | slice(0, 70) }}...</p>
+                            <div class="price">AUD {{ product.price }}</div>
+                            <a href="{{ path('product_view', {'id': product.id}) }}" class="btn btn-outline-primary mt-3 w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-4">
+            {{ pagerfanta(pager) }} <!-- This will render pagination controls for the products -->
+        </div>
+    </main>
+
+{% endblock %}

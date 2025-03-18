@@ -1,0 +1,61 @@
+{% extends 'main/homepage.html.twig' %}
+
+{% block title %}Log in!
+{% endblock %}
+
+{% block banner %}{% endblock %}
+
+{% block content %}
+
+	<div class="container column col-lg-6">
+		<img class="img-fluid" src="{{ asset('./images/login.jpeg') }}" alt="login image"/>
+	</div>
+
+	<div class="form container mx-auto login-form column col-lg-6 mb-6">
+		{% for flash in app.flashes('success') %}
+			<p class="alert alert-success">{{flash}}</p>
+		{% endfor %}
+		{% for flash in app.flashes('error') %}
+			<p class="alert alert-danger">{{flash}}</p>
+		{% endfor %}
+
+		<form method="post">
+			{% if error %}
+				<div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+			{% endif %}
+			{% if app.user %}
+				<div class="mb-1">
+					You are logged in as
+					{{ app.user.userIdentifier }},
+					<a href="{{ path('app_logout') }}">Logout</a>
+				</div>
+			{% endif %}
+			<h1 class="h3 mb-1 font-weight-normal">Please sign in</h1>
+			<span>Don't have an account with us ?
+				<a class="link-success " href="/register/customer">Register</a>
+			</span>
+			<div class="form-row my-2">
+				<div class="form-group">
+					<label for="inputUsername">Username</label>
+					<input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control mt-2" autocomplete="username" required autofocus>
+				</div>
+			</div>
+			<div class="form-row my-2">
+				<div class="form-group">
+					<label for="inputPassword">Password</label>
+					<input type="password" name="password" id="inputPassword" class="form-control mt-2" autocomplete="current-password" required>
+				</div>
+			</div>
+
+			<input type="hidden" name="_csrf_token" value="{{ csrf_token('nkc77') }}">
+			<div class="form-row">
+				<button class="btn btn-lg btn-primary" type="submit">
+					Sign in
+				</button>
+			</div>
+
+
+		</form>
+	</div>
+
+{% endblock %}
