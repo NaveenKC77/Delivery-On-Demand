@@ -196,7 +196,7 @@ class CategoryController extends AbstractFormController
     // User UI Page for single category
 
     #[Route('category/single/{id}/{page}',name:'category_view',requirements:['id' => '\d+'] )]
-    public function viewCategory(int $page =1 , int $id){
+    public function viewCategory( int $id,int $page =1){
 
         // query builder to get products for the specific category
         $qb= $this->productRepository->getByCategoriesQuery($id);

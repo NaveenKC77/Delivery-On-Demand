@@ -9,11 +9,10 @@ use App\Services\ProductEventDispatcherService;
 use App\Services\ProductService;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\Cache\ItemInterface;
+
 
 /**
  * Summary of ProductController
@@ -43,7 +42,7 @@ class ProductController extends AbstractFormController
     // returns upload dir
     public function getUploadDir(): string
     {
-        return $this->getParameter('kernel.project_dir') . '/assets/images/uploads';
+        return $this->getParameter('kernel.project_dir') . '/public/assets/images/uploads';
     }
     /**
      * Hook for post-create actions.
@@ -123,7 +122,7 @@ class ProductController extends AbstractFormController
 
             if ($imagePath) {
                 $newFileName = $this->fileUploadService->upload($imagePath, $this->getUploadDir());
-                $entity->setImagePath('./images/uploads/' . $newFileName);
+                $entity->setImagePath('/assets/images/uploads/' . $newFileName);
             }
             try {
                 $this->getService()->add($entity);
@@ -158,7 +157,7 @@ class ProductController extends AbstractFormController
 
             if ($imagePath) {
                 $newFileName = $this->fileUploadService->upload($imagePath, $this->getUploadDir());
-                $product->setImagePath('./images/uploads/' . $newFileName);
+                $product->setImagePath('/assets/images/uploads/' . $newFileName);
             } else {
                 $product->setImagePath($originalImagePath);
             }
