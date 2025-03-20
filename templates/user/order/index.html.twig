@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2>My Orders</h2>
+
+        {% if pager is null %}
+            <p class="text-muted">You have no orders yet.</p>
+        {% else %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th>Order Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in pager %}
+                        <tr>
+                            <td>{{ order.id }}</td>
+                            <td>{{ order.status.label }}</td>
+                            <td>${{ order.total }}</td>
+                            <td>Todays</td>
+                            <td>
+                                <a href="{{ path('app_view_order', { id: order.id }) }}" class="btn btn-primary btn-sm">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Pagination Controls -->
+            <div class="pagination">
+                {{pagerfanta(pager)}}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Services\ServicesInterface;
 
 /**
  * Summary of AbstractFormController
@@ -16,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class AbstractFormController extends AbstractController
 {
-    use FormControllerTrait;
+    use AppControllerTrait;
 
     /**
      * Summary of getUploadDir
@@ -53,7 +54,12 @@ abstract class AbstractFormController extends AbstractController
             $entity = $this->form->getData();
 
             try {
+
+                if($this->getService() instanceof ServicesInterface ){
+
+
                 $this->getService()->add($entity);
+                }
 
                 // for creating events, eg: returns category for Category Class from where event can be triggered using entity
                 $this->setData($entity);

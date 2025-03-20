@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Services\ServicesInterface;
 use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
@@ -11,7 +12,7 @@ use Symfony\Component\Form\FormInterface;
  * Summary of FormControllerTrait
  * Basic form controller properties and methods including Read and pagination setup
  */
-trait FormControllerTrait
+trait AppControllerTrait
 {
     protected const SUCCESS = 'success';
     protected const ERROR = 'error';
@@ -60,9 +61,9 @@ trait FormControllerTrait
     /**
      * Summary of getService
      * @return void
-     *              store form of type FormInterface
+     *              store Service Class
      */
-    abstract protected function getService() ;
+    abstract protected function getService();
 
 
     /**

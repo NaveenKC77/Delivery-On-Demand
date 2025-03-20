@@ -10,13 +10,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CustomerController extends AbstractController
 {
-    use FormControllerTrait;
+    use AppControllerTrait;
     public function __construct(
         private CustomerService $customerService,
     ) {
     }
 
-    public function getService()
+    public function getService(): CustomerService
     {
         return $this->customerService;
     }

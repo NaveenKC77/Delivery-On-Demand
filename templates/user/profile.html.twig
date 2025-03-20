@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action active">
+                    <i class="bi bi-person-circle"></i> Profile
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="bi bi-bag"></i> My Orders
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="bi bi-heart"></i> Wishlist
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="bi bi-bell"></i> Notifications <span class="badge bg-danger">3</span>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action text-danger">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Profile Details -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="bi bi-person"></i> My Profile</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img src="{{ asset('assets/images/profile-default.png') }}" alt="Profile Picture" class="rounded-circle img-fluid" style="width: 150px;">
+                            <button class="btn btn-outline-primary btn-sm mt-2"><i class="bi bi-pencil"></i> Change Photo</button>
+                        </div>
+                        <div class="col-md-8">
+                            <h4>John Doe</h4>
+                            <p><i class="bi bi-envelope"></i> johndoe@example.com</p>
+                            <p><i class="bi bi-phone"></i> +1 234 567 890</p>
+                            <p><i class="bi bi-geo-alt"></i> 123 Street, City, Country</p>
+                            <a href="#" class="btn btn-primary"><i class="bi bi-pencil"></i> Edit Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order History -->
+            <div class="card mt-4 mb-5">
+                <div class="card-header bg-secondary text-white">
+                    <h5><i class="bi bi-receipt"></i> Recent Orders</h5>
+                </div>
+                <div class="card-body">
+
+                {% for order in orders %}
+                    <div class="border-bottom pb-2 mb-2">
+                        <p><strong>Order #12345</strong> - <span class="text-muted">12 Mar 2025</span></p>
+                        <p>Status: <span class="badge bg-success">Completed</span></p>
+                        <p>Total: <strong>$99.99</strong></p>
+                        <a href="#" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> View</a>
+                    </div>
+
+                    {% endfor %}
+                  
+                    <a class="btn btn-primary" href="{{path('app_order')}}"> See All Orders....</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

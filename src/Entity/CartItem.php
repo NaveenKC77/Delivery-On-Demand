@@ -50,7 +50,6 @@ class CartItem
     public function setQuantity(int $quantity): static
     {
         $this->quantity = $quantity;
-
         return $this;
     }
 
@@ -59,11 +58,9 @@ class CartItem
         return $this->total;
     }
 
-
     public function setTotal($total): static
     {
         $this->total = $total;
-
         return $this;
     }
 
@@ -75,7 +72,6 @@ class CartItem
     public function setProduct(Product $product): static
     {
         $this->product = $product;
-
         return $this;
     }
 
@@ -87,7 +83,6 @@ class CartItem
     public function setCart(?Cart $cart): static
     {
         $this->cart = $cart;
-
         return $this;
     }
 
@@ -99,11 +94,10 @@ class CartItem
     public function setOrder(?Order $order): static
     {
         $this->order = $order;
-
         return $this;
     }
 
-    //get unit Price for calculation
+    // Get unit price for calculation
     public function getUnitPrice(): int|null
     {
         return $this->getProduct()->getPrice();

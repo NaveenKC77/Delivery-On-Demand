@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Enum\OrderStatus;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
@@ -24,7 +25,7 @@ class Order
     /**
      * @var Collection<int, CartItem>
      */
-    #[ORM\OneToMany(targetEntity: CartItem::class, mappedBy: Order::class)]
+    #[ORM\OneToMany(targetEntity: CartItem::class, mappedBy: 'order', cascade: ['persist'])]
     private Collection $cartItems;
 
     #[ORM\Column]
@@ -33,7 +34,6 @@ class Order
 
     #[ORM\Column]
     #[Assert\PositiveOrZero]
-
     private int $tax = 0;
 
     #[ORM\Column]
@@ -44,17 +44,15 @@ class Order
     #[Assert\PositiveOrZero]
     private int $total = 0;
 
+    #[ORM\Column(type: 'string', enumType: OrderStatus::class, options: ["default" => "pending"])]
+    private OrderStatus $status = OrderStatus::PENDING;
+
     #[ORM\OneToOne(mappedBy: 'order', cascade: ['persist', 'remove'])]
     private ?OrderDetails $orderDetails = null;
 
     public function __construct()
     {
         $this->cartItems = new ArrayCollection();
-        $this->subtotal = 0;
-        $this->tax = 0;
-        $this->shipping = 0;
-        $this->total = 0;
-
     }
 
     public function getId(): ?int
@@ -70,7 +68,6 @@ class Order
     public function setCustomer(?Customer $customer): static
     {
         $this->customer = $customer;
-
         return $this;
     }
 
@@ -86,21 +83,19 @@ class Order
     {
         if (!$this->cartItems->contains($cartItem)) {
             $this->cartItems->add($cartItem);
-            $cartItem->setOrder($this);
+            $cartItem->setOrder($this); // Set the order reference in the CartItem
         }
-
         return $this;
     }
 
     public function removeCartItem(CartItem $cartItem): static
     {
         if ($this->cartItems->removeElement($cartItem)) {
-            // set the owning side to null (unless already changed)
+            // Set the owning side to null
             if ($cartItem->getOrder() === $this) {
                 $cartItem->setOrder(null);
             }
         }
-
         return $this;
     }
 
@@ -112,7 +107,6 @@ class Order
     public function setSubtotal(int $subtotal): static
     {
         $this->subtotal = $subtotal;
-
         return $this;
     }
 
@@ -124,10 +118,8 @@ class Order
     public function setTax(int $tax): static
     {
         $this->tax = $tax;
-
         return $this;
     }
-
 
     public function getShipping(): ?int
     {
@@ -137,7 +129,6 @@ class Order
     public function setShipping(int $shipping): static
     {
         $this->shipping = $shipping;
-
         return $this;
     }
 
@@ -149,15 +140,8 @@ class Order
     public function setTotal(int $total): static
     {
         $this->total = $total;
-
         return $this;
     }
-
-    public function getFirstName(): ?OrderDetails
-    {
-        return $this->firstName;
-    }
-
 
     public function getOrderDetails(): ?OrderDetails
     {
@@ -166,31 +150,21 @@ class Order
 
     public function setOrderDetails(OrderDetails $orderDetails): static
     {
-        // set the owning side of the relation if necessary
         if ($orderDetails->getOrder() !== $this) {
             $orderDetails->setOrder($this);
         }
-
         $this->orderDetails = $orderDetails;
-
         return $this;
     }
 
-    // #[ORM\PrePersist]
-    // #[ORM\PreUpdate]
-    // public function calculateAmounts(): void
-    // {
-    //     $this->tax = $this->calculateTax(10); // Assuming 10% tax rate
-    //     $this->total = $this->calculateTotal();
-    // }
+    public function getStatus(): OrderStatus
+    {
+        return $this->status;
+    }
 
-    // public function calculateTax(int $taxRate = 10): int
-    // {
-    //     return (int) (($this->subtotal * $taxRate) / 100);
-    // }
-
-    // public function calculateTotal(): int
-    // {
-    //     return $this->subtotal + $this->tax + $this->shipping;
-    // }
+    public function setStatus(OrderStatus $status): static
+    {
+        $this->status = $status;
+        return $this;
+    }
 }

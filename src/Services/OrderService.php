@@ -8,6 +8,7 @@ use App\Entity\Order;
 use App\Entity\OrderDetails;
 use App\Factory\OrderFactory;
 use App\Repository\OrderRepository;
+use Doctrine\ORM\QueryBuilder;
 
 class OrderService
 {
@@ -17,6 +18,7 @@ class OrderService
 
     public function add($order)
     {
+
         $this->orderRepository->getEntityManager()->persist($order);
         $this->orderRepository->getEntityManager()->flush();
     }
@@ -30,11 +32,36 @@ class OrderService
         //save order in Db
         $this->add($order);
 
+
+         // explicitly persist the cart items
+    foreach ($order->getCartItems() as $cartItem) {
+        $this->orderRepository->getEntityManager()->persist($cartItem);
+    }
         //   reset cart
         $cart->resetCart();
 
         return $order;
 
 
+    }
+
+    public function getAll(): array{
+        return $this->orderRepository->findAll();
+    }
+
+    public function getAllQueryBuilder(): QueryBuilder{
+        return $this->orderRepository->getAllQueryBuilder();
+    }
+
+    public function getOneById(int $id):Order | null{
+        return $this->orderRepository->findOneById($id);
+    }
+
+    public function getAllByCustomerId($customerId){
+        return $this->orderRepository->findOrdersByUserQueryBuilder($customerId)->getQuery()->getResult();
+    }
+
+    public function getAllByCustomerIdQueryBuilder($customerId){
+        return $this->orderRepository->findOrdersByUserQueryBuilder($customerId);
     }
 }

@@ -21,12 +21,13 @@ class OrderFactory
 
         $order->setSubtotal($cart->getTotal());
 
+        $order->setCustomer($customer);
+
+    
         // Add cart items to the order
         foreach ($cart->getCartItems() as $item) {
             $order->addCartItem($item);
         }
-
-
 
         // Automatically calculate tax and total based on subtotal .. assuming taxRate=10
         $tax = $this->orderCalculatorService->calculateTax($order->getSubtotal(), 10);

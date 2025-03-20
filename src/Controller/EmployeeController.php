@@ -10,12 +10,12 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class EmployeeController extends AbstractController
 {
-    use FormControllerTrait;
+    use AppControllerTrait;
     public function __construct(private EmployeeService $employeeService)
     {
     }
 
-    public function getService()
+    public function getService(): EmployeeService
     {
         return $this->employeeService;
     }

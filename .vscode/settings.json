@@ -2,5 +2,20 @@
     "phpCodeSniffer.standard": "PSR12",
     "phpCodeSniffer.autoExecutable": true,
     "phpCodeSniffer.autoloadPHPCSIntegration": false,
-    "editor.formatOnSave" : false,
+    "editor.formatOnSave": false,
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "database": "db_dod",
+            "username": "root",
+            "name": "local"
+        }
+    ],
 }

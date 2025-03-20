@@ -1,0 +1,87 @@
+{% extends 'admin/dashboard.html.twig' %}
+
+{% block title %}Order #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Flash Messages -->
+    <div class="row">
+        {% for flash in app.flashes('success') %}
+            <p class="alert alert-success">{{ flash }}</p>
+        {% endfor %}
+        {% for flash in app.flashes('error') %}
+            <p class="alert alert-danger">{{ flash }}</p>
+        {% endfor %}
+    </div>
+
+    <!-- Order Summary -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">
+            Order Summary - #{{ order.id }}
+        </div>
+        <div class="card-body">
+            <p><strong>Status:</strong> 
+                <form method="post" action="{{ path('admin_order_update_status', { id: order.id }) }}" class="d-inline">
+                    <select name="status" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+                        {% for status in orderStatuses %}
+                            <option value="{{ status.value }}" {% if order.status.value == status.value %}selected{% endif %}>
+                                {{ status.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </p>
+            <p><strong>Subtotal:</strong> ${{ order.subtotal }}</p>
+            <p><strong>Tax:</strong> ${{ order.tax }}</p>
+            <p><strong>Shipping:</strong> ${{ order.shipping }}</p>
+            <p class="fw-bold"><strong>Total:</strong> ${{ order.total }}</p>
+        </div>
+    </div>
+
+    <!-- Customer Details -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            Customer Details
+        </div>
+        <div class="card-body">
+            <p><strong>Name:</strong> {{ order.orderDetails.name }}</p>
+            <p><strong>Email:</strong> {{ order.orderDetails.email }}</p>
+            <p><strong>Shipping Address:</strong> {{ order.orderDetails.shippingAddress }}</p>
+            <p><strong>Billing Address:</strong> {{ order.orderDetails.postalAddress }}</p>
+        </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+            Order Items
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for cartItem in order.cartItems %}
+                        <tr>
+                            <td>{{ cartItem.product.name }}</td>
+                            <td>{{ cartItem.quantity }}</td>
+                            <td>{{cartItem.product.price}}</td>
+                            <td>{{cartItem.total}}
+                           
+                        </tr>
+                    {% endfor %}
+                  
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block chartScripts %}
+{% endblock %}
