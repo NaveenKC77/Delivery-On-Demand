@@ -14,7 +14,7 @@
                 <li class="list-group-item"><strong>Total:</strong> <span class="fw-bold">${{ order.total }}</span></li>
                 <li class="list-group-item"><strong>Tax:</strong> ${{ order.tax }}</li>
                 <li class="list-group-item"><strong>Shipping:</strong> ${{ order.shipping }}</li>
-                <li class="list-group-item"><strong>Order Date:</strong> Today</li>
+                <li class="list-group-item"><strong>Order Date: </strong> {{ order.createdAt|date('F j, Y \\a\\t g:i A') }} </li>
             </ul>
 
             <h4 class="mt-4">Items</h4>

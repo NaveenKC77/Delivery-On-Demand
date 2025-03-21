@@ -3,10 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
@@ -19,8 +22,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
+
+    #[ORM\Column(type: 'string', length: 15)]
+    #[Assert\Regex(
+        pattern:   '/^0\d{9}$/',
+        message: "Please enter a valid phone number."
+    )]
+    private string $phoneNumber;
+
     #[ORM\Column(length: 180)]
     private ?string $username = null;
+
+    #[ORM\Column(length: 180)]
+    private ?string $firstName = null;
+
+    #[ORM\Column(length: 180)]
+    private ?string $lastName = null;
 
     /**
      * @var list<string> The user roles
@@ -50,6 +67,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
 
     private ?string $avatarUri;
 
+    /**
+     * @var Collection<int, Notification>
+     */
+    #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'user')]
+    private Collection $notifications;
+
+    public function __construct()
+    {
+        $this->notifications = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -63,6 +91,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
     public function setUsername(string $username): static
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): static
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): static
+    {
+        $this->lastName = $lastName;
 
         return $this;
     }
@@ -205,6 +256,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
         return $this;
     }
 
+    public function getPhoneNumber(): string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(string $phoneNumber): self
+    {
+        $this->phoneNumber = $phoneNumber;
+
+        return $this;
+    }
+
     public function getAvatarUri()
     {
         return 'https://ui-avatars.com/api/?' . http_build_query([
@@ -212,5 +275,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
             'background' => 'random',
             'size' => '32',
         ]);
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): static
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): static
+    {
+        if ($this->notifications->removeElement($notification)) {
+            // set the owning side to null (unless already changed)
+            if ($notification->getUser() === $this) {
+                $notification->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

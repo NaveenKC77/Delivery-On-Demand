@@ -190,7 +190,7 @@ class CartController extends AbstractController
                 $this->addFlash('error', $e->getMessage());
             }
 
-            return $this->redirectToRoute('app_main');
+            return $this->redirectToRoute('app_order');
         }
 
         return $this->render('cart/checkout.html.twig', [

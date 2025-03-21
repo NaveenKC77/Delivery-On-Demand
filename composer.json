@@ -17,6 +17,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^3.2",
         "easycorp/easyadmin-bundle": "^4.18",
+        "giggsey/libphonenumber-for-php": "^8.13",
         "nesbot/carbon": "^3.8",
         "pagerfanta/doctrine-orm-adapter": "^4.7",
         "pagerfanta/twig": "^4.7",

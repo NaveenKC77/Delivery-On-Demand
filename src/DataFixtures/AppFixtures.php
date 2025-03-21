@@ -23,12 +23,15 @@ class AppFixtures extends Fixture
             ['email' => 'admin@dod.com',
                 'username' => 'admin',
                 'roles' => ['ROLE_ADMIN'],
-                'isVerified' => true]
+                'isVerified' => true,
+                'firstName' => 'Naveen',
+                'lastName' => 'K C',
+                'phoneNumber'=> '+61433941726',
+            ]
+                
         );
 
        
-        EmployeeFactory::new()->createMany(2);
-
         CategoryFactory::new()->createMany(4);
         ProductFactory::new()->createMany(16);
     }

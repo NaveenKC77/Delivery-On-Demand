@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Event\Events\UserRegisteredEvent;
 use App\Form\CustomerRegistrationFormType;
 use App\Form\EmployeeRegistrationFormType;
+use App\Services\PhoneNumberService;
 use App\Services\UserRegistrationService;
 use App\Services\UserVerificationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,7 +22,8 @@ class RegistrationController extends AbstractController
     public function __construct(
         private EventDispatcherInterface $eventDispatcher,
         private UserRegistrationService $userRegistrationService,
-        private UserVerificationService $userVerificationService
+        private UserVerificationService $userVerificationService,
+        private PhoneNumberService $phoneNumberService
     ) {
     }
 
@@ -37,8 +39,21 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(CustomerRegistrationFormType::class, $user);
         $form->handleRequest($request);
 
+    
         if ($form->isSubmitted() && $form->isValid()) {
             try {
+
+                $phoneNumber = $form->get('phoneNumber')->getData();
+
+                // Normalize and validate the phone number
+                $normalizedPhoneNumber = $this->phoneNumberService->normalizePhoneNumber($phoneNumber);
+        
+            
+                if ($normalizedPhoneNumber === null) {
+                    $this->addFlash('error', 'Invalid phone number.');
+                    return $this->redirectToRoute('app_register');
+                }
+
                 // Register customer
                 $this->userRegistrationService->registerCustomer($user, $form);
 

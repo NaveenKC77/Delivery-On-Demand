@@ -43,18 +43,27 @@
             <h2 class="mt-5">{{ category.name }} - Products</h2>
             <div class="row g-4">
                 {% for product in category.products | slice(0, 5) %}
-                    <div class="col-md-6 col-lg-4 col-xl-3">
-                        <!-- Product Card -->
-                        <div class="{{ product.stock == 0 ? 'card product-card border border-danger' : 'card product-card' }}">
-                            <img src="{{ asset(product.imagePath) }}" class="card-img-top product-image" alt="{{ product.name }}">
-                            <div class="card-body">
-                                <h5 class="card-title text-truncate">{{ product.name }}</h5>
-                                <p class="card-text text-muted small">{{ product.description | slice(0, 70) }}...</p>
-                                <div class="price">AUD{{ product.price }}</div>
-                                <a href="/product/single/{{ product.id }}" class="btn btn-outline-primary mt-3 w-100">View Details</a>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Product Card -->
+    <div class="col-md-6 col-lg-4 col-xl-3">
+        <div class="card product-card position-relative">
+            <img src="{{ asset(product.imagePath) }}" class="card-img-top product-image" alt="Product Image">
+            
+              {% if product.stock == 0 %}
+                <!-- Out of Stock Transparent Overlay (Non-blocking clicks) -->
+                <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" 
+                     style="background: rgba(0, 0, 0, 0.1); color: red; font-size: 1.5rem; font-weight: bold; backdrop-filter: blur(4px); pointer-events: none;">
+                    Out of Stock
+                </div>
+            {% endif %}
+            
+            <div class="card-body">
+                <h5 class="card-title text-truncate">{{ product.name }}</h5>
+                <p class="card-text text-muted small">{{ product.description|slice(0,70) }}...</p>
+                <div class="price">AUD {{ product.price }}</div>
+                <a href="/product/single/{{ product.id }}" class="btn btn-outline-primary mt-3 w-100">View Details</a>
+            </div>
+        </div>
+    </div>
                 {% endfor %}
             </div>
         {% endfor %}

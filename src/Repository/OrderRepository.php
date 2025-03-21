@@ -19,13 +19,15 @@ class OrderRepository extends ServiceEntityRepository
     public function getAllQueryBuilder(){
         return $this->createQueryBuilder('o')
         ->addSelect('orderDetails')
-        ->leftJoin('o.orderDetails','orderDetails');
+        ->leftJoin('o.orderDetails','orderDetails')
+        ->orderBy('o.createdAt','DESC');
     }
 
     public function findOrdersByUserQueryBuilder($customerId){
         return $this->createQueryBuilder('o')
         ->andWhere('o.customer = :val')
-        ->setParameter('val',$customerId);
+        ->setParameter('val',$customerId)
+        ->orderBy('o.createdAt','DESC');
     
     }
 
