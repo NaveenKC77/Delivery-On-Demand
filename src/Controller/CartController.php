@@ -179,7 +179,7 @@ class CartController extends AbstractController
                 $order = $this->orderService->createOrder($customer, $cart, $orderDetails);
 
                 // Add a success flash message
-                $this->addFlash('success', 'Order Confirmed');
+                $this->addFlash('success', 'Order Placed');
 
                 // raise orderPlacedEvent
                 $event = new OrderPlacedEvent($order);

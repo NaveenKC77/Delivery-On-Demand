@@ -83,7 +83,7 @@ class OrderController extends AbstractController
 
 
             default:
-                dd($statusValue);
+                $this->addFlash('error','No action available');
 
         }
         $this->addFlash('success', 'Order status updated successfully.');
