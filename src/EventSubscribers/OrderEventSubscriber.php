@@ -3,6 +3,8 @@
 namespace App\EventSubscribers;
 
 use App\Entity\Order;
+use App\Event\Events\OrderCancelledEvent;
+use App\Event\Events\OrderConfirmedEvent;
 use App\Event\Events\OrderPlacedEvent;
 use App\Repository\ProductRepository;
 use App\Services\NotificationService;
@@ -27,30 +29,68 @@ class OrderEventSubscriber implements EventSubscriberInterface
 
             $customer = $order->getCustomer()->getUser();
 
-            $title = "Order Placed";
+            $title = "Order ". $event->getAction();
     
-            $content = "Order Placed , Our admin will look into it , Order Number 11";
+            $content = "Order Placed . Our admin will look into it and confirm it . You can track your order status by clicking the 'View Details' button ";
 
-            $this->notificationService->newNotification($customer,$title,$content);
+            $orderId=$order->getId();
+            $link = "/user/order/single/$orderId";
+
+            $this->notificationService->newNotification($customer,$title,$content,$link);
 
 
         }
         //send notification to user
 
-       
-
-
-
-
-
-
         // log in dynamo db
     }
+    
+    public function onOrderConfirmed(OrderConfirmedEvent $event): void{
+        $order = $event->getOrder();
 
+        if ($order instanceof Order) {
+
+            // get user entity for the id
+            $customer = $order->getCustomer()->getUser();
+
+            // notification title , capitalise first letter of every word
+            $title=ucwords("Order ". $event->getAction());
+
+            $orderId=$order->getId();
+
+            $content = "Order Confirmed. You can track you order now.";
+
+            $link = "/user/order/single/$orderId";
+
+            // create new notification
+            $this->notificationService->newNotification($customer,$title,$content,$link);
+
+        }
+    }
+
+
+    public function onOrderCancelled(OrderCancelledEvent $event): void{
+        $order = $event->getOrder();
+
+        if ($order instanceof Order) {
+            $customer = $order->getCustomer()->getUser();
+
+            $title="Order". $event->getAction();
+
+            $orderId=$order->getId();
+            $content = " Sorry Order Cancelled .";
+            $link = "/user/order/single/$orderId";
+
+            $this->notificationService->newNotification($customer,$title,$content,$link);
+
+        }
+    }
     public static function getSubscribedEvents()
     {
         return [
             OrderPlacedEvent::class => ['onOrderPlaced'],
+            OrderConfirmedEvent::class=>['onOrderConfirmed'],
+            OrderCancelledEvent::class=>['onOrderCancelled']
         ];
     }
 

@@ -48,25 +48,28 @@
                     </div>
 
                     <hr>
-
-                    <!-- Notifications Section -->
-                    <h5><i class="bi bi-bell"></i> Notifications</h5>
-                    <div class="list-group">
-                        {% for notification in notifications %}
-                            <a href="{{path('app_notification_read',{'id':notification.id})}}" class="list-group-item list-group-item-action {% if not notification.isRead %}bg-light text-success{% endif %}">
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <strong>{{ notification.title }}</strong>
-                                        <p class="mb-1">{{ notification.content }}</p>
-                                    </div>
-                                    <small class="text-muted">{{ notification.createdAt|date('d M Y, H:i') }}</small>
-                                </div>
-                            </a>
-                        {% else %}
-                            <p class="text-muted">No notifications available.</p>
-                        {% endfor %}
-                    </div>
+<h5><i class="bi bi-bell"></i> Notifications</h5>
+<div class="list-group">
+    {% for notification in notifications %}
+        <div 
+            class="list-group-item list-group-item-action {% if not notification.isRead %}bg-light text-success{% endif %}"
+            onclick="window.location.href='{{ path('app_notification_read', { 'id': notification.id }) }}';"
+            style="cursor: pointer;"
+        >
+            <div class="d-flex justify-content-between">
+                <div>
+                    <strong>{{ notification.title }}</strong>
+                    <p class="mb-1">{{ notification.content }}</p>
                 </div>
+                <small class="text-muted">{{ notification.createdAt|date('d M Y, H:i') }}</small>
+            </div>
+            <a href="{{ notification.link }}" class="btn btn-sm btn-primary mt-2">View Details</a>
+        </div>
+    {% else %}
+        <p class="text-muted">No notifications available.</p>
+    {% endfor %}
+</div>
+
             </div>
         </div>
     </div>

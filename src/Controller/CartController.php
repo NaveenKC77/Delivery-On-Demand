@@ -185,7 +185,7 @@ class CartController extends AbstractController
                 $event = new OrderPlacedEvent($order);
                 $this->eventDispatcher->dispatch($event, OrderPlacedEvent::class);
 
-                return $this->redirectToRoute('app_main');
+                return $this->redirectToRoute('app_order');
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
             }

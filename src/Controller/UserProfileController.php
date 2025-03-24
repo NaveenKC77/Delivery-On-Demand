@@ -27,7 +27,7 @@ class UserProfileController extends AbstractController{
         return CustomerRegistrationFormType::class;
     }
 
-    #[Route('/profile',name:'app_profile')]
+    #[Route('/user/profile',name:'app_profile')]
     public function profile(): Response{
         
         $user = $this->getUser();
@@ -43,7 +43,7 @@ class UserProfileController extends AbstractController{
     return $this->read();
     }
 
-    #[Route('/profile/edit',name:'app_edit_profile')]
+    #[Route('/user/profile/edit',name:'app_edit_profile')]
 
     public function editProfile(Request $request){
 

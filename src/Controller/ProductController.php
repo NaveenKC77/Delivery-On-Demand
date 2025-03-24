@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
  * Summary of ProductController
  * Route for product related operations
  */
-class ProductController extends AbstractFormController
+class ProductController extends AbstractCRUDController
 {
     public function __construct(
         private ProductService $productService,

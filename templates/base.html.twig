@@ -83,7 +83,7 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <li><a class="dropdown-item" href="{{ path('app_profile') }}"><i class="bi bi-person"></i> Profile</a></li>
-                <li><a class="dropdown-item" href="{{ path('app_main') }}"><i class="bi bi-bell"></i> Notifications <span class="badge bg-danger">5</span></a></li>
+                <li><a class="dropdown-item" href="{{ path('app_notification') }}"><i class="bi bi-bell"></i> Notifications </a></li>
 				<li><a class="dropdown-item" href="{{ path('app_order') }}"><i class="bi bi-list"></i> Order History </a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item text-danger" href="{{ path('app_logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
@@ -110,6 +110,15 @@
 
 		<main>
 			{% block main %}
+			<div class="row text-center">
+			{% for flash in app.flashes('success') %}
+				<p class="alert alert-success">{{flash}}</p>
+			{% endfor %}
+			{% for flash in app.flashes('error') %}
+				<p class="alert alert-danger">{{flash}}</p>
+			{% endfor %}
+
+		</div>
 				<section class="mb-3">
 					{% block content %}{% endblock %}
 				</section>

@@ -9,8 +9,8 @@ use Pagerfanta\Pagerfanta;
 use Symfony\Component\Form\FormInterface;
 
 /**
- * Summary of FormControllerTrait
- * Basic form controller properties and methods including Read and pagination setup
+ * Summary of App Controller Trait
+ * Abstraction of basic controller functionalities for app to be implemented by all controllers
  */
 trait AppControllerTrait
 {

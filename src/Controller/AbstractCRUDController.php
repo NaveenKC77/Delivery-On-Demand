@@ -15,7 +15,7 @@ use App\Services\ServicesInterface;
  * Abstract form controller for All Entities Apart from UserTypes , uses FormControllerTraits
  * provides Create , Update and Delete Abstract Functions
  */
-abstract class AbstractFormController extends AbstractController
+abstract class AbstractCRUDController extends AbstractController
 {
     use AppControllerTrait;
 
@@ -55,12 +55,8 @@ abstract class AbstractFormController extends AbstractController
 
             try {
 
-                if($this->getService() instanceof ServicesInterface ){
-
-
                 $this->getService()->add($entity);
-                }
-
+            
                 // for creating events, eg: returns category for Category Class from where event can be triggered using entity
                 $this->setData($entity);
 

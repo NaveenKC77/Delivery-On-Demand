@@ -4,6 +4,9 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Enum\OrderStatus;
+use App\Event\Events\OrderCancelledEvent;
+use App\Event\Events\OrderCompletedEvent;
+use App\Event\Events\OrderConfirmedEvent;
 use App\Services\OrderService;
 use App\Services\PaginatorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,7 +15,7 @@ use App\Form\OrderDetailsFormType;
 use App\Entity\Order;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class OrderController extends AbstractController
@@ -23,6 +26,7 @@ class OrderController extends AbstractController
     public function __construct(
         private OrderService $orderService,
         private PaginatorService $paginatorService,
+        private EventDispatcherInterface $eventDispatcher,
     ){
 
     }
@@ -64,6 +68,24 @@ class OrderController extends AbstractController
         $order->setStatus(OrderStatus::from($statusValue));
         $entityManager->flush();
 
+        switch ($statusValue){
+            case OrderStatus::CONFIRMED->value:
+                $event = new OrderConfirmedEvent($order);
+                $this->eventDispatcher->dispatch($event,OrderConfirmedEvent::class);
+               
+            case OrderStatus::COMPLETED->value:
+                $event = new OrderCompletedEvent($order);   
+                $this->eventDispatcher->dispatch($event,OrderCompletedEvent::class);
+            
+            case OrderStatus::CANCELLED->value:
+                $event = new OrderCancelledEvent($order);
+                $this->eventDispatcher->dispatch($event,OrderCancelledEvent::class);
+
+
+            default:
+                dd($statusValue);
+
+        }
         $this->addFlash('success', 'Order status updated successfully.');
 
         return $this->redirectToRoute('admin_order');
@@ -81,7 +103,7 @@ class OrderController extends AbstractController
         return $this->read();
     }
 
-#[Route('/profile/order/{page<\d+>}',name:'app_order')]
+#[Route('/user/order/{page<\d+>}',name:'app_order')]
     public function userOrdersPage(int $page=1){
         
         // get logged in customer Id 
@@ -103,7 +125,7 @@ class OrderController extends AbstractController
         
     }
 
-    #[Route('/profile/order/single/{id}','app_view_order')]
+    #[Route('/user/order/single/{id}','app_view_order')]
     public function viewOrderUser(int $id){
         $order = $this->orderService->getOneById($id);
 

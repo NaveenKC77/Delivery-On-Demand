@@ -11,7 +11,7 @@ class Notification
 {
 
     use TimestampableEntity;
-    
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -23,6 +23,9 @@ class Notification
     #[ORM\Column(length: 255)]
     private ?string $content = '';
 
+    #[ORM\Column(length: 255)]
+    private ?string $link = '';
+
     #[ORM\Column]
     private ?bool $isRead = false;
 
@@ -30,10 +33,11 @@ class Notification
     private ?User $user = null;
 
 
-    public function __construct(User $user,string $title,string $content){
+    public function __construct(User $user,string $title,string $content,string $link){
             $this->setUser($user);
             $this->title = $title;
             $this->content= $content;
+            $this->link=$link;
 
     }
     public function getId(): ?int
@@ -62,6 +66,15 @@ class Notification
     {
         $this->content = $content;
 
+        return $this;
+    }
+
+    public function getLink(): ?string{
+        return $this->link;
+    }
+
+    public function setLink(string $link): static{
+        $this->link = $link;
         return $this;
     }
 

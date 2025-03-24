@@ -13,16 +13,16 @@ class NotificationService{
 
 
     // create new notification
-    public function newNotification(User $user,string $title,string $content){
+    public function newNotification(User $user,string $title,string $content,string $link){
 
-        $notification = new Notification($user, $title, $content);
+        $notification = new Notification($user, $title, $content,$link);
 
         $this->notificationRepository->save($notification);
 
     }
 
     // get all notifications for the user
-    public function getAlNotifications (User $user) : array{
+    public function getAllNotifications (User $user) : array{
         $notifications = $this->notificationRepository->getNotificationsByUserQueryBuilder($user->getId())
         ->getQuery()
         ->getResult();
@@ -30,7 +30,12 @@ class NotificationService{
         return $notifications;
     }
 
-    //get unreadNotification Count
+    //get unreadNotification notifications
+
+    public function getAllUnreadNotifications(User $user){
+        $notifications = $this->notificationRepository->getUnReadNotificationsByUserQueryBuilder($user->getId())->getQuery()->getResult();
+        return $notifications;
+    }
 
     public function countUnReadNotification(User $user){
 

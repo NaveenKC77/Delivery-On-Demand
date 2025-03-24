@@ -12,7 +12,7 @@ class NotificationController extends AbstractController
 {
 
     public function __construct(private NotificationService $notificationService){}
-    #[Route('/notification', name: 'app_notification')]
+    #[Route('/user/notification', name: 'app_notification')]
     public function index(): Response
     {
 
@@ -20,7 +20,7 @@ class NotificationController extends AbstractController
         $user = $this->getUser();
 
         // get all notifications
-        $notifications = $this->notificationService->getAlNotifications($user);
+        $notifications = $this->notificationService->getAllNotifications($user);
 
         //unread Notifications count
         $unreadNotifications = $this->notificationService->countUnReadNotification($user);
@@ -32,7 +32,7 @@ class NotificationController extends AbstractController
         ]);
     }
 
-    #[Route('/notification/read/{id}', name:'app_notification_read')]
+    #[Route('/user/notification/read/{id}', name:'app_notification_read')]
 
     public function markNotificationRead(int $id){
         try{

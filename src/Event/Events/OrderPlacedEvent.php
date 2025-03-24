@@ -2,19 +2,10 @@
 
 namespace App\Event\Events;
 
-use App\Entity\Order;
-use Symfony\Contracts\EventDispatcher\Event;
+use App\Enum\OrderStatus;
 
-class OrderPlacedEvent extends Event
+class OrderPlacedEvent extends AbstractOrderEvent
 {
-    public function __construct(
-        private Order $order
-    ) {
-    }
-
-    public function getOrder(): Order
-    {
-        return $this->order;
-    }
+    public const EVENT_NAME = OrderStatus::PENDING->value;
 
 }
