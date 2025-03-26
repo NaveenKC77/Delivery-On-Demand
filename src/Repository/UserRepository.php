@@ -12,8 +12,10 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 /**
  * @extends ServiceEntityRepository<User>
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface,UserRepositoryInterface
 {
+
+    use EntityPersistanceTrait;
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, User::class);
@@ -33,21 +35,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    public function save(User $user)
-    {
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+    /**
+     * Summary of getAllQueryBuilder
+     * @return \Doctrine\ORM\QueryBuilder
+     * returns qb for all users in the system
+     */
+    public function getAllQueryBuilder(): \Doctrine\ORM\QueryBuilder{
+        return $this->createQueryBuilder('u');
     }
-
-    public function delete(User $user)
-    {
-        $this->getEntityManager()->remove($user);
-        $this->getEntityManager()->flush();
-    }
-
     /**
      * Get all users with the "Admin" role.
-     *
      * @return User[]
      */
     public function findAllAdmins(): array

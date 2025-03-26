@@ -4,19 +4,21 @@ namespace App\Repository;
 
 use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Category>
  */
-class CategoryRepository extends ServiceEntityRepository
+class CategoryRepository extends ServiceEntityRepository implements CategoryRepositoryInterface
 {
+    use EntityPersistanceTrait;
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Category::class);
     }
 
-    public function getAllQueryBuilder()
+    public function getAllQueryBuilder(): QueryBuilder
     {
         return $this->createQueryBuilder('c')
             ->addSelect('products')
@@ -33,20 +35,6 @@ class CategoryRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-
-    public function save(Category $category): void
-    {
-        $em = $this->getEntityManager();
-        $em->persist($category);
-        $em->flush();
-    }
-
-    public function delete(Category $category): void
-    {
-        $em = $this->getEntityManager();
-        $em->remove($category);
-        $em->flush();
-    }
 
     //    /**
     //     * @return Category[] Returns an array of Category objects

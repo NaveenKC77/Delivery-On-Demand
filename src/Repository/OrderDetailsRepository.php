@@ -9,11 +9,20 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<OrderDetails>
  */
-class OrderDetailsRepository extends ServiceEntityRepository
+class OrderDetailsRepository extends ServiceEntityRepository implements OrderDetailsRepositoryInterface
 {
+    use EntityPersistanceTrait;
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, OrderDetails::class);
+    }
+
+    /**
+     * Summary of getAllQueryBuilder
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getAllQueryBuilder(): \Doctrine\ORM\QueryBuilder{
+        return $this->createQueryBuilder("o");
     }
 
     //    /**

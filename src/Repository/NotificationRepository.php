@@ -10,27 +10,28 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<Notification>
  */
-class NotificationRepository extends ServiceEntityRepository
+class NotificationRepository extends ServiceEntityRepository implements NotificationRepositoryInterface
 {
+    use EntityPersistanceTrait;
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Notification::class);
     }
 
-    public function save(Notification $notification): void
-    {
-        $em = $this->getEntityManager();
-        $em->persist($notification);
-        $em->flush();
+    /**
+     * Summary of getAllQueryBuilder
+     * @return QueryBuilder
+     * all rows from notifications table
+     */
+    public function getAllQueryBuilder(): QueryBuilder{
+        return $qb = $this->createQueryBuilder("n");
     }
-
-    public function delete(Notification $notification): void
-    {
-        $em = $this->getEntityManager();
-        $em->remove($notification);
-        $em->flush();
-    }
-
+    /**
+     * Summary of getNotificationsByUserQueryBuilder
+     * @param int $userId
+     * @return QueryBuilder
+     * return notifications for each user
+     */
     public function getNotificationsByUserQueryBuilder(int $userId): QueryBuilder{
         return $this->createQueryBuilder("n")
         ->andWhere('n.user = :val')
@@ -38,6 +39,12 @@ class NotificationRepository extends ServiceEntityRepository
         ->orderBy('n.createdAt');
     }
 
+    /**
+     * Summary of getUnReadNotificationsByUserQueryBuilder
+     * @param int $userId
+     * @return QueryBuilder
+     * returns unread notifications for each user 
+     */
     public function getUnReadNotificationsByUserQueryBuilder(int $userId): QueryBuilder{
         return $this->createQueryBuilder("n")
         ->andWhere('n.user = :userId')

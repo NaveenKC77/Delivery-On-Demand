@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
-class Notification
+class Notification implements EntityInterface
 {
 
     use TimestampableEntity;

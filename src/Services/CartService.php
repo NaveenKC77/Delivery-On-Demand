@@ -4,30 +4,41 @@ namespace App\Services;
 
 use App\Entity\Cart;
 use App\Entity\CartItem;
-use App\Repository\CartRepository;
+use App\Entity\EntityInterface;
 use App\Entity\User;
+use App\Repository\CartRepositoryInterface;
 
-class CartService
+
+class CartService extends AbstractEntityService
 {
-    public function __construct(private CartRepository $cartRepository, private CartCalculatorService $cartCalculatorService, private CartItemService $cartItemService)
+    public function __construct(public CartRepositoryInterface $repository, private CartItemService $cartItemService,private CartCalculatorService $cartCalculatorService)
     {
+        parent::__construct(repository: $repository);
     }
 
-    public function getOneById(int $id): Cart | null
+    public function getAll():array{
+        return $this->repository->findAll();
+    }
+
+    public function getAllQueryBuilder(): \Doctrine\ORM\QueryBuilder{
+        return $this->repository->getAllQueryBuilder();
+    }
+
+    public function getOneById(int $id): EntityInterface
     {
-        return $this->cartRepository->findOneById($id);
+        return $this->repository->find($id);
     }
 
     public function getCartFromCustomerId($customerId): Cart|null
     {
-        return $this->cartRepository->findOneByCustomerId($customerId);
+        return $this->repository->findByCustomerId($customerId);
     }
 
     public function initializeCart(User $user): void
     {
         $cart = new Cart();
         $cart->setCustomer($user->getCustomer());
-        $this->cartRepository->save($cart);
+        $this->save($cart);
 
     }
 
@@ -40,7 +51,7 @@ class CartService
 
         $this->resetCartNumbers($cart);
 
-        $this->cartRepository->save($cart);
+        $this->save($cart);
 
     }
 
@@ -51,7 +62,7 @@ class CartService
 
         $this->resetCartNumbers($cart);
 
-        $this->cartRepository->save($cart);
+        $this->save($cart);
 
     }
 
@@ -65,19 +76,15 @@ class CartService
         $cart->setTotal($total);
         $cart->setQuantity($quantity);
 
-        $this->cartRepository->save($cart);
+        $this->save($cart);
     }
 
     public function checkItemExists(Cart $cart, CartItem $cartItem): bool
     {
 
-        $cartItems = $cart->getCartItems()->toArray();
-
-        $itemIdArray = array_map(function (CartItem $cartItem) {
-            return $cartItem->getProduct()->getId();
-        }, $cartItems);
-
-        return in_array($cartItem->getProduct()->getId(), $itemIdArray);
+      return $cart->getCartItems()->exists(fn($key,CartItem $ci)=>
+        $ci->getProduct()->getId()=== $cartItem->getProduct()->getId()
+    );
 
     }
 }

@@ -6,7 +6,7 @@ use App\Repository\OrderDetailsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderDetailsRepository::class)]
-class OrderDetails
+class OrderDetails implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

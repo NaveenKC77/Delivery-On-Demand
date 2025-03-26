@@ -8,7 +8,7 @@ use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
 use App\Services\CategoryEventDispatcherService;
 use App\Services\CategoryService;
-use App\Services\ServicesInterface;
+use App\Services\EntityServicesInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +31,7 @@ class CategoryController extends AbstractCRUDController
     }
 
     // returns service
-    public function getService(): ServicesInterface
+    public function getService(): EntityServicesInterface
     {
         return $this->categoryService;
     }

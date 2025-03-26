@@ -12,7 +12,7 @@ use App\Enum\OrderStatus;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
-class Order
+class Order implements EntityInterface
 {
 
     use TimestampableEntity;

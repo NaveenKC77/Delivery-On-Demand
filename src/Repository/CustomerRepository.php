@@ -11,8 +11,10 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<Customer>
  */
-class CustomerRepository extends ServiceEntityRepository
+class CustomerRepository extends ServiceEntityRepository implements CustomerRepositoryInterface
 {
+
+    use EntityPersistanceTrait;
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Customer::class);
