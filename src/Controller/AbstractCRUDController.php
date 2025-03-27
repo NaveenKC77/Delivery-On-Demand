@@ -55,7 +55,7 @@ abstract class AbstractCRUDController extends AbstractController
             try {
 
                 $this->getService()->add($entity);
-            
+
                 // for creating events, eg: returns category for Category Class from where event can be triggered using entity
                 $this->setData($entity);
 

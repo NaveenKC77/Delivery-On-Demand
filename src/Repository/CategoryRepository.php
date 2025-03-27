@@ -35,6 +35,12 @@ class CategoryRepository extends ServiceEntityRepository implements CategoryRepo
             ->getResult();
     }
 
+    //overriding parent method to make it public
+    public function getEntityManager(): \Doctrine\ORM\EntityManagerInterface
+    {
+        return parent::getEntityManager();
+    }
+
 
     //    /**
     //     * @return Category[] Returns an array of Category objects

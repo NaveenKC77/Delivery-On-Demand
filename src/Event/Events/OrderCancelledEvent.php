@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Event\Events;
+
 use App\Enum\OrderStatus;
 
 class OrderCancelledEvent extends AbstractOrderEvent

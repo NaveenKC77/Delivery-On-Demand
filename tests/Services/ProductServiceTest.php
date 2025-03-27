@@ -2,8 +2,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-
-class ProductServiceTest extends TestCase{
-
-    
+class ProductServiceTest extends TestCase
+{
 }

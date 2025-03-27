@@ -14,9 +14,8 @@ use App\Enum\OrderStatus;
 #[ORM\Table(name: '`order`')]
 class Order implements EntityInterface
 {
-
     use TimestampableEntity;
-    
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

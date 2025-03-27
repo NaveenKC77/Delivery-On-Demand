@@ -21,8 +21,15 @@ class OrderDetailsRepository extends ServiceEntityRepository implements OrderDet
      * Summary of getAllQueryBuilder
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function getAllQueryBuilder(): \Doctrine\ORM\QueryBuilder{
+    public function getAllQueryBuilder(): \Doctrine\ORM\QueryBuilder
+    {
         return $this->createQueryBuilder("o");
+    }
+
+    //overriding parent method to make it public
+    public function getEntityManager(): \Doctrine\ORM\EntityManagerInterface
+    {
+        return parent::getEntityManager();
     }
 
     //    /**

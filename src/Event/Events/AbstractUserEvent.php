@@ -15,8 +15,9 @@ abstract class AbstractUserEvent extends Event implements AppLoggerEventInterfac
     // event typ e : create , delete , update
     protected const EVENT_NAME = "";
 
-    public function getAction():string{
-        return static::EVENT_NAME;    
+    public function getAction(): string
+    {
+        return static::EVENT_NAME;
     }
     public function getEntityType(): string
     {

@@ -12,7 +12,6 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ProductRepository extends ServiceEntityRepository implements ProductRepositoryInterface
 {
-
     use EntityPersistanceTrait;
     public function __construct(ManagerRegistry $registry)
     {
@@ -22,9 +21,9 @@ class ProductRepository extends ServiceEntityRepository implements ProductReposi
     /**
      * Summary of getAllQueryBuilder
      * @return QueryBuilder
-     * returns all products joined with its categories
+     *                      returns all products joined with its categories
      */
-    public function getAllQueryBuilder():QueryBuilder
+    public function getAllQueryBuilder(): QueryBuilder
     {
         return $this->createQueryBuilder('p')
             ->addSelect('category')
@@ -37,13 +36,13 @@ class ProductRepository extends ServiceEntityRepository implements ProductReposi
      * Summary of getByCategoriesQueryBuilder
      * @param mixed $categoryId
      * @return QueryBuilder
-     * return all products by categories
+     *                      return all products by categories
      */
     public function getByCategoriesQueryBuilder($categoryId)
     {
         return $this->createQueryBuilder('p')
         ->where('p.category = :categoryId')
-        ->setParameter('categoryId',$categoryId);
+        ->setParameter('categoryId', $categoryId);
     }
 
     /**
@@ -70,6 +69,11 @@ class ProductRepository extends ServiceEntityRepository implements ProductReposi
         ->setMaxResults(3)
         ->getQuery()
         ->getResult();
+    }
+    //overriding parent method to make it public
+    public function getEntityManager(): \Doctrine\ORM\EntityManagerInterface
+    {
+        return parent::getEntityManager();
     }
 
     //    /**

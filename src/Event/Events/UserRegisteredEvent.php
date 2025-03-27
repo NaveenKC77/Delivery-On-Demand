@@ -3,7 +3,6 @@
 namespace App\Event\Events;
 
 use App\Entity\User;
-
 use Symfony\Contracts\EventDispatcher\Event;
 
 class UserRegisteredEvent extends AbstractUserEvent
@@ -24,7 +23,8 @@ class UserRegisteredEvent extends AbstractUserEvent
         return $this->user;
     }
 
-    public function getAction(): string{
+    public function getAction(): string
+    {
         return 'Register';
     }
 }

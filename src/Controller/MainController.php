@@ -15,13 +15,13 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class MainController extends AbstractController
 {
-    public function __construct(private ProductService $productService,private LoggerInterface $logger,private AppCacheService $appCacheService)
+    public function __construct(private ProductService $productService, private LoggerInterface $logger, private AppCacheService $appCacheService)
     {
     }
     #[Route('/', name: 'app_main')]
     public function index(): Response
     {
-       
+
         $featuredProducts = $this->productService->getFeaturedProducts();
         return $this->render('main/homepage.html.twig', [
             'featuredProducts' => $featuredProducts,

@@ -21,21 +21,23 @@ class NotificationRepository extends ServiceEntityRepository implements Notifica
     /**
      * Summary of getAllQueryBuilder
      * @return QueryBuilder
-     * all rows from notifications table
+     *                      all rows from notifications table
      */
-    public function getAllQueryBuilder(): QueryBuilder{
+    public function getAllQueryBuilder(): QueryBuilder
+    {
         return $qb = $this->createQueryBuilder("n");
     }
     /**
      * Summary of getNotificationsByUserQueryBuilder
      * @param int $userId
      * @return QueryBuilder
-     * return notifications for each user
+     *                      return notifications for each user
      */
-    public function getNotificationsByUserQueryBuilder(int $userId): QueryBuilder{
+    public function getNotificationsByUserQueryBuilder(int $userId): QueryBuilder
+    {
         return $this->createQueryBuilder("n")
         ->andWhere('n.user = :val')
-        ->setParameter('val',$userId)
+        ->setParameter('val', $userId)
         ->orderBy('n.createdAt');
     }
 
@@ -43,9 +45,10 @@ class NotificationRepository extends ServiceEntityRepository implements Notifica
      * Summary of getUnReadNotificationsByUserQueryBuilder
      * @param int $userId
      * @return QueryBuilder
-     * returns unread notifications for each user 
+     *                      returns unread notifications for each user
      */
-    public function getUnReadNotificationsByUserQueryBuilder(int $userId): QueryBuilder{
+    public function getUnReadNotificationsByUserQueryBuilder(int $userId): QueryBuilder
+    {
         return $this->createQueryBuilder("n")
         ->andWhere('n.user = :userId')
         ->setParameter('userId', $userId)
@@ -54,28 +57,34 @@ class NotificationRepository extends ServiceEntityRepository implements Notifica
         ->orderBy('n.createdAt');
     }
 
-//    /**
-//     * @return Notification[] Returns an array of Notification objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('n')
-//            ->andWhere('n.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('n.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    //overriding parent method to make it public
+    public function getEntityManager(): \Doctrine\ORM\EntityManagerInterface
+    {
+        return parent::getEntityManager();
+    }
 
-//    public function findOneBySomeField($value): ?Notification
-//    {
-//        return $this->createQueryBuilder('n')
-//            ->andWhere('n.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    //    /**
+    //     * @return Notification[] Returns an array of Notification objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('n')
+    //            ->andWhere('n.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('n.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
+
+    //    public function findOneBySomeField($value): ?Notification
+    //    {
+    //        return $this->createQueryBuilder('n')
+    //            ->andWhere('n.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }

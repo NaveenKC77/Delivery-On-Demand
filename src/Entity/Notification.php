@@ -9,7 +9,6 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
 class Notification implements EntityInterface
 {
-
     use TimestampableEntity;
 
     #[ORM\Id]
@@ -33,11 +32,12 @@ class Notification implements EntityInterface
     private ?User $user = null;
 
 
-    public function __construct(User $user,string $title,string $content,string $link){
-            $this->setUser($user);
-            $this->title = $title;
-            $this->content= $content;
-            $this->link=$link;
+    public function __construct(User $user, string $title, string $content, string $link)
+    {
+        $this->setUser($user);
+        $this->title = $title;
+        $this->content = $content;
+        $this->link = $link;
 
     }
     public function getId(): ?int
@@ -69,11 +69,13 @@ class Notification implements EntityInterface
         return $this;
     }
 
-    public function getLink(): ?string{
+    public function getLink(): ?string
+    {
         return $this->link;
     }
 
-    public function setLink(string $link): static{
+    public function setLink(string $link): static
+    {
         $this->link = $link;
         return $this;
     }

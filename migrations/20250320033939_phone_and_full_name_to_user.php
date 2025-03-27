@@ -22,9 +22,9 @@ final class PhoneAndFullNameToUser extends AbstractMigration
 
         $table = $this->table('user');
 
-        $table->addColumn('first_name','string', ['limit'=> 30])
-        ->addColumn('last_name','string', ['limit'=> 30])
-        ->addColumn('phone_number','string', ['limit'=> 15])
+        $table->addColumn('first_name', 'string', ['limit' => 30])
+        ->addColumn('last_name', 'string', ['limit' => 30])
+        ->addColumn('phone_number', 'string', ['limit' => 15])
         ->save();
     }
 }

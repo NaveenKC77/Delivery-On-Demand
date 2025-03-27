@@ -28,7 +28,7 @@ class AbstractRegistrationFormType extends AbstractType
                         'pattern' => '/^0\d{9}$/',
                         'message' => 'Please enter a valid 10-digit phone number starting with 0.',
                     ]),
-                    
+
                 ],
             ])
             ->add('agreeTerms', CheckboxType::class, [

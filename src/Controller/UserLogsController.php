@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-
 use App\Services\LogFilterService;
 use App\Services\LoggerService;
 use App\Services\ServicesInterface;
@@ -14,10 +13,10 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class UserLogsController extends AbstractLogsController
 {
-    public function __construct(private UserService $userService, private LoggerService $loggerService, private LogFilterService $logFilterService,private CacheInterface $logsCache)
+    public function __construct(private UserService $userService, private LoggerService $loggerService, private LogFilterService $logFilterService, private CacheInterface $logsCache)
     {
 
-        parent::__construct($this->loggerService, $this->userService, $this->logFilterService,$this->logsCache);
+        parent::__construct($this->loggerService, $this->userService, $this->logFilterService, $this->logsCache);
     }
 
     public function getEntityType(): string

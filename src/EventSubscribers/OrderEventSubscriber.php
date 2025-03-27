@@ -14,7 +14,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class OrderEventSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private HttpClientInterface $client, private MailerInterface $mailer,private ProductRepository $productRepository,private NotificationService $notificationService)
+    public function __construct(private HttpClientInterface $client, private MailerInterface $mailer, private ProductRepository $productRepository, private NotificationService $notificationService)
     {
     }
 
@@ -29,14 +29,14 @@ class OrderEventSubscriber implements EventSubscriberInterface
 
             $customer = $order->getCustomer()->getUser();
 
-            $title = "Order ". $event->getAction();
-    
+            $title = "Order " . $event->getAction();
+
             $content = "Order Placed . Our admin will look into it and confirm it . You can track your order status by clicking the 'View Details' button ";
 
-            $orderId=$order->getId();
+            $orderId = $order->getId();
             $link = "/user/order/single/$orderId";
 
-            $this->notificationService->newNotification($customer,$title,$content,$link);
+            $this->notificationService->newNotification($customer, $title, $content, $link);
 
 
         }
@@ -44,8 +44,9 @@ class OrderEventSubscriber implements EventSubscriberInterface
 
         // log in dynamo db
     }
-    
-    public function onOrderConfirmed(OrderConfirmedEvent $event): void{
+
+    public function onOrderConfirmed(OrderConfirmedEvent $event): void
+    {
         $order = $event->getOrder();
 
         if ($order instanceof Order) {
@@ -54,34 +55,35 @@ class OrderEventSubscriber implements EventSubscriberInterface
             $customer = $order->getCustomer()->getUser();
 
             // notification title , capitalise first letter of every word
-            $title=ucwords("Order ". $event->getAction());
+            $title = ucwords("Order " . $event->getAction());
 
-            $orderId=$order->getId();
+            $orderId = $order->getId();
 
             $content = "Order Confirmed. You can track you order now.";
 
             $link = "/user/order/single/$orderId";
 
             // create new notification
-            $this->notificationService->newNotification($customer,$title,$content,$link);
+            $this->notificationService->newNotification($customer, $title, $content, $link);
 
         }
     }
 
 
-    public function onOrderCancelled(OrderCancelledEvent $event): void{
+    public function onOrderCancelled(OrderCancelledEvent $event): void
+    {
         $order = $event->getOrder();
 
         if ($order instanceof Order) {
             $customer = $order->getCustomer()->getUser();
 
-            $title="Order". $event->getAction();
+            $title = "Order" . $event->getAction();
 
-            $orderId=$order->getId();
+            $orderId = $order->getId();
             $content = " Sorry Order Cancelled .";
             $link = "/user/order/single/$orderId";
 
-            $this->notificationService->newNotification($customer,$title,$content,$link);
+            $this->notificationService->newNotification($customer, $title, $content, $link);
 
         }
     }
@@ -89,8 +91,8 @@ class OrderEventSubscriber implements EventSubscriberInterface
     {
         return [
             OrderPlacedEvent::class => ['onOrderPlaced'],
-            OrderConfirmedEvent::class=>['onOrderConfirmed'],
-            OrderCancelledEvent::class=>['onOrderCancelled']
+            OrderConfirmedEvent::class => ['onOrderConfirmed'],
+            OrderCancelledEvent::class => ['onOrderCancelled']
         ];
     }
 
@@ -105,7 +107,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
             $newStock = $product->getStock() - $quantity;
             $product->setStock($newStock);
 
-           $this->productRepository->save($product);
+            $this->productRepository->save($product);
         }
     }
 }

@@ -9,15 +9,16 @@ use App\Entity\EntityInterface;
  * Explicitly for Doctrine Created Repositories
  * Functions to persist Data On Database
  */
-trait EntityPersistanceTrait {
-
+trait EntityPersistanceTrait
+{
     /**
      * Summary of save
      * @param \App\Entity\EntityInterface $entity
-     * save data to databse
+     *                                            save data to databse
      * @return void
      */
-    public function save(EntityInterface $entity): void{
+    public function save(EntityInterface $entity): void
+    {
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
     }
@@ -25,10 +26,11 @@ trait EntityPersistanceTrait {
     /**
      * Summary of delete
      * @param \App\Entity\EntityInterface $entity
-     * Delete Data From Database
+     *                                            Delete Data From Database
      * @return void
      */
-    public function delete(EntityInterface $entity): void{
+    public function delete(EntityInterface $entity): void
+    {
         $this->getEntityManager()->remove($entity);
         $this->getEntityManager()->flush();
     }

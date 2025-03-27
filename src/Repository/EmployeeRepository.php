@@ -52,6 +52,12 @@ class EmployeeRepository extends ServiceEntityRepository
     {
         return $this->getAllVerifiedQueryBuilder()->getQuery()->getResult();
     }
+
+    //overriding parent method to make it public
+    public function getEntityManager(): \Doctrine\ORM\EntityManagerInterface
+    {
+        return parent::getEntityManager();
+    }
     //    /**
     //     * @return Employee[] Returns an array of Employee objects
     //     */

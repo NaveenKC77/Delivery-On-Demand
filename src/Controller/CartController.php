@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Services\CartCalculatorServiceInterface;
 use App\Entity\Cart;
 use App\Entity\CartItem;
 use App\Entity\Customer;
@@ -16,13 +17,11 @@ use App\Services\ProductService;
 use App\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 
 /**
  * Summary of CartController
@@ -32,6 +31,7 @@ class CartController extends AbstractController
 {
     public function __construct(
         private CartService $cartService,
+        private CartCalculatorServiceInterface $cartCalculatorService,
         private CartItemService $cartItemService,
         private UserService $userService,
         private ProductService $productService,
@@ -44,7 +44,7 @@ class CartController extends AbstractController
     private function getCart(): Cart|null
     {
 
-        $cache = new FilesystemAdapter();
+
         // getting authorized user
         $user = $this->security->getUser();
 
@@ -58,12 +58,6 @@ class CartController extends AbstractController
         if (!$customer instanceof Customer) {
             throw new \Exception('wrong type of User passed');
         }
-        // $cart = $cache->get('Cart',function (ItemInterface $item)use($customer): Cart|null{
-        //     $item->expiresAfter(10);
-
-        //     return $customer->getCart();
-
-        // });
 
         $cart = $customer->getCart();
         // $cart = $customer->getCart();
@@ -132,7 +126,7 @@ class CartController extends AbstractController
             $cart = $this->getCart();
             $this->cartItemService->plusQuantity($cartItemId);
             //reset cart total
-            $this->cartService->resetCartNumbers($cart);
+            $this->cartCalculatorService->updateCartTotals($cart);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
@@ -147,7 +141,7 @@ class CartController extends AbstractController
             $cart = $this->getCart();
             $this->cartItemService->minusQuantity($cartItemId);
             //reset cart total
-            $this->cartService->resetCartNumbers($cart);
+            $this->cartCalculatorService->updateCartTotals($cart);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }

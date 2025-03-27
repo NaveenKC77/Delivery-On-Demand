@@ -5,7 +5,7 @@ namespace App\Event\Events;
 use App\Entity\Category;
 use Symfony\Contracts\EventDispatcher\Event;
 
-abstract class AbstractCategoryEvent extends Event implements AppLoggerEventInterface 
+abstract class AbstractCategoryEvent extends Event implements AppLoggerEventInterface
 {
     public function __construct(
         private Category $category,
@@ -20,9 +20,10 @@ abstract class AbstractCategoryEvent extends Event implements AppLoggerEventInte
      * @return string
      *                return action type 'Create','Update' or 'Delete'
      */
-    public function getAction(): string{
-    return static::EVENT_NAME;
-   }
+    public function getAction(): string
+    {
+        return static::EVENT_NAME;
+    }
 
     public function getEntityType(): string
     {

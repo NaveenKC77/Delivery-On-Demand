@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\CartItem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,10 +20,17 @@ class CartItemRepository extends ServiceEntityRepository implements CartItemRepo
     }
 
 
-    public function getAllQueryBuilder(): QueryBuilder{
+    public function getAllQueryBuilder(): QueryBuilder
+    {
         return $this->createQueryBuilder('c')
         ->getQuery()
         ->getResult();
+    }
+
+    //overriding parent method to make it public
+    public function getEntityManager(): \Doctrine\ORM\EntityManagerInterface
+    {
+        return parent::getEntityManager();
     }
     //    /**
     //     * @return CartItem[] Returns an array of CartItem objects

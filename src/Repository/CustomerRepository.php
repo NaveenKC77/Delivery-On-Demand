@@ -13,7 +13,6 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CustomerRepository extends ServiceEntityRepository implements CustomerRepositoryInterface
 {
-
     use EntityPersistanceTrait;
     public function __construct(ManagerRegistry $registry)
     {
@@ -52,6 +51,12 @@ class CustomerRepository extends ServiceEntityRepository implements CustomerRepo
     public function findAllVerified(): array
     {
         return $this->getAllVerifiedQueryBuilder()->getQuery()->getResult();
+    }
+
+    //overriding parent method to make it public
+    public function getEntityManager(): \Doctrine\ORM\EntityManagerInterface
+    {
+        return parent::getEntityManager();
     }
     //    /**
     //     * @return Customer[] Returns an array of Customer objects

@@ -5,8 +5,8 @@ namespace App\Event\Events;
 /**
  * Basic methods for all loger abtsract classes to follow
  */
-interface AppLoggerEventInterface {
-
+interface AppLoggerEventInterface
+{
     //returns Entity type : product, category , order etc
     public function getEntityType(): string;
 

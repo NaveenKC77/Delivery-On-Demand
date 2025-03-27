@@ -44,7 +44,7 @@ class LoggerEventSubscriber implements EventSubscriberInterface
         return $user;
 
     }
- 
+
 
     public function onProductCreated(ProductCreatedEvent $event): void
     {
@@ -74,7 +74,7 @@ class LoggerEventSubscriber implements EventSubscriberInterface
 
     public function onCategoryCreated(CategoryCreatedEvent $event): void
     {
-    
+
         $category = $event->getCategory();
 
         $this->createLog($category, $event->getEntityType(), $event->getAction());
@@ -97,7 +97,8 @@ class LoggerEventSubscriber implements EventSubscriberInterface
 
     }
 
-    public function onUserRegistered(UserRegisteredEvent $event): void{
+    public function onUserRegistered(UserRegisteredEvent $event): void
+    {
         $user = $event->getUser();
 
         $this->createUserLog($user, $event->getEntityType(), $event->getAction());
@@ -115,7 +116,7 @@ class LoggerEventSubscriber implements EventSubscriberInterface
         // unique uuid for storing LogId in Dynamo
         $logId = Guid::uuid4()->toString();
 
-        
+
 
         $item = [
             'PK' => [
@@ -154,7 +155,8 @@ class LoggerEventSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function createUserLog(EntityInterface $entity, string $entityType, string $action){
+    public function createUserLog(EntityInterface $entity, string $entityType, string $action)
+    {
         $date = new \DateTimeImmutable();
 
         // unique uuid for storing LogId in Dynamo
@@ -171,7 +173,7 @@ class LoggerEventSubscriber implements EventSubscriberInterface
                 'S' => $entityType
             ],
             'EntityId' => [
-                'N' =>(string)  $entity->getId()
+                'N' => (string)  $entity->getId()
             ],
             'AdminId' => [
                 'S' => '0'
@@ -196,7 +198,7 @@ class LoggerEventSubscriber implements EventSubscriberInterface
             dd($e->getMessage());
         }
     }
-    
+
     public static function getSubscribedEvents()
     {
         return [

@@ -2,6 +2,6 @@
 
 namespace App\Repository;
 
-interface UserRepositoryInterface extends EntityRepositoryInterface{
-
+interface UserRepositoryInterface extends EntityRepositoryInterface
+{
 }

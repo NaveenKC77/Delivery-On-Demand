@@ -15,10 +15,10 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class CategoryLogsController extends AbstractLogsController
 {
-    public function __construct(private CategoryService $categoryService, private LoggerService $loggerService, private UserService $userService,private LogFilterService $logFilterService,private CacheInterface $logsCache)
+    public function __construct(private CategoryService $categoryService, private LoggerService $loggerService, private UserService $userService, private LogFilterService $logFilterService, private CacheInterface $logsCache)
     {
 
-        parent::__construct($this->loggerService, $this->userService,$this->logFilterService,$this->logsCache);
+        parent::__construct($this->loggerService, $this->userService, $this->logFilterService, $this->logsCache);
     }
 
     public function getEntityType(): string

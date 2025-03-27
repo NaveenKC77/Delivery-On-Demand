@@ -2,6 +2,9 @@
 
 namespace App\Repository;
 
-interface CustomerRepositoryInterface extends EntityRepositoryInterface{
+use Doctrine\ORM\QueryBuilder;
 
+interface CustomerRepositoryInterface extends EntityRepositoryInterface
+{
+    public function getAllVerifiedQueryBuilder(): QueryBuilder;
 }

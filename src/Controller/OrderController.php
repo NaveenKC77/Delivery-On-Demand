@@ -20,46 +20,47 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class OrderController extends AbstractController
 {
-
     use AppControllerTrait;
 
     public function __construct(
         private OrderService $orderService,
         private PaginatorService $paginatorService,
         private EventDispatcherInterface $eventDispatcher,
-    ){
+    ) {
 
     }
 
     #Needs Updating
-    public function getFormType(): string{
+    public function getFormType(): string
+    {
         return OrderDetailsFormType::class;
     }
 
-    public function getService(){
+    public function getService()
+    {
         return $this->orderService;
     }
     #[Route('admin/order/{page</d+>}', 'admin_order')]
-    public function index(int $page=1)
+    public function index(int $page = 1)
     {
         $qb = $this->orderService->getAllQueryBuilder();
 
-        $pagination = $this->getPagination($qb, $page,10);
+        $pagination = $this->getPagination($qb, $page, 10);
 
         $this->setTemplateName('admin/order/index.html.twig');
-        $this->setTemplateData(['pager'=>$pagination,'orderStatuses'=>OrderStatus::cases()]);
+        $this->setTemplateData(['pager' => $pagination,'orderStatuses' => OrderStatus::cases()]);
 
-        
+
         return $this->read();
-       
+
 
     }
 
     #[Route('/admin/order/update-status/{id}', name: 'admin_order_update_status', methods: ['POST'])]
-    public function updateStatus(Order $order,Request $request, EntityManagerInterface $entityManager): RedirectResponse
+    public function updateStatus(Order $order, Request $request, EntityManagerInterface $entityManager): RedirectResponse
     {
         $statusValue = $request->request->get('status');
-        
+
         if (!in_array($statusValue, array_column(OrderStatus::cases(), 'value'))) {
             $this->addFlash('error', 'Invalid status selected.');
             return $this->redirectToRoute('admin_order');
@@ -68,22 +69,25 @@ class OrderController extends AbstractController
         $order->setStatus(OrderStatus::from($statusValue));
         $entityManager->flush();
 
-        switch ($statusValue){
+        switch ($statusValue) {
             case OrderStatus::CONFIRMED->value:
                 $event = new OrderConfirmedEvent($order);
-                $this->eventDispatcher->dispatch($event,OrderConfirmedEvent::class);
-               
+                $this->eventDispatcher->dispatch($event, OrderConfirmedEvent::class);
+
+                // no break
             case OrderStatus::COMPLETED->value:
-                $event = new OrderCompletedEvent($order);   
-                $this->eventDispatcher->dispatch($event,OrderCompletedEvent::class);
-            
+                $event = new OrderCompletedEvent($order);
+                $this->eventDispatcher->dispatch($event, OrderCompletedEvent::class);
+
+                // no break
             case OrderStatus::CANCELLED->value:
                 $event = new OrderCancelledEvent($order);
-                $this->eventDispatcher->dispatch($event,OrderCancelledEvent::class);
+                $this->eventDispatcher->dispatch($event, OrderCancelledEvent::class);
 
 
+                // no break
             default:
-                $this->addFlash('error','No action available');
+                $this->addFlash('error', 'No action available');
 
         }
         $this->addFlash('success', 'Order status updated successfully.');
@@ -91,49 +95,52 @@ class OrderController extends AbstractController
         return $this->redirectToRoute('admin_order');
     }
 
-    #[Route('/admin/order/single/{id}','admin_view_order')]
-    public function viewOrder(int $id){
+    #[Route('/admin/order/single/{id}', 'admin_view_order')]
+    public function viewOrder(int $id)
+    {
         $order = $this->orderService->getOneById($id);
 
 
         $this->setTemplateName('/admin/order/single.html.twig');
-        $this->setTemplateData(['order'=>$order,'orderStatuses'=>OrderStatus::cases()]);
+        $this->setTemplateData(['order' => $order,'orderStatuses' => OrderStatus::cases()]);
 
-  
+
         return $this->read();
     }
 
-#[Route('/user/order/{page<\d+>}',name:'app_order')]
-    public function userOrdersPage(int $page=1){
-        
-        // get logged in customer Id 
+    #[Route('/user/order/{page<\d+>}', name:'app_order')]
+    public function userOrdersPage(int $page = 1)
+    {
+
+        // get logged in customer Id
         $user = $this->getUser();
-        
-        if($user instanceof User && $user->getCustomer()){
+
+        if ($user instanceof User && $user->getCustomer()) {
             $customerId = $user->getCustomer()->getId();
         }
-        
-        $qb= $this->orderService->getAllByCustomerIdQueryBuilder($customerId);
 
-        $pagination = $this->getPagination($qb,$page,5 );
+        $qb = $this->orderService->getAllByCustomerIdQueryBuilder($customerId);
+
+        $pagination = $this->getPagination($qb, $page, 5);
 
         $this->setTemplateName('/user/order/index.html.twig');
 
-        $this->setTemplateData(['user'=>$user,'pager'=>$pagination]);
+        $this->setTemplateData(['user' => $user,'pager' => $pagination]);
 
         return $this->read();
-        
+
     }
 
-    #[Route('/user/order/single/{id}','app_view_order')]
-    public function viewOrderUser(int $id){
+    #[Route('/user/order/single/{id}', 'app_view_order')]
+    public function viewOrderUser(int $id)
+    {
         $order = $this->orderService->getOneById($id);
 
 
         $this->setTemplateName('/user/order/single.html.twig');
-        $this->setTemplateData(['order'=>$order,'orderStatuses'=>OrderStatus::cases()]);
+        $this->setTemplateData(['order' => $order,'orderStatuses' => OrderStatus::cases()]);
 
-  
+
         return $this->read();
     }
 }

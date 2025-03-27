@@ -21,7 +21,7 @@ final class AddLinkToNotification extends AbstractMigration
     {
         $table = $this->table("notification");
 
-        $table->addColumn("link","string", ["limit"=> 255])
+        $table->addColumn("link", "string", ["limit" => 255])
         ->save();
     }
 }

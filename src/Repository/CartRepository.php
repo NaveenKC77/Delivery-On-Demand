@@ -12,14 +12,14 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CartRepository extends ServiceEntityRepository implements CartRepositoryInterface
 {
-
     use EntityPersistanceTrait;
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Cart::class);
     }
 
-    public function getALlQueryBuilder(): QueryBuilder{
+    public function getAllQueryBuilder(): QueryBuilder
+    {
         return $this->createQueryBuilder("c");
     }
     public function findByCustomerId(int $customerId): ?Cart
@@ -34,7 +34,12 @@ class CartRepository extends ServiceEntityRepository implements CartRepositoryIn
             ->getOneOrNullResult();
     }
 
-  
+    //overriding parent method to make it public
+    public function getEntityManager(): \Doctrine\ORM\EntityManagerInterface
+    {
+        return parent::getEntityManager();
+    }
+
 
     //    /**
     //     * @return Cart[] Returns an array of Cart objects

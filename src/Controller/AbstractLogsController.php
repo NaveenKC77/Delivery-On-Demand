@@ -151,13 +151,13 @@ abstract class AbstractLogsController extends AbstractController
 
         // Get logs by entity type
         // get item logs from cache , if empty , from dynamo Db
-        $itemLogs = $this->logsCache->get('logs',function(ItemInterface $item)use($entityType){
-           $item->expiresAfter(600);
+        $itemLogs = $this->logsCache->get('logs', function (ItemInterface $item) use ($entityType) {
+            $item->expiresAfter(600);
             return $this->loggerService->getLogsByEntityType($entityType);
         });
 
         // $itemLogs = $this->loggerService->getLogsByEntityType($this->getEntityType());
-    
+
 
         // Apply filters one by one
 

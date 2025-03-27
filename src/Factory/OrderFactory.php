@@ -23,7 +23,7 @@ class OrderFactory
 
         $order->setCustomer($customer);
 
-    
+
         // Add cart items to the order
         foreach ($cart->getCartItems() as $item) {
             $order->addCartItem($item);

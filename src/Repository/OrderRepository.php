@@ -21,27 +21,35 @@ class OrderRepository extends ServiceEntityRepository implements OrderRepository
     /**
      * Summary of getAllQueryBuilder
      * @return QueryBuilder
-     * returns all rows in order table
+     *                      returns all rows in order table
      */
-    public function getAllQueryBuilder():QueryBuilder{
+    public function getAllQueryBuilder(): QueryBuilder
+    {
         return $this->createQueryBuilder('o')
         ->addSelect('orderDetails')
-        ->leftJoin('o.orderDetails','orderDetails')
-        ->orderBy('o.createdAt','DESC');
+        ->leftJoin('o.orderDetails', 'orderDetails')
+        ->orderBy('o.createdAt', 'DESC');
     }
 
     /**
      * Summary of findOrdersByUserQueryBuilder
      * @param mixed $customerId
      * @return QueryBuilder
-     * returns order for specific User
+     *                      returns order for specific User
      */
-    public function getOrdersByUserQueryBuilder($customerId): QueryBuilder{
+    public function findOrdersByUserQueryBuilder($customerId): QueryBuilder
+    {
         return $this->createQueryBuilder('o')
         ->andWhere('o.customer = :val')
-        ->setParameter('val',$customerId)
-        ->orderBy('o.createdAt','DESC');
-    
+        ->setParameter('val', $customerId)
+        ->orderBy('o.createdAt', 'DESC');
+
+    }
+
+    //overriding parent method to make it public
+    public function getEntityManager(): \Doctrine\ORM\EntityManagerInterface
+    {
+        return parent::getEntityManager();
     }
 
 

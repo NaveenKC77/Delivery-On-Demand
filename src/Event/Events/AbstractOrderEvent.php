@@ -11,13 +11,14 @@ abstract class AbstractOrderEvent extends Event implements AppLoggerEventInterfa
         private Order $order,
     ) {
     }
-    protected const EVENT_NAME ="";
+    protected const EVENT_NAME = "";
     /**
      * Summary of getAction
      * @return string
      *                return action type 'Pending,Confirmed,Processing,Completed,Cancelled'
      */
-    public function getAction(): string{
+    public function getAction(): string
+    {
         return static::EVENT_NAME;
     }
 

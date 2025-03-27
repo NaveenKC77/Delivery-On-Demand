@@ -10,8 +10,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class NotificationController extends AbstractController
 {
-
-    public function __construct(private NotificationService $notificationService){}
+    public function __construct(private NotificationService $notificationService)
+    {
+    }
     #[Route('/user/notification', name: 'app_notification')]
     public function index(): Response
     {
@@ -26,7 +27,7 @@ class NotificationController extends AbstractController
         $unreadNotifications = $this->notificationService->countUnReadNotification($user);
 
         return $this->render('user/notification/index.html.twig', [
-            'user'=>$user,
+            'user' => $user,
             'notifications' => $notifications,
             'unread_notifications' => $unreadNotifications
         ]);
@@ -34,12 +35,12 @@ class NotificationController extends AbstractController
 
     #[Route('/user/notification/read/{id}', name:'app_notification_read')]
 
-    public function markNotificationRead(int $id){
-        try{
+    public function markNotificationRead(int $id)
+    {
+        try {
             $this->notificationService->markNotificationRead($id);
             return $this->redirectToRoute('app_notification');
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             dd($e->getMessage());
             return $this->redirectToRoute('app_notification');
         }

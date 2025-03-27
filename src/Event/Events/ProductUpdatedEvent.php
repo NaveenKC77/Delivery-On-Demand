@@ -4,5 +4,5 @@ namespace App\Event\Events;
 
 class ProductUpdatedEvent extends AbstractProductEvent
 {
-   public const EVENT_NAME = "Update";
+    public const EVENT_NAME = "Update";
 }

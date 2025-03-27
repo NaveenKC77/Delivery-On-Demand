@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures;
 
-
 use App\Factory\CategoryFactory;
 use App\Factory\EmployeeFactory;
 use App\Factory\ProductFactory;
@@ -26,12 +25,11 @@ class AppFixtures extends Fixture
                 'isVerified' => true,
                 'firstName' => 'Naveen',
                 'lastName' => 'K C',
-                'phoneNumber'=> '+61433941726',
+                'phoneNumber' => '+61433941726',
             ]
-                
         );
 
-       
+
         CategoryFactory::new()->createMany(4);
         ProductFactory::new()->createMany(16);
     }

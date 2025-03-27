@@ -20,7 +20,7 @@ class CategoryController extends AbstractCRUDController
         private CategoryService $categoryService,
         private CategoryRepository $categoryRepository,
         private CategoryEventDispatcherService  $eventDispatcherService,
-        private ProductRepository $productRepository, 
+        private ProductRepository $productRepository,
     ) {
     }
 
@@ -177,9 +177,10 @@ class CategoryController extends AbstractCRUDController
 
     // Customer Interface Category Page
 
-    #[Route('/category/{page<\d+>}',name:'app_category')]
+    #[Route('/category/{page<\d+>}', name:'app_category')]
 
-    public function userCategory(int $page=1){
+    public function userCategory(int $page = 1)
+    {
 
         // fetches queryBuyilder that returns all categories
         $qb = $this->categoryRepository->getAllQueryBuilder();
@@ -195,16 +196,17 @@ class CategoryController extends AbstractCRUDController
 
     // User UI Page for single category
 
-    #[Route('category/single/{id}/{page}',name:'category_view',requirements:['id' => '\d+'] )]
-    public function viewCategory( int $id,int $page =1){
+    #[Route('category/single/{id}/{page}', name:'category_view', requirements:['id' => '\d+'])]
+    public function viewCategory(int $id, int $page = 1)
+    {
 
         // query builder to get products for the specific category
-        $qb= $this->productRepository->getByCategoriesQuery($id);
+        $qb = $this->productRepository->getByCategoriesQuery($id);
         $pagination = parent::getPagination($qb, $page, 5);
 
         // getting dtaa for category
         $category =  $this->categoryRepository->findOneById($id);
-        $this->setTemplateData(['pager' => $pagination,'category'=>$category]);
+        $this->setTemplateData(['pager' => $pagination,'category' => $category]);
 
         $this->setTemplateName('category/single.html.twig');
 

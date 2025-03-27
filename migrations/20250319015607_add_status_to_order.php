@@ -22,7 +22,7 @@ final class AddStatusToOrder extends AbstractMigration
 
         $table = $this->table('order');
 
-        $table->addColumn('status','string', ['limit'=> 100,'null'=>false])
+        $table->addColumn('status', 'string', ['limit' => 100,'null' => false])
         ->update();
     }
 }

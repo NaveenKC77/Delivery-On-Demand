@@ -21,13 +21,13 @@ final class AddNotificationTable extends AbstractMigration
     {
         $table = $this->table('notification');
 
-        $table->addColumn('title','string', ['limit'=> 255,'null'=> false])
-        ->addColumn('content','string', ['limit'=> 255,'null'=> false])
-        ->addColumn( 'is_read','boolean',['null'=> false])
-        ->addColumn('user_id','integer',['null'=> false,'signed'=>false])
+        $table->addColumn('title', 'string', ['limit' => 255,'null' => false])
+        ->addColumn('content', 'string', ['limit' => 255,'null' => false])
+        ->addColumn('is_read', 'boolean', ['null' => false])
+        ->addColumn('user_id', 'integer', ['null' => false,'signed' => false])
         ->addColumn("created_at", "datetime", ["null" => false])
         ->addColumn("updated_at", "datetime", ["null" => false])
-        ->addForeignKey('user_id','user','id',['delete' => 'CASCADE'])
+        ->addForeignKey('user_id', 'user', 'id', ['delete' => 'CASCADE'])
         ->create();
     }
 }

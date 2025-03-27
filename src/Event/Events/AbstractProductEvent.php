@@ -11,13 +11,14 @@ abstract class AbstractProductEvent extends Event implements AppLoggerEventInter
         private Product $product,
     ) {
     }
-    protected const EVENT_NAME ="";
+    protected const EVENT_NAME = "";
     /**
      * Summary of getAction
      * @return string
      *                return action type 'Create','Update' or 'Delete'
      */
-    public function getAction(): string{
+    public function getAction(): string
+    {
         return static::EVENT_NAME;
     }
 

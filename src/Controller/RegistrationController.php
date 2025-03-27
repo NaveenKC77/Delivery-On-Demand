@@ -39,7 +39,7 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(CustomerRegistrationFormType::class, $user);
         $form->handleRequest($request);
 
-    
+
         if ($form->isSubmitted() && $form->isValid()) {
             try {
 
@@ -47,8 +47,8 @@ class RegistrationController extends AbstractController
 
                 // Normalize and validate the phone number
                 $normalizedPhoneNumber = $this->phoneNumberService->normalizePhoneNumber($phoneNumber);
-        
-            
+
+
                 if ($normalizedPhoneNumber === null) {
                     $this->addFlash('error', 'Invalid phone number.');
                     return $this->redirectToRoute('app_register');

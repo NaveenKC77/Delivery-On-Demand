@@ -16,10 +16,10 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class ProductLogsController extends AbstractLogsController
 {
-    public function __construct(private ProductService $productService, private LoggerService $loggerService, private UserService $userService,private LogFilterService $logFilterService,private CacheInterface $logsCache)
+    public function __construct(private ProductService $productService, private LoggerService $loggerService, private UserService $userService, private LogFilterService $logFilterService, private CacheInterface $logsCache)
     {
 
-        parent::__construct($this->loggerService, $this->userService,$this->logFilterService,$this->logsCache);
+        parent::__construct($this->loggerService, $this->userService, $this->logFilterService, $this->logsCache);
     }
 
     public function getEntityType(): string
@@ -47,14 +47,14 @@ class ProductLogsController extends AbstractLogsController
         $this->setTemplateName('admin/logs/product.html.twig');
 
         $itemId = $request->getSession()->get('productLogId', $this->getItemId());
-        
-        // //get from cache 
+
+        // //get from cache
         // $productLogs = $logsCache->get('productLogs',function(ItemInterface $item)use($request,$itemId){
         //     $item->expiresAfter(120);
         //     return parent::getAllLogs($request,$itemId);
         // });
-        
-        return parent::getAllLogs($request,$itemId);
+
+        return parent::getAllLogs($request, $itemId);
     }
 
     /**

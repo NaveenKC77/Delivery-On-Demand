@@ -12,9 +12,8 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 /**
  * @extends ServiceEntityRepository<User>
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface,UserRepositoryInterface
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, UserRepositoryInterface
 {
-
     use EntityPersistanceTrait;
     public function __construct(ManagerRegistry $registry)
     {
@@ -38,9 +37,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     /**
      * Summary of getAllQueryBuilder
      * @return \Doctrine\ORM\QueryBuilder
-     * returns qb for all users in the system
+     *                                    returns qb for all users in the system
      */
-    public function getAllQueryBuilder(): \Doctrine\ORM\QueryBuilder{
+    public function getAllQueryBuilder(): \Doctrine\ORM\QueryBuilder
+    {
         return $this->createQueryBuilder('u');
     }
     /**
@@ -57,6 +57,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
+    public function getEntityManager(): \Doctrine\ORM\EntityManagerInterface
+    {
+        return parent::getEntityManager();
+    }
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */
