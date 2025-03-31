@@ -2,26 +2,24 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
+use App\Enum\ActiveSidenav;
 use App\Form\CustomerRegistrationFormType;
-use App\Form\ProductFormType;
-use App\Services\PhoneNumberService;
-use App\Services\UserProfileService;
+use App\Services\AppContextInterface;
+use App\Services\PhoneNumberServiceInterface;
+use App\Services\UserProfileServiceInterface;
 use Exception;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class UserProfileController extends AbstractController
+class UserProfileController extends AbstractReadController
 {
-    use AppControllerTrait;
-
-    public function __construct(private UserProfileService $userProfileService, private PhoneNumberService $phoneNumberService)
+    public function __construct(private UserProfileServiceInterface $userProfileService, private PhoneNumberServiceInterface $phoneNumberService, private AppContextInterface $appContext)
     {
     }
 
-    public function getService()
+    public function getService(): UserProfileServiceInterface
     {
         return $this->userProfileService;
     }
@@ -34,69 +32,63 @@ class UserProfileController extends AbstractController
     #[Route('/user/profile', name:'app_profile')]
     public function profile(): Response
     {
-
-        $user = $this->getUser();
-
-        if ($user instanceof User && $user->getCustomer()) {
-            $customerId = $user->getCustomer()->getId();
-        }
+        $user = $this->appContext->getCurrentUser();
+        $customerId = $this->appContext->getCurrentCustomer()->getId();
+        
 
         $orders = $this->userProfileService->getOrders($customerId);
 
         $this->setTemplateName('/user/profile/profile.html.twig');
-        $this->setTemplateData(['user' => $user,'orders' => array_slice($orders, 0, 4)]);
+        $this->setTemplateData(['user' => $user,'orders' => array_slice($orders, 0, 4),'active' => ActiveSidenav::PROFILE]);
         return $this->read();
     }
 
     #[Route('/user/profile/edit', name:'app_edit_profile')]
 
-    public function editProfile(Request $request)
+    public function editProfile(Request $request): RedirectResponse|Response
     {
 
-        $user = $this->getUser();
+        $user = $this->appContext->getCurrentUser();
+        $form = $this->createForm($this->getFormType(), $user);
+        $form->handleRequest($request);
 
-        if ($user instanceof User && $user->getCustomer()) {
+        if ($form->isSubmitted() && $form->isValid()) {
+            $editedUser = $form->getData();
 
-            $form = $this->createForm($this->getFormType(), $user);
-            $form->handleRequest($request);
+            try {
 
-            if ($form->isSubmitted() && $form->isValid()) {
-                $editedUser = $form->getData();
+                $phoneNumber = $form->get('phoneNumber')->getData();
 
-                try {
-
-                    $phoneNumber = $form->get('phoneNumber')->getData();
-
-                    // Normalize and validate the phone number
-                    $normalizedPhoneNumber = $this->phoneNumberService->normalizePhoneNumber($phoneNumber);
+                // Normalize and validate the phone number
+                $normalizedPhoneNumber = $this->phoneNumberService->normalizePhoneNumber($phoneNumber);
 
 
-                    if ($normalizedPhoneNumber === null) {
-                        $this->addFlash('error', 'Invalid phone number.');
-                        return $this->redirectToRoute('app_register');
-                    }
-
-                    $editedUser->setPhoneNumber($normalizedPhoneNumber);
-
-                    if ($this->userProfileService->editProfile($editedUser)) {
-                        $this->addFlash('success', 'Profile Edited Successfully');
-                        return $this->redirectToRoute('app_profile');
-                    }
-
-                    $this->addFlash('error', 'Something Went Wrong');
-                } catch (Exception $e) {
-                    $this->addFlash('error', $e->getMessage());
-                    return $this->redirectToRoute('app_edit_profile');
+                if ($normalizedPhoneNumber === null) {
+                    $this->addFlash('error', 'Invalid phone number.');
+                    return $this->redirectToRoute('app_register');
                 }
 
+                $editedUser->setPhoneNumber($normalizedPhoneNumber);
 
+                if ($this->userProfileService->editProfile($editedUser)) {
+                    $this->addFlash('success', 'Profile Edited Successfully');
+                    return $this->redirectToRoute('app_profile');
+                }
+
+                $this->addFlash('error', 'Something Went Wrong');
+            } catch (Exception $e) {
+                $this->addFlash('error', $e->getMessage());
+                return $this->redirectToRoute('app_edit_profile');
             }
 
-            $this->setTemplateName('/user/profile/edit.html.twig');
-            $this->setTemplateData(['user' => $user,'form' => $form->createView()]);
-
-            return  $this->read();
 
         }
+
+        $this->setTemplateName('/user/profile/edit.html.twig');
+        $this->setTemplateData(['user' => $user,'form' => $form->createView(),'active' => ActiveSidenav::PROFILE]);
+
+        return  $this->read();
+
+
     }
 }

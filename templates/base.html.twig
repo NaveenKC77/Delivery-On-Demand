@@ -1,147 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<title>
-			{% block title %}{% endblock %}
-		</title>
-		{# Bootstrap 5 CSS CDN #}
-		<link
-		href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-		{# Bootstrap icons #}
-		<link
-		rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-		{# Google fonts Poppins #}
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link
-		href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
 
-		{# Local CSS #}
-		<link href="{{ asset('assets/styles/app.css') }}" rel="stylesheet">
+    {# Bootstrap 5 CSS CDN #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
 
+    {# Bootstrap Icons #}
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-	</head>
-	<body>
-		<header>
-			{% block header %}{% endblock %}
-		</header>
-		<nav>
-			{% block nav %}
-				<nav class="navbar navbar-expand-lg navbar-light bg-light">
-					<div class="container-fluid">
-						<a class="navbar-brand" href="#"><img class="" style="width: 40px; height: 40px;" src="{{asset('assets/images/logo.png')}}" ></img></a>
-						<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-							<span class="navbar-toggler-icon"></span>
-						</button>
-						<div class="collapse navbar-collapse" id="navbarSupportedContent">
-							<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-								<li class="nav-item">
-									<a class="nav-link active" aria-current="page" href="/">Home</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" href="#">About Us</a>
-								</li>
-								<li class="nav-item dropdown">
-									<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-										Products
-									</a>
-									<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-										<li>
-											<a class="dropdown-item" href="{{path('app_product')}}">View All Products</a>
-										</li>
-										<li>
-											<a class="dropdown-item" href="#">Most Popular Products</a>
-										</li>
-									</ul>
-								</li>
-								<li class="nav-item dropdown">
-									<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-										Categories
-									</a>
-									<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-										<li>
-											<a class="dropdown-item" href="/category">Browse Categories</a>
-										</li>
-										<li>
-											<a class="dropdown-item" href="#">Most Popular Categories</a>
-										</li>
+    {# Google Fonts: Poppins #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;700&display=swap"
+          rel="stylesheet">
 
+    {# Local CSS #}
+    <link href="{{ asset('assets/styles/app.css') }}" rel="stylesheet">
+</head>
+<body>
+   
+    <nav>
+        {% block nav %}
+           <twig:Navbar></twig:Navbar>
+        {% endblock %}
+    </nav>
 
-									</ul>
-								</li>
-
-
-							</ul>
-							<form class="d-flex">
-    {% if app.user %}
-        <div class="dropdown me-2">
-            <button class="btn btn-light border dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="{{app.user.avatarUri}}" alt="Profile" class="rounded-circle">
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                <li><a class="dropdown-item" href="{{ path('app_profile') }}"><i class="bi bi-person"></i> Profile</a></li>
-                <li><a class="dropdown-item" href="{{ path('app_notification') }}"><i class="bi bi-bell"></i> Notifications </a></li>
-				<li><a class="dropdown-item" href="{{ path('app_order') }}"><i class="bi bi-list"></i> Order History </a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" href="{{ path('app_logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
-            </ul>
+    <main class="p-2 mb-4">
+        <div class=" conatiner-fluid mx-auto">
+            {# Flashes Twig Component #}
+            <twig:Flash></twig:Flash>
+           
+                {% block main %}
+                {% endblock %}
+            
         </div>
+    </main>
 
-        {% if not app.user.isAdmin() %}
-            <a class="btn btn-sm bg-light border border-primary text-primary me-2" href="{{ path('app_cart') }}">
-                <h5 class="d-inline bi bi-cart"></h5>
-                <sup>{{ app.user.customer.cart.quantity }}</sup>
-            </a>
-        {% endif %}
+    <footer class="bg-dark text-white py-4 fixed-bottom border border-secondary mt-5">
+       <twig:Footer></twig:Footer>
+    </footer>   
+   
 
-    {% else %}
-        <a href="{{ path('app_login') }}" class="btn btn-light text-success text-bold px-4 border border-success">Login</a>
-    {% endif %}
-</form>
-						</div>
-					</div>
-				</nav>
-			{% endblock %}
+    {# Bootstrap 5 JS Bundle CDN #}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
-		</nav>
+</body>
 
-		<main>
-			{% block main %}
-			<div class="row text-center mx-2">
-			{% for flash in app.flashes('success') %}
-				<p class="alert alert-success">{{flash}}</p>
-			{% endfor %}
-			{% for flash in app.flashes('error') %}
-				<p class="alert alert-danger">{{flash}}</p>
-			{% endfor %}
-
-		</div>
-				<section class="mb-3">
-					{% block content %}{% endblock %}
-				</section>
-
-
-			{% endblock %}
-		</main>
-
-		<footer>
-			{% block footer %}
-				<footer class="bg-dark text-white py-4 sticky-bottom mb-1">
-		<div class="container text-center">
-			<p class="mb-0">© 2024 Your E-commerce Store. All Rights Reserved.</p>
-		</div>
-	</footer>
-			{% endblock %}
-		</footer>
-
-
-		{# Bootstrap 5 JS BUndle CDN #}
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
-		{# Font Awesome CDN #}
-		<script src="https://kit.fontawesome.com/a7b610f770.js" crossorigin="anonymous"></script>
-	</body>
-</html></body></html></script></body></body></html>
+</html>

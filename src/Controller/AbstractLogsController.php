@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Services\EntityServicesInterface;
 use App\Services\LogFilterService;
 use App\Services\LoggerService;
 use App\Services\ServicesInterface;
@@ -62,7 +63,7 @@ abstract class AbstractLogsController extends AbstractController
     /**
      * specific for each logs
      */
-    abstract protected function getService(): ServicesInterface;
+    abstract protected function getService(): EntityServicesInterface;
 
     public function __construct(
         private LoggerService $loggerService,

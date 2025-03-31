@@ -2,11 +2,10 @@
 
 namespace App\Controller;
 
-use App\Services\DynamoDbService;
 use App\Services\CategoryService;
+use App\Services\EntityServicesInterface;
 use App\Services\LogFilterService;
 use App\Services\LoggerService;
-use App\Services\ServicesInterface;
 use App\Services\UserService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +30,7 @@ class CategoryLogsController extends AbstractLogsController
         return 'category_logs';
     }
 
-    public function getService(): ServicesInterface
+    public function getService(): EntityServicesInterface
     {
         return $this->categoryService;
     }

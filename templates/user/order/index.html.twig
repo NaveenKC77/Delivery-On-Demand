@@ -2,29 +2,16 @@
 
 {% block title %}My Orders{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
+{% block main %}
     <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-3">
-            <div class="list-group">
-                <a href="{{ path('app_profile') }}" class="list-group-item list-group-item-action">
-                    <i class="bi bi-person-circle"></i> Profile
-                </a>
-                <a href="{{ path('app_order') }}" class="list-group-item list-group-item-action active">
-                    <i class="bi bi-bag"></i> My Orders
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
-                    <i class="bi bi-heart"></i> Wishlist
-                </a>
-                <a href="{{ path('app_notification') }}" class="list-group-item list-group-item-action">
-                    <i class="bi bi-bell"></i> Notifications <span class="badge bg-danger">3</span>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action text-danger">
-                    <i class="bi bi-box-arrow-right"></i> Logout
-                </a>
+         <!--Profile SideNav-->
+         <twig:ProfileSidenav active="{{active}}"/>
+
+          <!-- Profile Details -->
+          <div class="col-md-9">
+            <twig:UserProfile user="{{user}}"/>
             </div>
-        </div>
+
 
         <!-- Orders Details -->
         <div class="col-md-9">
@@ -55,7 +42,7 @@
                                         <td>${{ order.total }}</td>
                                         <td>{{ order.createdAt|date('F j, Y \\a\\t g:i A') }}</td>
                                         <td>
-                                            <a href="{{ path('app_view_order', { id: order.id }) }}" class="btn btn-primary btn-sm">
+                                            <a href="{{ path('app_order_view', { id: order.id }) }}" class="btn btn-primary btn-sm">
                                                 View
                                             </a>
                                         </td>
@@ -73,5 +60,5 @@
             </div>
         </div>
     </div>
-</div>
+
 {% endblock %}

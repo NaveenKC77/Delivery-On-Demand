@@ -3,22 +3,17 @@
 namespace App\Controller;
 
 use App\Form\EmployeeRegistrationFormType;
-use App\Services\EmployeeService;
+use App\Services\EmployeeServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class EmployeeController extends AbstractController
+class EmployeeController extends AbstractReadController
 {
-    use AppControllerTrait;
-    public function __construct(private EmployeeService $employeeService)
+    public function __construct(private EmployeeServiceInterface $employeeService)
     {
     }
 
-    public function getService(): EmployeeService
-    {
-        return $this->employeeService;
-    }
 
     public function getRoles(): array
     {
@@ -33,7 +28,7 @@ class EmployeeController extends AbstractController
     #[Route('/admin/employee/{page<\d+>}', name: 'app_employee')]
     public function index(int $page = 1): Response
     {
-        $qb = $this->getService()->getAllQueryBuilder();
+        $qb = $this->employeeService->getAllQueryBuilder();
         $pagination = $this->getPagination($qb, $page, 10);
 
         $this->setTemplateName('/admin/employee/index.html.twig');
@@ -45,7 +40,7 @@ class EmployeeController extends AbstractController
     #[Route('/admin/employee/verified/{page<\d+>}', name: 'app_verified_employee')]
     public function verifiedEmployees(int $page = 1): Response
     {
-        $qb = $this->getService()->getAllVerifiedQueryBuilder();
+        $qb = $this->employeeService->getAllVerifiedQueryBuilder();
         $pagination = $this->getPagination($qb, $page, 10);
 
         $this->setTemplateName('/admin/employee/verified.html.twig');

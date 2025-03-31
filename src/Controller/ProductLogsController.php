@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Services\DynamoDbService;
+use App\Services\EntityServicesInterface;
 use App\Services\LogFilterService;
 use App\Services\LoggerService;
 use App\Services\ProductService;
+use App\Services\ProductServiceInterface;
 use App\Services\ServicesInterface;
 use App\Services\UserService;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +18,7 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class ProductLogsController extends AbstractLogsController
 {
-    public function __construct(private ProductService $productService, private LoggerService $loggerService, private UserService $userService, private LogFilterService $logFilterService, private CacheInterface $logsCache)
+    public function __construct(private ProductServiceInterface $productService, private LoggerService $loggerService, private UserService $userService, private LogFilterService $logFilterService, private CacheInterface $logsCache)
     {
 
         parent::__construct($this->loggerService, $this->userService, $this->logFilterService, $this->logsCache);
@@ -32,7 +34,7 @@ class ProductLogsController extends AbstractLogsController
         return 'product_logs';
     }
 
-    public function getService(): ServicesInterface
+    public function getService(): EntityServicesInterface
     {
         return $this->productService;
     }

@@ -1,0 +1,120 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light mt-2 fw-bold">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{path('app_main')}}">
+            <img src="{{ asset('assets/images/logo.png') }}"
+                 alt="Logo"
+                 style="width: 40px; height: 40px;">
+        </a>
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About Us</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#"
+                       id="navbarDropdown"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Products
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li>
+                            <a class="dropdown-item" href="{{ path('app_product') }}">
+                                View All Products
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                Most Popular Products
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#"
+                       id="navbarDropdownCategories"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Categories
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownCategories">
+                        <li>
+                            <a class="dropdown-item" href="/category">
+                                Browse Categories
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                Most Popular Categories
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="d-flex justify-content-between">
+                {% if app.user %}
+                    <div class="dropdown me-5">
+                        <button class="btn btn-light border dropdown-toggle"
+                                type="button"
+                                id="userDropdown"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            <img src="{{ app.user.avatarUri }}"
+                                 alt="Profile"
+                                 class="rounded-circle">
+                        </button>
+                        <ul class="dropdown-menu me-5"
+                            aria-labelledby="userDropdown">
+                            <li>
+                                <a class="dropdown-item" href="{{ path('app_profile') }}">
+                                    <i class="bi bi-person"></i> Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ path('app_notification') }}">
+                                    <i class="bi bi-bell"></i> Notifications <span class="badge bg-danger">{{unreadCount}}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ path('app_order') }}">
+                                    <i class="bi bi-list"></i> Order History
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="{{ path('app_logout') }}">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    {% if not app.user.isAdmin() %}
+                        <a class="btn btn-sm bg-light border border-primary text-primary me-2"
+                           href="{{ path('app_cart') }}">
+                            <h5 class="d-inline bi bi-cart"></h5>
+                            <sup>{{ app.user.customer.cart.quantity }}</sup>
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <a href="{{ path('app_login') }}"
+                       class="btn btn-light text-success px-4 border border-success">
+                        Login
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

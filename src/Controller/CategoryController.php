@@ -4,12 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Form\CategoryFormType;
-use App\Repository\ProductRepository;
-use App\Repository\CategoryRepository;
 use App\Services\CategoryEventDispatcherService;
-use App\Services\CategoryService;
+use App\Services\CategoryServiceInterface;
 use App\Services\EntityServicesInterface;
-use Symfony\Component\Form\FormInterface;
+use App\Services\PaginatorServiceInterface;
+use App\Services\ProductServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -17,13 +16,29 @@ use Symfony\Component\Routing\Attribute\Route;
 class CategoryController extends AbstractCRUDController
 {
     public function __construct(
-        private CategoryService $categoryService,
-        private CategoryRepository $categoryRepository,
+        private CategoryServiceInterface $categoryService,
         private CategoryEventDispatcherService  $eventDispatcherService,
-        private ProductRepository $productRepository,
+        private ProductServiceInterface $productService,
+        private PaginatorServiceInterface $paginatorService
     ) {
+        parent::__construct($paginatorService);
     }
 
+
+    public function getEntityName(): string
+    {
+        return "Category";
+    }
+
+    public function getEntityServiceType(): EntityServicesInterface
+    {
+        return $this->categoryService;
+    }
+
+    public function getRedirectionRoute(): string
+    {
+        return "app_category";
+    }
     // get form type
     public function getFormType(): string
     {
@@ -67,11 +82,11 @@ class CategoryController extends AbstractCRUDController
     }
 
     // display page
-    #[Route('/admin/category/{page<\d+>}', name: 'app_admin_category')]
+    #[Route('/admin/category/{page<\d+>}', name: 'admin_category')]
     public function index(int $page = 1): Response
     {
         // fetches queryBuyilder that returns all categories
-        $qb = $this->categoryRepository->getAllQueryBuilder();
+        $qb = $this->getService()->getAllQueryBuilder();
 
         // pagination setup
         $pagination = parent::getPagination($qb, $page, 10);
@@ -83,95 +98,54 @@ class CategoryController extends AbstractCRUDController
     }
 
     // display page for single item
-    #[Route(path: '/admin/category/single/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route(path: '/admin/category/show/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'], name:'admin_category_view')]
     public function singleCategoryPage(int $id)
     {
-        $category = $this->getService()->getOneById($id);
+        $category = $this->categoryService->getCategory($id);
 
-        $this->setTemplateName('admin/category/singleCategory.html.twig');
+        $this->setTemplateName('admin/category/show.html.twig');
         $this->setTemplateData(['category' => $category]);
 
         return parent::read();
     }
 
     // add new category
-    #[Route('/admin/category/create', name: 'app_admin_category_create', methods: ['GET', 'POST'])]
+    #[Route('/admin/category/create', name: 'admin_category_create', methods: ['GET', 'POST'])]
     public function createCategory(Request $request)
     {
         $this->setTemplateName('admin/category/create.html.twig');
         $this->setRedirectRoute('app_admin_category');
-        $this->setMessage('New Category Successfully Added');
-
         $this->setData(new Category());
 
         $result = parent::create($request);
-        if (!$result instanceof FormInterface) {
 
-            try {
-                // triggering event to store log in dynamodb
-                $this->postCreateHook($this->getData());
-
-                return $result;
-            } catch (\Exception $e) {
-                $this->addFlash('error', $e->getMessage());
-                return $this->redirectToRoute($this->getRedirectRoute());
-            }
-
-        }
-        $this->form = $result;
-
-        $this->setTemplateData(['form' => $this->form]);
+        $this->setTemplateData(['form' => $result]);
 
         return parent::read();
     }
 
     // Page to edit a single category
-    #[Route('/admin/category/edit/{id}', requirements: ['id' => '\d+'])]
+    #[Route('/admin/category/edit/{id}', name:"admin_category_edit", requirements: ['id' => '\d+'])]
     public function editCategory(int $id, Request $request): Response
     {
         $this->setTemplateName('admin/category/edit.html.twig');
         $this->setRedirectRoute('app_admin_category');
 
-        $category = $this->categoryService->getOneById($id);
-        $this->setMessage($category->getId() . ' successfully edited.');
+        $category = $this->categoryService->getCategory($id) ;
+        $result = parent::update($id, $request);
 
-        $result = parent::update($category, $request);
-        if (!$result instanceof FormInterface) {
-            try {
-
-                // triggering event to store log in dynamodb
-                $this->postUpdateHook($this->getData());
-
-                return $result;
-            } catch (\Exception $e) {
-                $this->addFlash('error', $e->getMessage());
-                return $this->redirectToRoute($this->getRedirectRoute());
-            }
-        }
-        $this->form = $result;
-        $this->setTemplateData(['category' => $category, 'form' => $this->form]);
+        $this->setTemplateData(['category' => $category, 'form' => $result]);
 
         return parent::read();
     }
 
     // Delete single Category
-    #[Route('/admin/category/delete/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route('/admin/category/delete/{id}', name:"admin_category_delete", requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function deleteCategory(int $id)
     {
         $this->setRedirectRoute('app_admin_category');
-
-        $this->setMessage('Category with id: ' . $id . ' deleted successfully');
-
-        try {
-            $category = $this->categoryService->getOneById($id);
-            // triggering event to store log in dynamodb
-            $this->postDeleteHook($category);
-
-            return parent::delete($id);
-        } catch (\Exception $e) {
-            $this->addFlash('error', $e->getMessage());
-            return $this->redirectToRoute($this->getRedirectRoute());
-        }
+        $category = $this->categoryService->getOneById($id);
+        return parent::delete($id);
 
     }
 
@@ -183,7 +157,7 @@ class CategoryController extends AbstractCRUDController
     {
 
         // fetches queryBuyilder that returns all categories
-        $qb = $this->categoryRepository->getAllQueryBuilder();
+        $qb = $this->getService()->getAllQueryBuilder();
 
         // pagination setup
         $pagination = parent::getPagination($qb, $page, 10);
@@ -196,19 +170,19 @@ class CategoryController extends AbstractCRUDController
 
     // User UI Page for single category
 
-    #[Route('category/single/{id}/{page}', name:'category_view', requirements:['id' => '\d+'])]
+    #[Route('category/view/{id}/{page<\d+>}', name:'app_category_view', requirements:['id' => '\d+'])]
     public function viewCategory(int $id, int $page = 1)
     {
 
         // query builder to get products for the specific category
-        $qb = $this->productRepository->getByCategoriesQuery($id);
+        $qb = $this->productService->getProductsByCategoriesQb($id);
         $pagination = parent::getPagination($qb, $page, 5);
 
         // getting dtaa for category
-        $category =  $this->categoryRepository->findOneById($id);
+        $category =  $this->categoryService->getCategory($id);
         $this->setTemplateData(['pager' => $pagination,'category' => $category]);
 
-        $this->setTemplateName('category/single.html.twig');
+        $this->setTemplateName('category/show.html.twig');
 
         return parent::read();
     }

@@ -3,21 +3,14 @@
 {% block title %}Log in!
 {% endblock %}
 
-{% block banner %}{% endblock %}
-
-{% block content %}
+{% block main %}
 
 	<div class="container column col-lg-3">
 		<img class="img-fluid" src="{{ asset('/assets/images/login.jpeg') }}" alt="login image"/>
 	</div>
 
 	<div class="form container mx-auto login-form column col-lg-6 mb-6">
-		{% for flash in app.flashes('success') %}
-			<p class="alert alert-success">{{flash}}</p>
-		{% endfor %}
-		{% for flash in app.flashes('error') %}
-			<p class="alert alert-danger">{{flash}}</p>
-		{% endfor %}
+		<twig:Flash/>
 
 		<form method="post">
 			{% if error %}

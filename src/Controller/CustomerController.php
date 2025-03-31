@@ -4,21 +4,15 @@ namespace App\Controller;
 
 use App\Form\CustomerRegistrationFormType;
 use App\Services\CustomerService;
+use App\Services\CustomerServiceInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class CustomerController extends AbstractController
+class CustomerController extends AbstractReadController
 {
-    use AppControllerTrait;
     public function __construct(
-        private CustomerService $customerService,
+        private CustomerServiceInterface $customerService,
     ) {
-    }
-
-    public function getService(): CustomerService
-    {
-        return $this->customerService;
     }
 
     public function getRoles(): array
@@ -34,7 +28,7 @@ class CustomerController extends AbstractController
     #[Route('/admin/customer/{page<\d+>}', name: 'app_customer')]
     public function index(int $page = 1): Response
     {
-        $qb = $this->getService()->getAllQueryBuilder();
+        $qb = $this->customerService->getAllQueryBuilder();
         $pagination = $this->getPagination($qb, $page, 10);
 
         $this->setTemplateName('/admin/customer/index.html.twig');
@@ -46,7 +40,7 @@ class CustomerController extends AbstractController
     #[Route('/admin/customer/verified/{page<\d+>}', name: 'app_verified_customer')]
     public function verifiedCustomers(int $page = 1): Response
     {
-        $qb = $this->getService()->getAllVerifiedQueryBuilder();
+        $qb = $this->customerService->getAllVerifiedQueryBuilder();
         $pagination = $this->getPagination($qb, $page, 10);
 
         $this->setTemplateName('/admin/customer/verified.html.twig');

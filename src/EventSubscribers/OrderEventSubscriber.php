@@ -34,7 +34,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
             $content = "Order Placed . Our admin will look into it and confirm it . You can track your order status by clicking the 'View Details' button ";
 
             $orderId = $order->getId();
-            $link = "/user/order/single/$orderId";
+            $link = "/user/order/view/$orderId";
 
             $this->notificationService->newNotification($customer, $title, $content, $link);
 
@@ -61,7 +61,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
 
             $content = "Order Confirmed. You can track you order now.";
 
-            $link = "/user/order/single/$orderId";
+            $link = "/user/order/view/$orderId";
 
             // create new notification
             $this->notificationService->newNotification($customer, $title, $content, $link);
@@ -81,7 +81,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
 
             $orderId = $order->getId();
             $content = " Sorry Order Cancelled .";
-            $link = "/user/order/single/$orderId";
+            $link = "/user/order/view/$orderId";
 
             $this->notificationService->newNotification($customer, $title, $content, $link);
 

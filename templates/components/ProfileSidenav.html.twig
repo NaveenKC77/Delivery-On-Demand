@@ -1,0 +1,32 @@
+<!-- Sidebar -->
+<div class="col-md-3">
+    <div class="list-group">
+        <!-- Profile Link -->
+        <a href="{{ path('app_profile') }}" class="list-group-item list-group-item-action {{ active.value == 'profile' ? 'active' : '' }}">
+            <i class="bi bi-person-circle"></i> Profile
+        </a>
+
+        <!-- Orders Link -->
+        <a href="{{ path('app_order') }}" class="list-group-item list-group-item-action {{ active.value == 'order' ? 'active' : '' }}">
+            <i class="bi bi-bag"></i> My Orders
+        </a>
+
+        <!-- Wishlist Link -->
+        <a href="#" class="list-group-item list-group-item-action {{ active.value == 'wishlist' ? 'active' : '' }}">
+            <i class="bi bi-heart"></i> Wishlist
+        </a>
+
+        <!-- Notifications Link -->
+        <a href="{{ path('app_notification') }}" class="list-group-item list-group-item-action {{ active.value == 'notification' ? 'active' : '' }}">
+            <i class="bi bi-bell"></i> Notifications 
+            {% if unreadCount > 0 %}
+                <span class="badge bg-danger">{{ unreadCount }}</span>
+            {% endif %}
+        </a>
+
+        <!-- Logout Link -->
+        <a href="{{ path('app_logout') }}" class="list-group-item list-group-item-action text-danger">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+    </div>
+</div>

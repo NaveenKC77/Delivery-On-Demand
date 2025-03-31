@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block main %}
+    <!-- Hero Section -->
+    <section class="hero bg-dark text-white py-5" style="background: url('{{ asset(product.imagePath) }}') center/cover no-repeat;">
+        <div class="container text-center bg-dark bg-opacity-75 p-4 rounded">
+            <h1 class="fw-bold">{{ product.name ?? 'Unknown Product' }}</h1>
+            <p class="lead">{{ product.category.name ?? 'Uncategorized' }}</p>
+        </div>
+    </section>
+
+    <!-- Product Details Section -->
+    <section class="container my-5 mx-auto">
+        <div class="row g-5 align-items-center">
+            <!-- Product Image -->
+            <div class="col-md-6 text-center">
+                <img src="{{ asset(product.imagePath ?? 'default.jpg') }}" alt="{{ product.name ?? 'Product' }}" class="img-fluid product-image rounded shadow-lg">
+            </div>
+            <!-- Product Information -->
+            <div class="col-md-6">
+                <div class="product-details">
+                   
+                    <p class="price display-5 fw-bold text-success">${{ product.price ?? '0.00' }}</p>
+                    <p class="text-muted">{{ product.description ?? 'No description available.' }}</p>
+                    <div class="mt-3">
+                        <span class="badge {{ product.stock is defined and product.stock > 0 ? 'bg-success' : 'bg-danger' }}">{{ product.stock is defined and product.stock > 0 ? 'In Stock' : 'Out of Stock' }}</span>
+                    </div>
+                    
+                    <!-- Add to Cart Button -->
+                    {% if app.user %}
+                        <div class="mt-4">
+                            {% if product.stock is defined and product.stock == 0 %}
+                                <div class="alert alert-warning text-center">Out of Stock... Sorry!</div>
+                            {% else %}
+                                <a href="/cart/add/{{ product.id ?? 0 }}" class="btn btn-lg btn-primary w-100 shadow-sm">
+                                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="mt-4">
+                            <a href="/login" class="btn btn-lg btn-outline-primary w-100 shadow-sm">
+                                Login/Register to Purchase
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Reviews Section -->
+        <div class="mt-5">
+            <h3 class="text-secondary">Customer Reviews</h3>
+            <hr>
+            {% if product.reviews is defined and product.reviews|length > 0 %}
+                {% for review in product.reviews %}
+                    <div class="card mb-3 shadow-sm p-3">
+                        <div class="d-flex align-items-center">
+                            <img src="/images/default-avatar.png" alt="User" class="rounded-circle me-3" width="50" height="50">
+                            <h5 class="mb-0">{{ review.user.name ?? 'Anonymous' }}</h5>
+                        </div>
+                        <p class="mt-2">{{ review.comment ?? 'No comment provided.' }}</p>
+                        <p class="text-muted">Rating: <span class="text-warning">{{ review.rating is defined ? '⭐'.repeat(review.rating) : 'N/A' }}</span>/5</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No reviews yet. Be the first to review this product!</p>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

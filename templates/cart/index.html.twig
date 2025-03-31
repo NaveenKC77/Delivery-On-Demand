@@ -82,7 +82,9 @@
 							<span>Total:</span>
 							<span>{{cart.total}}</span>
 						</h5>
+						{% if cart.total > 0 %}
 						<a href="/cart/checkout"class="btn btn-primary w-100 mt-3">Proceed to Checkout</a>
+						{% endif %}
 						<a href="{{path('app_product')}}" class="btn btn-outline-secondary w-100 mt-2">Continue Shopping</a>
 					</div>
 				</div>

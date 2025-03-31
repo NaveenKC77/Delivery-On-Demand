@@ -1,0 +1,19 @@
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5><i class="bi bi-person"></i> My Profile</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <img src="{{ user.avatarUri}}" alt="Profile Picture" class="rounded-circle img-fluid" style="width: 150px;">
+               
+            </div>
+            <div class="col-md-8">
+                <h4>{{user.firstName ~ ' ' ~ user.lastName}}</h4>
+                <p><i class="bi bi-envelope"></i> {{user.email}}</p>
+                <p><i class="bi bi-phone"></i> {{user.phoneNumber}}</p>
+                <p><i class="bi bi-geo-alt"></i> {{user.customer.address}}</p>
+                <a href="{{path('app_edit_profile')}}" class="btn btn-primary"><i class="bi bi-pencil"></i> Edit Profile</a>
+            </div>
+        </div>
+    </div>

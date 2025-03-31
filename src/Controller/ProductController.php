@@ -5,10 +5,9 @@ namespace App\Controller;
 use App\Entity\Product;
 use App\Form\ProductFormType;
 use App\Services\FileUploadService;
+use App\Services\PaginatorServiceInterface;
 use App\Services\ProductEventDispatcherService;
 use App\Services\ProductService;
-use Pagerfanta\Doctrine\ORM\QueryAdapter;
-use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -23,9 +22,15 @@ class ProductController extends AbstractCRUDController
         private ProductService $productService,
         private FileUploadService $fileUploadService,
         private ProductEventDispatcherService $eventDispatcherService,
+        private PaginatorServiceInterface $paginatorService
     ) {
+        parent::__construct($this->paginatorService);
     }
 
+    public function getEntityName(): string
+    {
+        return "Product";
+    }
     // get form type
     public function getFormType(): string
     {
@@ -33,7 +38,7 @@ class ProductController extends AbstractCRUDController
     }
 
     // returns service
-    public function getService(): ProductService
+    public function getEntityServiceType(): ProductService
     {
         return $this->productService;
     }
@@ -69,20 +74,13 @@ class ProductController extends AbstractCRUDController
 
 
     // display page
-    #[Route('/admin/product/{page<\d+>}', name: 'app_admin_product')]
+    #[Route('/admin/product/{page<\d+>}', name: 'admin_product')]
     public function index(int $page = 1): Response
     {
         $this->setTemplateName('admin/product/index.html.twig');
 
-        // query builder for pagination : gets All products
         $qb = $this->productService->getAllQueryBuilder();
-
-        //setup pagination
-        $pagination = new Pagerfanta(
-            new QueryAdapter($qb)
-        );
-        $pagination->setMaxPerPage(10);
-        $pagination->setCurrentPage($page);
+        $pagination = $this->getPagination($qb, 1, 10);
 
         $this->setTemplateData(['pager' => $pagination]);
 
@@ -90,7 +88,7 @@ class ProductController extends AbstractCRUDController
     }
 
     // display page for single item
-    #[Route(path: '/admin/product/single/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route(path: '/admin/product/show/{id}', name:"admin_product_show", requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function singleProductPage(int $id): Response
     {
         $product = $this->productService->getOneById($id);
@@ -102,50 +100,50 @@ class ProductController extends AbstractCRUDController
     }
 
     // add new product
-    #[Route('/admin/product/create', name: 'app_admin_product_create', methods: ['GET', 'POST'])]
-    public function create(Request $request): Response
+    #[Route('/admin/product/create', name: 'admin_product_create', methods: ['GET', 'POST'])]
+    public function new(Request $request): Response
     {
         $this->setTemplateName('admin/product/create.html.twig');
-        $this->setRedirectRoute('app_admin_product');
-        $this->setMessage(' New product added successfully.');
+        $this->setRedirectRoute('admin_product');
+
 
         $product = new Product();
         $this->setData($product);
 
-        $this->form = $this->createForm($this->getFormType(), $this->getData());
-        $this->form->handleRequest($request);
+        $form = $this->createForm($this->getFormType(), $this->getData());
+        $form->handleRequest($request);
 
-        if ($this->form->isSubmitted() && $this->form->isValid()) {
-            $entity = $this->form->getData();
-            $imagePath = $this->form->get('imagePath')->getData();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entity = $form->getData();
+            $imagePath = $form->get('imagePath')->getData();
 
             if ($imagePath) {
                 $newFileName = $this->fileUploadService->upload($imagePath, $this->getUploadDir());
                 $entity->setImagePath('/assets/images/uploads/' . $newFileName);
             }
             try {
-                $this->getService()->add($entity);
+                $this->productService->save($entity);
 
                 $this->postCreateHook($entity);
-                $this->addFlash(static::SUCCESS, $this->getMessage());
+                $this->addFlash(static::SUCCESS, $this->getEntityName() . " added.");
                 return $this->redirectToRoute($this->getRedirectRoute());
             } catch (\Exception $e) {
                 $this->addFlash(static::ERROR, $e->getMessage());
             }
         }
 
-        $this->setTemplateData(['form' => $this->form->createView(), 'product' => $product]);
+        $this->setTemplateData(['form' => $form->createView(), 'product' => $product]);
 
         return parent::read();
     }
 
-    #[Route('/admin/product/edit/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route('/admin/product/edit/{id}', name:'admin_product_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function edit(int $id, Request $request): Response
     {
         $this->setTemplateName('admin/product/edit.html.twig');
-        $this->setRedirectRoute('app_admin_product');
+        $this->setRedirectRoute('admin_product');
 
-        $product = $this->productService->getOneById($id);
+        $product = $this->productService->getProduct($id);
         $originalImagePath = $product->getImagePath();
 
         $form = $this->createForm(ProductFormType::class, $product);
@@ -162,7 +160,7 @@ class ProductController extends AbstractCRUDController
             }
 
             try {
-                $this->productService->edit($product);
+                $this->productService->getRepository()->save($product);
                 $this->postUpdateHook($product);
 
                 $this->addFlash('success', 'Product updated successfully.');
@@ -177,16 +175,15 @@ class ProductController extends AbstractCRUDController
     }
 
     // delete a single product
-    #[Route('/admin/product/delete/{id}', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route('/admin/product/delete/{id}', name:"admin_product_delete", requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function deleteProduct(int $id): Response
     {
         $this->setRedirectRoute('app_admin_product');
-        $this->setMessage('Product with id ' . $id . 'deleted successfully');
         try {
             $product = $this->productService->getOneById($id);
             //create log in dynamo db
             $this->postDeleteHook($product);
-            return parent::delete($product);
+            return parent::delete($id);
         } catch (\Exception $e) {
             $this->addFlash(static::ERROR, $e->getMessage());
             return $this->redirectToRoute($this->getRedirectRoute());
@@ -199,12 +196,7 @@ class ProductController extends AbstractCRUDController
         $this->setTemplateName('product/index.html.twig');
 
         $qb = $this->productService->getAllQueryBuilder();
-        $pagination = new Pagerfanta(
-            new QueryAdapter($qb)
-        );
-
-        $pagination->setMaxPerPage(12);
-        $pagination->setCurrentPage($page);
+        $pagination = $this->getPagination($qb, 1, 10);
 
         $this->setTemplateData(['pager' => $pagination]);
 
@@ -213,12 +205,12 @@ class ProductController extends AbstractCRUDController
     }
 
     // User page for single product
-    #[Route('/product/single/{id<\d+>}', name: 'product_view')]
+    #[Route('/product/show/{id<\d+>}', name: 'app_product_view')]
     public function userSingleProduct(int $id): Response
     {
-        $this->setTemplateName('product/single.html.twig');
+        $this->setTemplateName('product/show.html.twig');
 
-        $product = $this->getService()->getOneById($id);
+        $product = $this->productService->getOneById($id);
 
         $this->setTemplateData(['product' => $product]);
 

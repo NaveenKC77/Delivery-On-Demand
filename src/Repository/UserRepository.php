@@ -57,6 +57,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
+    //overriding parent method to make it public
     public function getEntityManager(): \Doctrine\ORM\EntityManagerInterface
     {
         return parent::getEntityManager();

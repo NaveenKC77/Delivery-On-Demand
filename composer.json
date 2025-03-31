@@ -59,6 +59,7 @@
         "symfony/twig-bundle": "7.1.*",
         "symfony/ux-icons": "^2.19",
         "symfony/ux-turbo": "^2.19",
+        "symfony/ux-twig-component": "^2.23",
         "symfony/validator": "7.1.*",
         "symfony/var-dumper": "7.1.*",
         "symfony/web-link": "7.1.*",

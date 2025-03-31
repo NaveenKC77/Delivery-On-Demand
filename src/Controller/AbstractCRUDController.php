@@ -3,49 +3,71 @@
 namespace App\Controller;
 
 use App\Entity\EntityInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Services\EntityServicesInterface;
+use Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Summary of AbstractFormController
- * Abstract form controller for All Entities Apart from UserTypes , uses FormControllerTraits
- * provides Create , Update and Delete Abstract Functions
- */
-abstract class AbstractCRUDController extends AbstractController
+abstract class AbstractCRUDController extends AbstractReadController
 {
-    use AppControllerTrait;
+    private ?FormInterface $form = null;
+    private mixed $data = null;
+
+    private string $redirectRoute = "";
+
+    protected function getData(): mixed
+    {
+        return $this->data;
+    }
+
+    protected function setData(mixed $data): static
+    {
+        $this->data = $data;
+        return $this;
+    }
 
     /**
-     * Summary of getUploadDir
+     * Get upload directory to upload files
+     * to be implemented by child class
      * @return string
-     *                returns upload Directory for files uploaded via form
      */
     abstract protected function getUploadDir(): string;
 
     /**
-     * Hooks for subclasses to perform additional actions post-CRUD.
-     */
-    protected function postCreateHook(object $entity): void
+     * Get form type for the class , to be implemented by child class
+     * @return string
+    */
+    abstract protected function getFormType(): string;
+
+    abstract protected function getEntityName(): string;
+
+    protected function getRedirectRoute(): string
     {
+        return $this->redirectRoute;
     }
-    protected function postUpdateHook(object $entity): void
+
+    protected function setRedirectRoute(string $redirectRoute): static
     {
-    }
-    protected function postDeleteHook(object $entity): void
-    {
+        $this->redirectRoute = $redirectRoute;
+        return $this;
     }
 
     /**
-     * Summary of create
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @return \Symfony\Component\Form\FormInterface|\Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response|null
-     *                                                                                                                                                  creates new object of provided entity type if form submitted , else returns form for rendering twig template
-     */
-    protected function create(Request $request): FormInterface|RedirectResponse|Response|null
+            * Get the basic entity service class
+             * @return EntityServicesInterface
+            */
+    abstract protected function getEntityServiceType(): EntityServicesInterface;
+
+
+    abstract protected function postUpdateHook(EntityInterface $entity): void;
+    abstract protected function postCreateHook(EntityInterface $entity): void;
+
+    abstract protected function postDeleteHook(EntityInterface $entity): void;
+
+    public function create(Request $request): FormInterface|RedirectResponse|null
     {
+        // create form and handle request
         $this->form = $this->createForm($this->getFormType(), $this->getData());
         $this->form->handleRequest($request);
 
@@ -53,76 +75,79 @@ abstract class AbstractCRUDController extends AbstractController
             $entity = $this->form->getData();
 
             try {
+                // persist data to db
+                $this->getEntityServiceType()->save($entity);
 
-                $this->getService()->add($entity);
+                // post create actions, raise event , create logs...
+                $this->postCreateHook($entity);
 
-                // for creating events, eg: returns category for Category Class from where event can be triggered using entity
-                $this->setData($entity);
+                // add Flash for confirmation message
+                $this->addFlash(static::SUCCESS, $this->getEntityName() . " created.");
 
-                $this->addFlash(static::SUCCESS, $this->getMessage());
-
+                // redirect user
                 return $this->redirectToRoute($this->getRedirectRoute());
-            } catch (\Exception $e) {
-                $this->addFlash(static::ERROR, $e->getMessage());
-
-                return $this->redirectToRoute($this->getRedirectRoute());
+            } catch (Exception $e) {
+                throw new Exception("Sorry, could not be added");
             }
         }
 
         return $this->form;
     }
 
-    /**
-     * Summary of update
-     * @param \App\Entity\EntityInterface $entity
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @return \Symfony\Component\Form\FormInterface|\Symfony\Component\HttpFoundation\RedirectResponse
-     *                                                                                                  nt\HttpFoundation\Response|null
-     *                                                                                                  creates new object of provided entity type if form submitted , else returns form for rendering twig template
-     */
-    protected function update(EntityInterface $entity, Request $request): FormInterface|RedirectResponse
+    public function update(int $id, Request $request): FormInterface|RedirectResponse|null
     {
+        // get the item from db
+        $entity = $this->getEntityServiceType()->getOneById($id);
+
+        // create form , and handle it
         $this->form = $this->createForm($this->getFormType(), $entity);
         $this->form->handleRequest($request);
 
         if ($this->form->isSubmitted() && $this->form->isValid()) {
+            // get form dtata and assign it to entity
             $entity = $this->form->getData();
 
             try {
-                $this->getService()->edit($entity);
-                // for creating events, eg: returns category for Category Class from where event can be triggered using entity
-                $this->setData($entity);
+                // persist to db
+                $this->getEntityServiceType()->save($entity);
 
-                $this->addFlash(static::SUCCESS, $this->getMessage());
+                // post update , raise events for logging .....
+                $this->postUpdateHook($entity);
 
+                // add flash for ui confirmation
+                $this->addFlash(static::SUCCESS, $this->getEntityName() . " updated. ");
+
+                // redirect the user
                 return $this->redirectToRoute($this->getRedirectRoute());
-            } catch (\Exception $e) {
-                $this->addFlash(static::ERROR, $e->getMessage());
-
-                return $this->redirectToRoute($this->getRedirectRoute());
+            } catch (Exception $e) {
+                throw new Exception("Could not update");
             }
         }
 
         return $this->form;
+
     }
 
-    /**
-     * Summary of delete
-     * @param mixed $id
-     * @return \Symfony\Component\HttpFoundation\Response
-     *                                                    deletes the object and redirects to the provided redireaction route
-     */
-    protected function delete($id): Response
+    public function delete(int $id): RedirectResponse|null
     {
-        try {
-            $entity = $this->getService()->getOneById($id);
-            $this->getService()->delete($entity);
-            $this->addFlash(static::SUCCESS, $this->getMessage());
+        // get the item from db
+        $entity = $this->getEntityServiceType()->getOneById($id);
 
+        try {
+            // delete from db
+            $this->getEntityServiceType()->delete($entity);
+
+            // post delete hook , raise event
+            $this->postDeleteHook($entity);
+
+            // add Flash for Ui confirmation
+            $this->addFlash(static::SUCCESS, $this->getEntityName() . " deleted.");
+
+            // redirect user
             return $this->redirectToRoute($this->getRedirectRoute());
-        } catch (\Exception $e) {
-            $this->addFlash(static::ERROR, $e->getMessage());
-            return $this->redirectToRoute($this->getRedirectRoute());
+        } catch (Exception $e) {
+            throw new Exception("Sorry , Deletion Failed");
         }
+
     }
 }

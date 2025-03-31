@@ -11,7 +11,7 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<Employee>
  */
-class EmployeeRepository extends ServiceEntityRepository
+class EmployeeRepository extends ServiceEntityRepository implements EmployeeRepositoryInterface
 {
     use EntityPersistanceTrait;
     public function __construct(ManagerRegistry $registry)

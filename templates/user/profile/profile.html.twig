@@ -2,52 +2,17 @@
 
 {% block title %}User Profile{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
+{% block main %}
+
     <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-3">
-            <div class="list-group">
-                <a href="{{ path('app_profile') }}" class="list-group-item list-group-item-action active">
-                    <i class="bi bi-person-circle"></i> Profile
-                </a>
-                <a href="{{path('app_order')}}" class="list-group-item list-group-item-action">
-                    <i class="bi bi-bag"></i> My Orders
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
-                    <i class="bi bi-heart"></i> Wishlist
-                </a>
-                <a href="{{path('app_notification')}}" class="list-group-item list-group-item-action">
-                    <i class="bi bi-bell"></i> Notifications <span class="badge bg-danger">3</span>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action text-danger">
-                    <i class="bi bi-box-arrow-right"></i> Logout
-                </a>
-            </div>
-        </div>
+      <!--Profile SideNav-->
+        <twig:ProfileSidenav active="{{active}}" />
+       
 
 
         <!-- Profile Details -->
         <div class="col-md-9">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5><i class="bi bi-person"></i> My Profile</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-4 text-center">
-                            <img src="{{ app.user.avatarUri}}" alt="Profile Picture" class="rounded-circle img-fluid" style="width: 150px;">
-                           
-                        </div>
-                        <div class="col-md-8">
-                            <h4>{{user.firstName ~ ' ' ~ user.lastName}}</h4>
-                            <p><i class="bi bi-envelope"></i> {{user.email}}</p>
-                            <p><i class="bi bi-phone"></i> {{user.phoneNumber}}</p>
-                            <p><i class="bi bi-geo-alt"></i> {{user.customer.address}}</p>
-                            <a href="{{path('app_edit_profile')}}" class="btn btn-primary"><i class="bi bi-pencil"></i> Edit Profile</a>
-                        </div>
-                    </div>
-                </div>
+            <twig:UserProfile user="{{user}}"/>
             </div>
 
             <!-- Order History -->
@@ -62,7 +27,7 @@
                         <p><strong>Order {{order.id}}</strong> - <span class="text-muted">{{ order.createdAt|date('F j, Y \\a\\t g:i A') }}</span></p>
                         <p>Status: <span class="badge bg-success">{{order.status.label}}</span></p>
                         <p>Total: <strong>${{order.total}}</strong></p>
-                         <a href="{{ path('app_view_order', { id: order.id }) }}" class="btn btn-primary btn-sm">
+                         <a href="{{ path('app_order_view', { id: order.id }) }}" class="btn btn-primary btn-sm">
                                     View
                                 </a>
                     </div>
@@ -74,5 +39,5 @@
             </div>
         </div>
     </div>
-</div>
+
 {% endblock %}

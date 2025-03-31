@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "74933016ea8cf6d337c27e522a9347cf",
+    "content-hash": "4669ba063fb4b83563fe31239b033f3c",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -10323,16 +10323,16 @@
         },
         {
             "name": "symfony/ux-twig-component",
-            "version": "v2.22.0",
+            "version": "v2.23.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-twig-component.git",
-                "reference": "03177a494399fbdcbb1f5f2aee017ccf8df581d9"
+                "reference": "f29033b95e93aea2d498dc40eac185ed14b07800"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-twig-component/zipball/03177a494399fbdcbb1f5f2aee017ccf8df581d9",
-                "reference": "03177a494399fbdcbb1f5f2aee017ccf8df581d9",
+                "url": "https://api.github.com/repos/symfony/ux-twig-component/zipball/f29033b95e93aea2d498dc40eac185ed14b07800",
+                "reference": "f29033b95e93aea2d498dc40eac185ed14b07800",
                 "shasum": ""
             },
             "require": {
@@ -10386,7 +10386,7 @@
                 "twig"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-twig-component/tree/v2.22.0"
+                "source": "https://github.com/symfony/ux-twig-component/tree/v2.23.0"
             },
             "funding": [
                 {
@@ -10402,7 +10402,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-23T06:59:34+00:00"
+            "time": "2025-01-25T02:19:26+00:00"
         },
         {
             "name": "symfony/validator",

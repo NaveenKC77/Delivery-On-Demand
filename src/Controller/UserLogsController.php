@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Services\EntityServicesInterface;
 use App\Services\LogFilterService;
 use App\Services\LoggerService;
 use App\Services\ServicesInterface;
 use App\Services\UserService;
+use App\Services\UserServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,7 +15,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class UserLogsController extends AbstractLogsController
 {
-    public function __construct(private UserService $userService, private LoggerService $loggerService, private LogFilterService $logFilterService, private CacheInterface $logsCache)
+    public function __construct(private UserServiceInterface $userService, private LoggerService $loggerService, private LogFilterService $logFilterService, private CacheInterface $logsCache)
     {
 
         parent::__construct($this->loggerService, $this->userService, $this->logFilterService, $this->logsCache);
@@ -29,7 +31,7 @@ class UserLogsController extends AbstractLogsController
         return 'user_logs';
     }
 
-    public function getService(): ServicesInterface
+    public function getService(): EntityServicesInterface
     {
         return $this->userService;
     }

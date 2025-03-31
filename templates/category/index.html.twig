@@ -31,7 +31,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ category.name }}</h5>
                             <p class="card-text text-muted small">{{ category.description | slice(0, 70) }}...</p>
-                            <a href="{{ path('category_view', {'id': category.id,'page':1}) }}" class="btn btn-outline-primary mt-3 w-100">View Products</a>
+                            <a href="{{ path('app_category_view', {'id': category.id,'page':1}) }}" class="btn btn-outline-primary mt-3 w-100">View Products</a>
                         </div>
                     </div>
                 </div>
