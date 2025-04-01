@@ -16,278 +16,71 @@
 
 	</head>
 
-	<body
-		class="d-flex flex-column vh-100">
-		<!-- Make body fill entire height -->
-		<div
-			class="d-flex flex-grow-1">
-			<!-- Sidebar and content wrapper -->
+	<body>
+		<main class="container-fluid vh-100 p-2 mb-2 ">
+			<div class="row h-100">
 
-			{% block sidebar %}
-				<!-- Sidebar -->
-				<nav class="d-flex flex-column flex-shrink-0 p-3 bg-dark text-white" style="width: 250px; height: 100%;">
-					<a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-						<img src="{{ asset('/images/logo.png') }}" alt="DOD Logo" class="me-2" style="width: 30px; height: 30px;">
-						<span>Delivery On Demand</span>
-					</a>
-					<hr>
-					<ul
-						class="nav nav-pills flex-column mb-auto">
-						<!-- Dashboard -->
-						<li class="nav-item">
-							<a href="{{ path('app_admin') }}" class="nav-link bg-dark border border-light d-flex align-items-center text-white">
-								<i class="bi bi-speedometer2 me-2"></i>
-								Dashboard
-							</a>
-						</li>
+			
+				<!--SideNav Column-->
+				<section class="sidenav col-md-12 col-lg-3 col-xl-2 flex-grow-0 ">
+					<twig:AdminSidenav />
+					
+				</section>
 
-						<!-- Components Section -->
-						<li class="nav-item mt-3">
-							<span class="nav-header text-muted">COMPONENTS</span>
-						</li>
-
-						<!-- Products -->
-						<li class="nav-item">
-							<a href="#" class="nav-link d-flex align-items-center text-white" data-bs-toggle="collapse" data-bs-target="#productsMenu" aria-expanded="false">
-								<i class="bi bi-box me-2"></i>
-								Products
-								<i class="bi bi-chevron-down ms-auto"></i>
-							</a>
-							<ul class="collapse list-unstyled ms-3" id="productsMenu">
-								<li>
-									<a href="{{ path('app_admin_product') }}" class="nav-link text-white">Browse Products</a>
-								</li>
-								<li>
-									<a href="{{ path('app_admin_product_create') }}" class="nav-link text-white">Add Product</a>
-								</li>
-							</ul>
-						</li>
-
-						<!-- Categories -->
-						<li class="nav-item">
-							<a href="#" class="nav-link d-flex align-items-center text-white" data-bs-toggle="collapse" data-bs-target="#categoriesMenu" aria-expanded="false">
-								<i class="bi bi-tags me-2"></i>
-								Categories
-								<i class="bi bi-chevron-down ms-auto"></i>
-							</a>
-							<ul class="collapse list-unstyled ms-3" id="categoriesMenu">
-								<li>
-									<a href="{{ path('app_admin_category') }}" class="nav-link text-white">Browse Categories</a>
-								</li>
-								<li>
-									<a href="{{ path('app_admin_category_create') }}" class="nav-link text-white">Add Category</a>
-								</li>
-							</ul>
-						</li>
-
-						<!-- Users -->
-						<li class="nav-item">
-							<a href="#" class="nav-link d-flex align-items-center text-white" data-bs-toggle="collapse" data-bs-target="#usersMenu" aria-expanded="false">
-								<i class="bi bi-person me-2"></i>
-								Users
-								<i class="bi bi-chevron-down ms-auto"></i>
-							</a>
-							<ul class="collapse list-unstyled ms-3" id="usersMenu">
-								<li>
-									<a href="{{ path('app_customer') }}" class="nav-link text-white">Browse Customers</a>
-								</li>
-								<li>
-									<a href="{{ path('app_employee') }}" class="nav-link text-white">Browse Employees</a>
-								</li>
-								<li>
-									<a href="{{ path('app_register_employee') }}" class="nav-link text-white">Register Employee</a>
-								</li>
-							</ul>
-						</li>
-
-						<li>
-							<a href="{{path('admin_order')}}" class="nav-link text-white d-flex align-items-center">
-								<i class="bi bi-bar-chart me-2"></i>
-								Orders
-							</a>
-						</li>
-
-						<li>
-							<a href="#" class="nav-link text-white d-flex align-items-center">
-								<i class="bi bi-gear me-2"></i>
-								Settings
-							</a>
-						</li>
-					</ul>
-					<hr>
-					<div class="mt-auto">
-						<a href="{{ path('app_logout') }}" class="nav-link text-white d-flex align-items-center">
-							<i class="bi bi-box-arrow-left me-2"></i>
-							Logout
-						</a>
+				<!--Main Page Including TopNav and Content-->
+				<section class="content col-md-12 col-lg-9 col-xl-10 flex-grow-1">
+					<!--Top Nav-->
+					<div>
+						<twig:AdminTopnav/>
 					</div>
-				</nav>
-			{% endblock %}
-
-			<!-- Main Content -->
-			<div
-				class="flex-grow-1 w-100">
-				<!-- Main content takes remaining space -->
-				{% block topNavBar %}
-					<!-- Top Navbar -->
-					<nav class="navbar navbar-expand-lg navbar-light bg-light border bottom-dark border-3">
-						<div class="container-fluid">
-							<a class="navbar-brand" href="#">Dashboard</a>
-							<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-								<span class="navbar-toggler-icon"></span>
-							</button>
-							<div class="collapse navbar-collapse" id="navbarNav">
-								<ul class="navbar-nav ms-auto">
-									<li class="nav-item dropdown">
-										<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-											<img src="{{app.user.avatarUri}}" alt="Profile" class="rounded-circle">
-										</a>
-										<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-											<li>
-												<a class="dropdown-item" href="#">Updates</a>
-											</li>
-											<li>
-												<a class="dropdown-item" href="#">Messages</a>
-											</li>
-											<li>
-												<a class="dropdown-item" href="#">Profile</a>
-											</li>
-											<li><hr class="dropdown-divider"></li>
-											<li>
-												<a class="dropdown-item" href="{{ path('app_logout') }}">Logout</a>
-											</li>
-										</ul>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</nav>
-				{% endblock %}
-
-				{% block cards %}
 
 					<!-- Dashboard Cards -->
 					<div class="container mt-4">
-						<div
-							class="row">
-							<!-- Card 1 -->
-							<div class="col-lg-3 col-md-6 mb-4">
-								<div class="card bg-light shadow-sm border-dark">
-									<div class="card-body">
-										<h5 class="card-title text-dark">26K Users</h5>
-										<p class="card-text text-muted">-12.4%</p>
-									</div>
-								</div>
-							</div>
-							<!-- Card 2 -->
-							<div class="col-lg-3 col-md-6 mb-4">
-								<div class="card bg-secondary shadow-sm border-0">
-									<div class="card-body">
-										<h5 class="card-title text-white">6,200 Income</h5>
-										<p class="card-text text-light">40.9% ↑</p>
-									</div>
-								</div>
-							</div>
-							<!-- Card 3 -->
-							<div class="col-lg-3 col-md-6 mb-4">
-								<div class="card bg-dark shadow-sm border-0">
-									<div class="card-body">
-										<h5 class="card-title text-white">2.49% Conversion Rate</h5>
-										<p class="card-text text-light">84.7% ↑</p>
-									</div>
-								</div>
-							</div>
-							<!-- Card 4 -->
-							<div class="col-lg-3 col-md-6 mb-4">
-								<div class="card bg-secondary shadow-sm border-0">
-									<div class="card-body">
-										<h5 class="card-title text-white">44K Sessions</h5>
-										<p class="card-text text-light">-3.5%</p>
-									</div>
-								</div>
-							</div>
-						</div>
+						<twig:AdminCards/>
+					
 					</div>
+					<!--End of cards-->
+					<!--Main Content-->
+					<div class="content">
+						<twig:Flash/>
+						{% block content %}
+						<!--Start of Logs link-->
+						<div class="container d-flex border border-light rounded-3 mx-auto justify-content-center p-3 bg-dark shadow">
+							<a href="/admin/logs/product" class="btn btn-outline-primary px-4 py-2 fw-bold mx-2">Products Log</a>
+							<a href="/admin/logs/category" class="btn btn-outline-secondary px-4 py-2 fw-bold mx-2">Categories Log</a>
+							<a href="/admin/logs/user" class="btn btn-outline-light px-4 py-2 fw-bold mx-2">Users Log</a>
+						</div>
 
+						{% endblock %}
+						
+						<!--End of logs link-->
+						
+						<!-- Chart -->
+						{% block chart %}
+						<twig:AdminChart data="{{data}}"/>
 
-				{% endblock %}
-				{% block content %}
-				<div class="container mx-auto">
-					<a href="/admin/logs/product" class="btn btn-lg btn-primary p-2">Products Log</a>
-					<a href="/admin/logs/category" class="ms-2 btn btn-lg btn-secondary p-2">Categories Log</a>
-					<a href="/admin/logs/user" class="ms-2 btn btn-lg btn-secondary p-2">Users Log</a>
-				</div>
-
-	<div class="container mt-5">
-    <h2>Added in Last 24 Hours, Week, and Month</h2>
-    <canvas id="barChart" width="400" height="200"></canvas>
-</div>
-
-
-				{% endblock %}
+						{% endblock %}
+						<!-- End of Chart-->
+					</div>
+					<!--End of main content-->
+					</div>
+				</section>
 			</div>
+			
+		</main>
 
-		</div>
-
-
-		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-		{% block chartScripts %}
-			<script>
-    const ctx = document.getElementById('barChart').getContext('2d');
-	const chartData = {{data|json_encode|raw}};
-    const myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Last 24 Hours', 'Last Week', 'Last Month'], // X-axis labels
-            datasets: [
-                {
-                    label: 'Products',
-                    data: chartData.products, // Data for each label
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
-                },
-                {
-                    label: 'Categories',
-                    data: chartData.categories, // Data for each label
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                },
-                {
-                    label: 'Users',
-                    data: chartData.users, // Data for each label
-                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top', // Position of the legend (top, bottom, etc.)
-                },
-                title: {
-                    display: true,
-                    text: 'Activity Overview (Last 24 Hours, Last Week, Last Month)'
-                }
-            },
-            scales: {
-                x: {
-                    stacked: false // Ensure bars are grouped, not stacked
-                },
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
+		
+		<script>
+    	document.getElementById('sidebarToggle').addEventListener('click', function () {
+        const sidebar = document.querySelector('.sidenav');
+        sidebar.classList.toggle('d-none');
     });
 </script>
-		{% endblock %}
+
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 		
+
+
 	</body>
+	
 </html>

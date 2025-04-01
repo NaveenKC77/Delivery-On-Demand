@@ -116,8 +116,6 @@ class LoggerEventSubscriber implements EventSubscriberInterface
         // unique uuid for storing LogId in Dynamo
         $logId = Guid::uuid4()->toString();
 
-
-
         $item = [
             'PK' => [
                 'S' => "USER#$adminId"
@@ -126,10 +124,10 @@ class LoggerEventSubscriber implements EventSubscriberInterface
                 'S' => "$entityType#$logId"
             ],
             'Entity' => [
-                'S' => "$entityType"
+                'S' => $entityType
             ],
             'EntityId' => [
-                'N' => (string) $entity->getId()
+                'N' => (string) ((int) $entity->getId())
             ],
             'AdminId' => [
                 'S' => (string) $admin->getId()
@@ -144,6 +142,7 @@ class LoggerEventSubscriber implements EventSubscriberInterface
                     'S' => $admin->getUsername()
                 ]
             ];
+
 
         //log in dynamo db
 
@@ -173,7 +172,7 @@ class LoggerEventSubscriber implements EventSubscriberInterface
                 'S' => $entityType
             ],
             'EntityId' => [
-                'N' => (string)  $entity->getId()
+                'N' => (string) ((int) $entity->getId())
             ],
             'AdminId' => [
                 'S' => '0'
@@ -215,3 +214,33 @@ class LoggerEventSubscriber implements EventSubscriberInterface
         ];
     }
 }
+
+/**
+ * array:8 [▼
+  "PK" => array:1 [▼
+    "S" => "USER#23"
+  ]
+  "SK" => array:1 [▼
+    "S" => "Product#e0af095c-350b-468d-afa3-62ee1df68626"
+  ]
+  "Entity" => array:1 [▼
+    "S" => "Product"
+  ]
+  "EntityId" => array:1 [▼
+    "N" => "160"
+  ]
+  "AdminId" => array:1 [▼
+    "S" => "23"
+  ]
+  "Action" => array:1 [▼
+    "S" => "Delete"
+  ]
+  "Date" => array:1 [▼
+    "S" => "2025-04-01T04:55:05+00:00"
+  ]
+  "Admin" => array:1 [▼
+    "S" => "admin"
+  ]
+] 
+ */
+

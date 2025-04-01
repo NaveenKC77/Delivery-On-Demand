@@ -7,7 +7,7 @@ use App\Form\ProductFormType;
 use App\Services\FileUploadService;
 use App\Services\PaginatorServiceInterface;
 use App\Services\ProductEventDispatcherService;
-use App\Services\ProductService;
+use App\Services\ProductServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class ProductController extends AbstractCRUDController
 {
     public function __construct(
-        private ProductService $productService,
+        private ProductServiceInterface $productService,
         private FileUploadService $fileUploadService,
         private ProductEventDispatcherService $eventDispatcherService,
         private PaginatorServiceInterface $paginatorService
@@ -38,7 +38,7 @@ class ProductController extends AbstractCRUDController
     }
 
     // returns service
-    public function getEntityServiceType(): ProductService
+    public function getEntityServiceType(): ProductServiceInterface
     {
         return $this->productService;
     }
@@ -80,7 +80,7 @@ class ProductController extends AbstractCRUDController
         $this->setTemplateName('admin/product/index.html.twig');
 
         $qb = $this->productService->getAllQueryBuilder();
-        $pagination = $this->getPagination($qb, 1, 10);
+        $pagination = $this->getPagination($qb, $page, 10);
 
         $this->setTemplateData(['pager' => $pagination]);
 
@@ -88,12 +88,12 @@ class ProductController extends AbstractCRUDController
     }
 
     // display page for single item
-    #[Route(path: '/admin/product/show/{id}', name:"admin_product_show", requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route(path: '/admin/product/view/{id}', name:"admin_product_view", requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function singleProductPage(int $id): Response
     {
         $product = $this->productService->getOneById($id);
 
-        $this->setTemplateName('admin/product/singleProduct.html.twig');
+        $this->setTemplateName('admin/product/show.html.twig');
         $this->setTemplateData(['product' => $product]);
 
         return parent::read();
@@ -123,7 +123,6 @@ class ProductController extends AbstractCRUDController
             }
             try {
                 $this->productService->save($entity);
-
                 $this->postCreateHook($entity);
                 $this->addFlash(static::SUCCESS, $this->getEntityName() . " added.");
                 return $this->redirectToRoute($this->getRedirectRoute());
@@ -164,13 +163,13 @@ class ProductController extends AbstractCRUDController
                 $this->postUpdateHook($product);
 
                 $this->addFlash('success', 'Product updated successfully.');
-                return $this->redirectToRoute('app_admin_product');
+                return $this->redirectToRoute('admin_product');
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
             }
         }
 
-        $this->setTemplateData(['form' => $form->createView()]);
+        $this->setTemplateData(['form' => $form->createView(),'product'=>$product]);
         return parent::read();
     }
 
@@ -178,7 +177,7 @@ class ProductController extends AbstractCRUDController
     #[Route('/admin/product/delete/{id}', name:"admin_product_delete", requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function deleteProduct(int $id): Response
     {
-        $this->setRedirectRoute('app_admin_product');
+        $this->setRedirectRoute('admin_product');
         try {
             $product = $this->productService->getOneById($id);
             //create log in dynamo db

@@ -1,0 +1,59 @@
+<div class="container mt-5">
+    <h2>Added in Last 24 Hours, Week, and Month</h2>
+    <canvas id="barChart" width="400" height="200"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script>
+    		const ctx = document.getElementById('barChart').getContext('2d');
+			const chartData = {{data|json_encode|raw}};
+    		const myChart = new Chart(ctx, {
+        				type: 'bar',
+        				data: {
+            			labels: ['Last 24 Hours', 'Last Week', 'Last Month'], // X-axis labels
+            			datasets: [
+                					{
+                    				label: 'Products',
+                    				data: chartData.products, // Data for each label
+                    				backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    				borderColor: 'rgba(255, 99, 132, 1)',
+                    				borderWidth: 1
+                },
+                {
+                    label: 'Categories',
+                    data: chartData.categories, // Data for each label
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Users',
+                    data: chartData.users, // Data for each label
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top', // Position of the legend (top, bottom, etc.)
+                },
+                title: {
+                    display: true,
+                    text: 'Activity Overview (Last 24 Hours, Last Week, Last Month)'
+                }
+            },
+            scales: {
+                x: {
+                    stacked: false // Ensure bars are grouped, not stacked
+                },
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>

@@ -38,7 +38,7 @@ class ProductRepository extends ServiceEntityRepository implements ProductReposi
      * @return QueryBuilder
      *                      return all products by categories
      */
-    public function getByCategoriesQueryBuilder($categoryId)
+    public function getByCategoriesQueryBuilder($categoryId): QueryBuilder
     {
         return $this->createQueryBuilder('p')
         ->where('p.category = :categoryId')
@@ -63,7 +63,7 @@ class ProductRepository extends ServiceEntityRepository implements ProductReposi
      * return featured products for homepage
      * logic to be changed
      */
-    public function findFeaturedProducts()
+    public function findFeaturedProducts():array
     {
         return $this->getAllQueryBuilder()
         ->setMaxResults(3)

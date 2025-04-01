@@ -3,12 +3,12 @@
 namespace App\Services;
 
 use App\Entity\Product;
-use App\Repository\ProductRepository;
+use App\Repository\ProductRepositoryInterface;
 use Doctrine\ORM\QueryBuilder;
 
 class ProductService extends AbstractEntityService implements ProductServiceInterface
 {
-    public function __construct(private ProductRepository $repository, private FileUploadService $fileUploadService)
+    public function __construct(private ProductRepositoryInterface $repository, private FileUploadService $fileUploadService)
     {
         parent::__construct($repository);
     }
