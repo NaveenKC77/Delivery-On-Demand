@@ -30,7 +30,7 @@ class OrderController extends AbstractReadController
     }
 
 
-    #[Route('admin/order/{page</d+>}', 'admin_order')]
+    #[Route('admin/order/{page<\d+>}', 'admin_order')]
     public function index(int $page = 1)
     {
 

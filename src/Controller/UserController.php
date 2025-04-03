@@ -18,7 +18,7 @@ class UserController extends AbstractController
     {
     }
 
-    #[Route('/admin/user/delete/{id<\d+>}', name: 'app_user')]
+    #[Route('/admin/user/delete/{id<\d+>}', name: 'adminuser')]
     public function delete(int $id, Request $request): Response
     {
         $this->userService->deleteUser($id);
@@ -31,7 +31,7 @@ class UserController extends AbstractController
             return $this->redirect($targetPath);
         }
 
-        return $this->redirectToRoute('app_admin_customer');
+        return $this->redirectToRoute('admin_customer');
     }
 
 

@@ -120,7 +120,8 @@ abstract class AbstractCRUDController extends AbstractReadController
                 // redirect the user
                 return $this->redirectToRoute($this->getRedirectRoute());
             } catch (Exception $e) {
-                throw new Exception("Could not update");
+                throw new Exception($e->getMessage());
+              
             }
         }
 

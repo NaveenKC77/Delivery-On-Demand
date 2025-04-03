@@ -9,6 +9,7 @@ use App\Services\CategoryServiceInterface;
 use App\Services\EntityServicesInterface;
 use App\Services\PaginatorServiceInterface;
 use App\Services\ProductServiceInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -114,10 +115,14 @@ class CategoryController extends AbstractCRUDController
     public function createCategory(Request $request)
     {
         $this->setTemplateName('admin/category/create.html.twig');
-        $this->setRedirectRoute('app_admin_category');
+        $this->setRedirectRoute('admin_category');
         $this->setData(new Category());
 
         $result = parent::create($request);
+
+        if(!$result instanceof FormInterface){
+            return $this->redirectToRoute('admin_category');
+        }
 
         $this->setTemplateData(['form' => $result]);
 
@@ -129,10 +134,14 @@ class CategoryController extends AbstractCRUDController
     public function editCategory(int $id, Request $request): Response
     {
         $this->setTemplateName('admin/category/edit.html.twig');
-        $this->setRedirectRoute('app_admin_category');
+        $this->setRedirectRoute('admin_category');
 
         $category = $this->categoryService->getCategory($id) ;
         $result = parent::update($id, $request);
+
+        if(!$result instanceof FormInterface){
+            return $this->redirectToRoute('admin_category');
+        }
 
         $this->setTemplateData(['category' => $category, 'form' => $result]);
 
@@ -143,7 +152,7 @@ class CategoryController extends AbstractCRUDController
     #[Route('/admin/category/delete/{id}', name:"admin_category_delete", requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function deleteCategory(int $id)
     {
-        $this->setRedirectRoute('app_admin_category');
+        $this->setRedirectRoute('admin_category');
         $category = $this->categoryService->getOneById($id);
         return parent::delete($id);
 

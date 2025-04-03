@@ -12,6 +12,7 @@ class UserService extends AbstractEntityService implements UserServiceInterface
 {
     public function __construct(private UserRepository $repository, private Security $security)
     {
+        parent::__construct($repository);
     }
 
     protected function getEntityClass(): string

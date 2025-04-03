@@ -1,4 +1,4 @@
-<nav class="d-flex flex-column flex-shrink-0 p-2 bg-dark w-100" style="width: 250px; height: 100%;">
+<nav class="d-flex flex-column flex-shrink-0 p-4 bg-dark w-100 " style="width: 250px; height: 100%;">
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
         <img src="{{ asset('/images/logo.png') }}" alt="DOD Logo" class="me-2" style="width: 30px; height: 30px;">
         <span>Delivery On Demand</span>
@@ -62,13 +62,13 @@
             </a>
             <ul class="collapse list-unstyled ms-3" id="usersMenu">
                 <li>
-                    <a href="{{ path('app_customer') }}" class="nav-link text-white">Browse Customers</a>
+                    <a href="{{ path('admin_customer') }}" class="nav-link text-white">Browse Customers</a>
                 </li>
                 <li>
-                    <a href="{{ path('app_employee') }}" class="nav-link text-white">Browse Employees</a>
+                    <a href="{{ path('admin_employee') }}" class="nav-link text-white">Browse Employees</a>
                 </li>
                 <li>
-                    <a href="{{ path('app_register_employee') }}" class="nav-link text-white">Register Employee</a>
+                    <a href="{{ path('admin_register_employee') }}" class="nav-link text-white">Register Employee</a>
                 </li>
             </ul>
         </li>

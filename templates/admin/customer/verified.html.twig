@@ -51,19 +51,7 @@
 
 {% block content %}
 	<div class="container-fluid">
-
-
-		<div class="row">
-			{% for flash in app.flashes('success') %}
-				<p class="alert alert-success">{{flash}}</p>
-			{% endfor %}
-			{% for flash in app.flashes('error') %}
-				<p class="alert alert-danger">{{flash}}</p>
-			{% endfor %}
-
-		</div>
-
-		<a href="{{path('app_customer')}}" class="btn btn-md btn-primary my-2">Show All Customers
+		<a href="{{path('admin_customer')}}" class="btn btn-md btn-primary my-2">Show All Customers
 		</a>
 
 		<div class="table-responsive">
@@ -118,5 +106,5 @@
 
 	</tbody>
 </table></div>{{pagerfanta(pager)}}{% endblock %}
-{% block chartScripts %}
+{% block chart %}
 {% endblock %}

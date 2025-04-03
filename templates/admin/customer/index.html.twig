@@ -50,18 +50,7 @@
 {% block content %}
 	<div class="container-fluid">
 
-
-		<div class="row">
-			{% for flash in app.flashes('success') %}
-				<p class="alert alert-success">{{flash}}</p>
-			{% endfor %}
-			{% for flash in app.flashes('error') %}
-				<p class="alert alert-danger">{{flash}}</p>
-			{% endfor %}
-
-		</div>
-
-		<a href="{{path('app_verified_customer')}}" class="btn btn-md btn-primary my-2">
+		<a href="{{path('admin_verified_customer')}}" class="btn btn-md btn-primary my-2">
 			Filter Verified
 		</a>
 
@@ -113,5 +102,5 @@
 
 	</tbody>
 </table></div>{{pagerfanta(pager)}}{% endblock %}
-{% block chartScripts %}
+{% block chart %}
 {% endblock %}

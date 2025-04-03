@@ -52,19 +52,6 @@
 {% block content %}
 	<div class="container-fluid">
 
-
-		<div class="row">
-			{% for flash in app.flashes('success') %}
-				<p class="alert alert-success">{{flash}}</p>
-			{% endfor %}
-			{% for flash in app.flashes('error') %}
-				<p class="alert alert-danger">{{flash}}</p>
-			{% endfor %}
-
-		</div>
-
-
-		
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-bordered align-middle shadow-sm">
 				<thead class="table-dark">
@@ -115,5 +102,5 @@
 
 
 {% endblock %}
-{% block chartScripts %}
+{% block chart %}
 {% endblock %}

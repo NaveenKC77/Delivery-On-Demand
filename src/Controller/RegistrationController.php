@@ -7,8 +7,11 @@ use App\Event\Events\UserRegisteredEvent;
 use App\Form\CustomerRegistrationFormType;
 use App\Form\EmployeeRegistrationFormType;
 use App\Services\PhoneNumberService;
+use App\Services\PhoneNumberServiceInterface;
 use App\Services\UserRegistrationService;
+use App\Services\UserRegistrationServiceInterface;
 use App\Services\UserVerificationService;
+use App\Services\UserVerificationServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,9 +24,9 @@ class RegistrationController extends AbstractController
 {
     public function __construct(
         private EventDispatcherInterface $eventDispatcher,
-        private UserRegistrationService $userRegistrationService,
-        private UserVerificationService $userVerificationService,
-        private PhoneNumberService $phoneNumberService
+        private UserRegistrationServiceInterface $userRegistrationService,
+        private UserVerificationServiceInterface $userVerificationService,
+        private PhoneNumberServiceInterface $phoneNumberService
     ) {
     }
 
@@ -77,7 +80,7 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-    #[Route('/register/employee', name: 'app_register_employee')]
+    #[Route('/register/employee', name: 'admin_register_employee')]
     public function registerEmployee(
         Request $request,
     ): Response {
